@@ -26,16 +26,6 @@
         </h6>
       </div>
     </div>
-    <div class="main">
-      <div class="section section-images">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-12">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="section">
       <div class="container text-center">
         <div class="row justify-content-md-center">
@@ -51,7 +41,18 @@
         </div>
       </div>
     </div>
-    <signup-form id="downloadSection"></signup-form>
+    <div class="main" id="downloadSection">
+      <div class="section section-images">
+        <D3></D3>
+        <!-- <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </div>
+    <signup-form></signup-form>
     <examples-section></examples-section>
   </div>
 </template>
@@ -59,6 +60,7 @@
 import { Parallax } from '@/components';
 import SignupForm from './components/SignupForm';
 import ExamplesSection from './components/ExamplesSection';
+import D3 from './components1/D3';
 
 export default {
   name: 'index',
@@ -66,7 +68,8 @@ export default {
   components: {
     Parallax,
     SignupForm,
-    ExamplesSection
+    ExamplesSection,
+    D3
   }
 };
 </script>
