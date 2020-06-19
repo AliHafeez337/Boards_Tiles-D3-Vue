@@ -12,10 +12,15 @@
   export default {
     data() {
       return {
-        data: [
-          { "x": 20, "color" : "green" },
-          { "x": 220, "color" : "purple"},
-          { "x": 420, "color" : "red"}
+        sections: [
+          { "x": 20, 'y': 20, 'width': 50, 'height': 100, "color" : "green" },
+          { "x": 220, 'y': 20, 'width': 50, 'height': 100, "color" : "purple"},
+          { "x": 420, 'y': 20, 'width': 50, 'height': 100, "color" : "red"}
+        ],
+        tiles: [
+          { "x": 20, 'y': 20, 'width': 50, 'height': 20, "color" : "green" },
+          { "x": 220, 'y': 20, 'width': 50, 'height': 20, "color" : "purple"},
+          { "x": 420, 'y': 20, 'width': 50, 'height': 20, "color" : "red"}
         ],
         height: window.innerWidth,
         width: window.innerWidth
@@ -33,17 +38,106 @@
                             .attr("width", window.innerWidth)
                             .attr("height", window.innerHeight);
 
-        //Draw the Rectangle
-        var rectangle = svgContainer.selectAll("rect")
-                                  .data(this.data)
-                                  .enter()
-                                  .append("rect");
+        var distance = function (p1, p2) {
+          return Math.pow(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2), 0.5);
+        };
 
-        rectangle
-          .attr("x", function (d) { return d.x; })
-          .attr("y", function (d) { return 20 })
-          .attr("width", 50)
-          .attr("height", 100)
+        var section = svgContainer.selectAll('.section')
+                  .data(this.sections)
+                  .enter()
+                  .append('rect')
+                  .attr('class', 'section')
+                  .attr('id', function(d) { return d.x + d.y });
+        
+        section
+          .attr("width", function (d) {
+              return d.width + 12;
+          })
+          .attr("height", function (d) {
+              return d.height + 12;
+          })
+          .attr("x", function (d) {
+              return d.x - 6;
+          })
+          .attr("y", function (d) {
+              return d.y - 6;
+          })
+          .attr("rx", 6)
+          .attr("ry", 6)
+          .style("fill", '#999')
+          .style("opacity", 0.5)
+          .on("click", function() {
+            console.log(this.attributes)
+          })
+          .call(d3.drag()
+            .on('start', function started() {
+                var rect = d3.select(this).classed("dragging", true);
+                
+                var c = d3.select(this)
+                
+                d3.event.on("drag", dragged).on("end", ended);
+
+                function dragged(d) {
+                  var coords = d3.mouse(this);
+                  var e = { x: coords[0], y: coords[1] }
+
+                  var x = Number(this.attributes.x.value);
+                  var y = Number(this.attributes.y.value);
+                  var w = Number(this.attributes.width.value);
+                  var h = Number(this.attributes.height.value);
+
+                  var c1 = { x: x, y: y };
+                  var c2 = { x: x + w, y: y };
+                  var c3 = { x: x + w, y: y + h };
+                  var c4 = { x: x, y: y + h };
+
+                  // figure out which corner this is closest to
+                  var d = [];
+                  var m1 = distance(e, c1);
+                  var m2 = distance(e, c2);
+                  var m3 = distance(e, c3);
+                  var m4 = distance(e, c4);
+                  var min = Math.min(m1, m2, m3, m4)
+
+                  // console.log(min, m1, m2, m3, m4)
+                  if (min === m3) {
+                    c
+                      .attr('width', function () { return w + (e.x - c3.x); })
+                      .attr('height', function () { return h + (e.y - c3.y); });
+                  } else {
+                    rect.raise().attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y);
+                  }
+                }
+
+                function ended() {
+                  // console.log('drag end')
+                  rect.classed("dragging", false);
+                }
+            })
+          );
+
+        var tile = svgContainer.selectAll('.tile')
+                  .data(this.tiles)
+                  .enter()
+                  .append('rect')
+                  .attr('class', 'tile')
+                  .attr('id', function(d) { return d.x + d.y });
+
+        tile
+          .attr("width", function (d) {
+              return d.width;
+          })
+          .attr("height", function (d) {
+              return d.height;
+          })
+          .attr("x", function (d) {
+              return d.x;
+          })
+          .attr("y", function (d) {
+              return d.y;
+          })
+          .attr("rx", 6)
+          .attr("ry", 6)
           .style("fill", function(d) { return d.color; })
           .call(
             d3.drag()
@@ -82,7 +176,8 @@
                         const transform = d3.event.transform;
                         const zx = transform.rescaleX(x).interpolate(d3.interpolateRound);
                         const zy = transform.rescaleY(y).interpolate(d3.interpolateRound);
-                        rectangle.attr("transform", transform).attr("stroke-width", 5 / transform.k);
+                        section.attr("transform", transform).attr("stroke-width", 5 / transform.k);
+                        tile.attr("transform", transform).attr("stroke-width", 5 / transform.k);
                       });
 
         svgContainer.call(zoom).call(zoom.transform, d3.zoomIdentity);
