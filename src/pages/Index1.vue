@@ -43,7 +43,7 @@
     </div>
     <div class="main" id="downloadSection">
       <div class="section section-images">
-        <D3></D3>
+        <board />
         <!-- <div class="container">
           <div class="row">
             <div class="col-md-12">
@@ -60,7 +60,7 @@
 import { Parallax } from '@/components';
 import SignupForm from './components/SignupForm';
 import ExamplesSection from './components/ExamplesSection';
-import D3 from './components1/D3';
+import board from './components1/board/board';
 
 export default {
   name: 'index',
@@ -69,7 +69,7 @@ export default {
     Parallax,
     SignupForm,
     ExamplesSection,
-    D3
+    board
   }
 };
 </script>
