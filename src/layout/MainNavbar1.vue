@@ -153,17 +153,19 @@ export default {
       }
     },
     getBoard(board) {
-      var sections =  [
-        { "x": 20, 'y': 20, 'width': 50, 'height': 100, "color" : "green" },
-        { "x": 220, 'y': 20, 'width': 50, 'height': 100, "color" : "purple"},
-        { "x": 420, 'y': 20, 'width': 50, 'height': 100, "color" : "red"}
-      ], tiles = [
-        { "x": 20, 'y': 20, 'width': 50, 'height': 20, "color" : "green" },
-        { "x": 220, 'y': 20, 'width': 50, 'height': 20, "color" : "purple"},
-        { "x": 420, 'y': 20, 'width': 50, 'height': 20, "color" : "red"}
-      ]
-      this.$store.dispatch('setSections', sections)
-      this.$store.dispatch('setTiles', tiles)
+      if (board === 'board1'){
+        var sections =  [
+          { "x": 20, 'y': 20, 'width': 50, 'height': 100, "color" : "green" },
+          { "x": 220, 'y': 20, 'width': 50, 'height': 100, "color" : "purple"},
+          { "x": 420, 'y': 20, 'width': 50, 'height': 100, "color" : "red"}
+        ], tiles = [
+          { "x": 20, 'y': 20, 'width': 50, 'height': 20, "color" : "green" },
+          { "x": 220, 'y': 20, 'width': 50, 'height': 20, "color" : "purple"},
+          { "x": 420, 'y': 20, 'width': 50, 'height': 20, "color" : "red"}
+        ]
+        this.$store.dispatch('setSections', sections)
+        this.$store.dispatch('setTiles', tiles)
+      }
     }
   }
 };
