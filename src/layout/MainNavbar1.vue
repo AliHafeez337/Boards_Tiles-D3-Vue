@@ -1,7 +1,7 @@
 <template>
   <navbar
     position="fixed"
-    type="primary"
+    type="white"
     :transparent="transparent"
     :color-on-scroll="colorOnScroll"
     menu-classes="ml-auto"
@@ -34,30 +34,6 @@
         </a>
       </li>
       <drop-down
-        tag="li"
-        title="Components"
-        icon="now-ui-icons design_app"
-        class="nav-item"
-      >
-        <!-- <nav-link to="/">
-          <i class="now-ui-icons business_chart-pie-36"></i> All components
-        </nav-link> -->
-        <a
-          href="javascript:void(0)"
-          @click="scrollToElement()"
-          class="dropdown-item"
-        >
-          <i class="now-ui-icons business_chart-pie-36"></i> All components
-        </a>
-        <a
-          href="https://demos.creative-tim.com/vue-now-ui-kit/documentation"
-          target="_blank"
-          class="dropdown-item"
-        >
-          <i class="now-ui-icons design_bullet-list-67"></i> Documentation
-        </a>
-      </drop-down>
-      <drop-down
               tag="li"
               title="Examples"
               icon="now-ui-icons design_image"
@@ -73,14 +49,39 @@
           <i class="now-ui-icons users_single-02"></i> Profile
         </nav-link>
       </drop-down>
+      <drop-down
+        tag="li"
+        title="Components"
+        icon="now-ui-icons design_app"
+        class="nav-item"
+      >
+        <!-- <nav-link to="/">
+          <i class="now-ui-icons business_chart-pie-36"></i> All components
+        </nav-link> -->
+        <a
+          href="javascript:void(0)"
+          @click="scrollToElement()"
+          class="dropdown-item"
+        >
+          Board 1
+        </a>
+        <a
+          href="https://demos.creative-tim.com/vue-now-ui-kit/documentation"
+          target="_blank"
+          class="dropdown-item"
+        >
+          <i class="now-ui-icons design_bullet-list-67"></i> Documentation
+        </a>
+      </drop-down>
       <li class="nav-item">
         <a
           class="nav-link btn btn-neutral"
-          href="https://www.creative-tim.com/product/vue-now-ui-kit-pro"
-          target="_blank"
+          href="javascript:void(0)"
+          @click="scrollToElement()"
         >
-          <i class="now-ui-icons arrows-1_share-66"></i>
-          <p>Upgrade to PRO</p>
+          <i class="now-ui-icons ui-1_check"></i>
+          &nbsp;
+          <p>SAVE</p>
         </a>
       </li>
 
