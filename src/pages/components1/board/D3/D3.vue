@@ -1,7 +1,6 @@
 
 <template>
   <div id="d3">
-    <h1>d3 component</h1>
   </div>
 </template>
  
@@ -10,18 +9,9 @@
   import {event as d3Event, select, selectAll} from "d3-selection";
 
   export default {
+    props: ['sections', 'tiles'],
     data() {
       return {
-        sections: [
-          { "x": 20, 'y': 20, 'width': 50, 'height': 100, "color" : "green" },
-          { "x": 220, 'y': 20, 'width': 50, 'height': 100, "color" : "purple"},
-          { "x": 420, 'y': 20, 'width': 50, 'height': 100, "color" : "red"}
-        ],
-        tiles: [
-          { "x": 20, 'y': 20, 'width': 50, 'height': 20, "color" : "green" },
-          { "x": 220, 'y': 20, 'width': 50, 'height': 20, "color" : "purple"},
-          { "x": 420, 'y': 20, 'width': 50, 'height': 20, "color" : "red"}
-        ],
         height: window.innerWidth,
         width: window.innerWidth
       }
@@ -110,7 +100,7 @@
                 }
 
                 function ended() {
-                  // console.log('drag end')
+                  console.log('section drag ends at:', this.attributes.x, this.attributes.y)
                   rect.classed("dragging", false);
                 }
             })
@@ -152,7 +142,7 @@
                 }
 
                 function ended() {
-                  // console.log('drag end')
+                  console.log('tile drag ends at:', this.attributes.x, this.attributes.y)
                   rect.classed("dragging", false);
                 }
               })
