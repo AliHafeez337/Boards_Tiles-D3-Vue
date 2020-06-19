@@ -17,6 +17,7 @@
       }
     },
     mounted() {
+      d3.select("svg").remove();
       this.renderD3();
     },
     methods: {
@@ -95,7 +96,7 @@
                       .attr('width', function () { return w + (e.x - c3.x); })
                       .attr('height', function () { return h + (e.y - c3.y); });
                   } else {
-                    rect.raise().attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y);
+                    rect.raise().attr("x", d.x = e.x).attr("y", d.y = e.y);
                   }
                 }
 
@@ -137,7 +138,8 @@
                 d3.event.on("drag", dragged).on("end", ended);
 
                 function dragged(d) {
-                  // console.log('dragged', d3.event.x, d3.event.y)
+                  // var coords = d3.mouse(this);
+                  // rect.raise().attr("x", d.x = coords[0]).attr("y", d.y = coords[1]);
                   rect.raise().attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y);
                 }
 

@@ -7,7 +7,10 @@ import * as getters from './getters';
 
 Vue.use(Vuex);
 
-const state = {}
+const state = {
+  sections: [],
+  tiles: []
+}
 
 export default {
   state,

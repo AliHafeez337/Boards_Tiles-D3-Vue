@@ -27,7 +27,7 @@
         <a
           class="nav-link"
           href="javascript:void(0)"
-          @click="scrollToElement()"
+          @click="scrollToElement('board1')"
         >
           <i class="now-ui-icons arrows-1_cloud-download-93"></i>
           <p>Download</p>
@@ -60,7 +60,7 @@
         </nav-link> -->
         <a
           href="javascript:void(0)"
-          @click="scrollToElement()"
+          @click="scrollToElement('board1')"
           class="dropdown-item"
         >
           Board 1
@@ -77,7 +77,7 @@
         <a
           class="nav-link btn btn-neutral"
           href="javascript:void(0)"
-          @click="scrollToElement()"
+          @click="scrollToElement('board1')"
         >
           <i class="now-ui-icons ui-1_check"></i>
           &nbsp;
@@ -145,11 +145,25 @@ export default {
     [Popover.name]: Popover
   },
   methods: {
-    scrollToElement() {
+    scrollToElement(board) {
+      this.getBoard(board);
       let element_id = document.getElementById("downloadSection");
       if (element_id) {
         element_id.scrollIntoView({ block: "end", behavior: "smooth" });
       }
+    },
+    getBoard(board) {
+      var sections =  [
+        { "x": 20, 'y': 20, 'width': 50, 'height': 100, "color" : "green" },
+        { "x": 220, 'y': 20, 'width': 50, 'height': 100, "color" : "purple"},
+        { "x": 420, 'y': 20, 'width': 50, 'height': 100, "color" : "red"}
+      ], tiles = [
+        { "x": 20, 'y': 20, 'width': 50, 'height': 20, "color" : "green" },
+        { "x": 220, 'y': 20, 'width': 50, 'height': 20, "color" : "purple"},
+        { "x": 420, 'y': 20, 'width': 50, 'height': 20, "color" : "red"}
+      ]
+      this.$store.dispatch('setSections', sections)
+      this.$store.dispatch('setTiles', tiles)
     }
   }
 };
