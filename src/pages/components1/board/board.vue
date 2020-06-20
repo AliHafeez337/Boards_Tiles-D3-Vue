@@ -1,6 +1,7 @@
 
 <template>
   <div id="board">
+    <input type="color" id="color" hidden/>
     <D3 
       :sections="sections" 
       :tiles="tiles"
