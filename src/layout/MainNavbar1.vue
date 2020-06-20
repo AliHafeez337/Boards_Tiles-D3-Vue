@@ -159,24 +159,31 @@ export default {
     getBoard(board) {
       if (board === 'board1'){
         var sections =  [
-          { "x": 20, 'y': 20, 'width': 70, 'height': 100 },
-          { "x": 220, 'y': 20, 'width': 70, 'height': 100 },
-          { "x": 420, 'y': 20, 'width': 70, 'height': 100 }
+          { "x": 20, 'y': 20, 'width': 180, 'height': 500 },
+          { "x": 250, 'y': 20, 'width': 180, 'height': 500 },
+          { "x": 520, 'y': 20, 'width': 180, 'height': 500 }
         ], tiles = [
-          { "x": 20, 'y': 20, 'width': 50, 'height': 20, "color" : "green" },
-          { "x": 220, 'y': 20, 'width': 50, 'height': 20, "color" : "purple" },
-          { "x": 420, 'y': 20, 'width': 50, 'height': 20, "color" : "red" }
+          { 'id': 'zkbug6kyx', "x": 20, 'y': 20, 'width': 80, 'height': 30, "color" : "green" },
+          { 'id': 'trnrt7tmm', "x": 250, 'y': 20, 'width': 80, 'height': 30, "color" : "purple" },
+          { 'id': 'k693b4ofl', "x": 520, 'y': 20, 'width': 80, 'height': 30, "color" : "red" }
+        ], labels = [
+          { 'id': '', 'tile': 'trnrt7tmm', 'width': 15, 'height': 7, "color" : "orange" },
+          { 'id': '', 'tile': 'trnrt7tmm', 'width': 15, 'height': 7, "color" : "red" }
         ]
         this.$store.dispatch('setSections', sections)
         this.$store.dispatch('setTiles', tiles)
+        this.$store.dispatch('setLabels', labels)
       }
+    },
+    ID() {
+      return Math.random().toString(36).substr(2, 9);
     },
     pushSection() {
       var section = { "x": 0, 'y': 0, 'width': 50, 'height': 100 }
       this.$store.dispatch('pushSection', section)
     },
     pushTile() {
-      var tile = { "x": 0, 'y': 0, 'width': 50, 'height': 20, "color" : "yellow" }
+      var tile = { 'id': 'veq3ik29w', "x": 0, 'y': 0, 'width': 50, 'height': 20, "color" : "yellow" }
       this.$store.dispatch('pushTile', tile)
     }
   }
