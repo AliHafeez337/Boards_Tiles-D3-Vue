@@ -9,7 +9,7 @@
   import {event as d3Event, select, selectAll} from "d3-selection";
 
   export default {
-    props: ['sections', 'tiles'],
+    props: ['sections', 'tiles', 'labels'],
     data() {
       return {
         height: window.innerWidth,
@@ -37,22 +37,14 @@
                   .data(this.sections)
                   .enter()
                   .append('rect')
-                  .attr('class', 'section')
-                  .attr('id', function(d) { return d.x + d.y });
+                  .attr('class', d => 'section ' + d.x.toString() + '-' + d.y.toString())
+                  .attr('id', d => d.x + d.y);
         
         section
-          .attr("width", function (d) {
-              return d.width;
-          })
-          .attr("height", function (d) {
-              return d.height;
-          })
-          .attr("x", function (d) {
-              return d.x;
-          })
-          .attr("y", function (d) {
-              return d.y;
-          })
+          .attr("width", d => d.width)
+          .attr("height", d => d.height)
+          .attr("x", d => d.x)
+          .attr("y", d => d.y)
           .attr("rx", 6)
           .attr("ry", 6)
           .style("fill", '#999')
@@ -124,51 +116,110 @@
             })
           );
 
-        var tile = svgContainer.selectAll('.tile')
+        var g = svgContainer.selectAll('.tile')
                   .data(this.tiles)
                   .enter()
-                  .append('rect')
-                  .attr('class', 'tile')
-                  .attr('id', function(d) { return d.x + d.y });
-
-        tile
-          .attr("width", function (d) {
-              return d.width;
-          })
-          .attr("height", function (d) {
-              return d.height;
-          })
-          .attr("x", function (d) {
-              return d.x;
-          })
-          .attr("y", function (d) {
-              return d.y;
-          })
-          .attr("rx", 6)
-          .attr("ry", 6)
-          .style("fill", function(d) { return d.color; })
-          .on("click", function() {
-            console.log('TILE CLICKED')
-          })
+                  .append('g')
+                  .attr('class', d => 'g ' + d.x.toString() + '-' + d.y.toString())
+                  .attr('id', d => d.id + 'p');
+        g
           .call(
             d3.drag()
-              .on("start", function started() {
-                var rect = d3.select(this).classed("dragging", true);
+              .on("start", function started(d) {
+                var rects = d3.select(this).selectAll('rect').classed("dragging", true);
+                const x = rects.attr("x"), y = rects.attr("y");
 
                 d3.event.on("drag", dragged).on("end", ended);
 
                 function dragged(d) {
                   // var coords = d3.mouse(this);
-                  // rect.raise().attr("x", d.x = coords[0]).attr("y", d.y = coords[1]);
-                  rect.raise().attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y);
+                  // console.log(coords)
+                  // rects.raise().attr("x", d.x = coords[0]).attr("y", d.y = coords[1]);
+                  rects
+                    .raise()
+                    .attr("x", d => {
+                      // console.log(Math.abs(d.x - x))
+                      return d.x = d3.event.x
+                    })
+                    .attr("y", d.y = d3.event.y);
+                    // .attr("y", d.y = d3.event.y + Math.abs(d.y - y));
                 }
 
                 function ended() {
                   console.log('tile drag ends at:', this.attributes.x, this.attributes.y)
-                  rect.classed("dragging", false);
+                  rects.classed("dragging", false);
                 }
               })
           );
+
+        var tile = g
+                    .append('rect')
+                    .attr('class', d => 'tile ' + d.x.toString() + '-' + d.y.toString())
+                    .attr('id', d => d.id);
+        tile
+          .attr("width", d => d.width)
+          .attr("height", d => d.height)
+          .attr("x", d => d.x)
+          .attr("y", d => d.y)
+          .attr("rx", 6)
+          .attr("ry", 6)
+          .style("fill", d => d.color)
+          .on("click", function() {
+            console.log('TILE CLICKED')
+          })
+          // .call(
+          //   d3.drag()
+          //     .on("start", function started() {
+          //       var rect = d3.select(this).classed("dragging", true);
+
+          //       d3.event.on("drag", dragged).on("end", ended);
+
+          //       function dragged(d) {
+          //         // var coords = d3.mouse(this);
+          //         // rect.raise().attr("x", d.x = coords[0]).attr("y", d.y = coords[1]);
+          //         rect.raise().attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y);
+          //       }
+
+          //       function ended() {
+          //         console.log('tile drag ends at:', this.attributes.x, this.attributes.y)
+          //         rect.classed("dragging", false);
+          //       }
+          //     })
+          // );
+
+        var a = [], b = []
+
+        this.labels.forEach((label, index) => {
+          var number = 1, c = a.indexOf(label.tile)
+          if (c > -1){
+            number = b[c] + 1
+            b[c] = number
+          } else {
+            a.push(label.tile)
+            b.push(1)
+          }
+          // console.log(number, a, b)
+
+          var tile = d3.select('#' + label.tile)
+          
+          var x = tile._groups[0][0].x.animVal.value;
+          var y = tile._groups[0][0].y.animVal.value;
+
+          var parent = d3.select('#' + label.tile + 'p')
+
+          var thisLabel = parent
+                            .append('rect')
+                            .attr('class', d => 'label ' + ((x + 2) + (number * d.width)) + '-' + (y + 2))
+                            .attr('id', number)
+          thisLabel
+            .attr("width", label.width)
+            .attr("height", label.height)
+            .attr("x", (x + 2) + (number * (label.width + 5)))
+            .attr("y", (y + 2))
+            .attr("rx", 1)
+            .attr("ry", 1)
+            .style("fill", label.color)
+        })
              
         const k = this.height / this.width
 

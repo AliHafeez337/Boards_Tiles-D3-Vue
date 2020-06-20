@@ -12,6 +12,13 @@ export const setTiles = ({ commit }, tiles) => {
   }, 1000)
 };
 
+export const setLabels = ({ commit }, labels) => {
+  // get from the database
+  setTimeout(() => {
+    commit('SET_LABELS', labels)
+  }, 1000)
+};
+
 export const pushSection = ({ commit, getters }, section) => {
   var sections = [...getters.getSections]
   setTimeout(() => {

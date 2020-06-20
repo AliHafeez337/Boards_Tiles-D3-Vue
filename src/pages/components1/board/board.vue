@@ -5,6 +5,7 @@
     <D3 
       :sections="sections" 
       :tiles="tiles"
+      :labels="labels"
       :key="d3"
     />
   </div>
@@ -25,6 +26,9 @@
       },
       tiles() {
         return this.$store.getters.getTiles;
+      },
+      labels() {
+        return this.$store.getters.getLabels;
       }
     },
     watch: {
@@ -34,6 +38,10 @@
       },
       tiles: function (val) {
         console.log('TILES', val)
+        this.d3 += 1
+      },
+      labels: function (val) {
+        console.log('LABELS', val)
         this.d3 += 1
       }
     },

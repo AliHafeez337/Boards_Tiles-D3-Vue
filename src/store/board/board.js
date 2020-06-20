@@ -9,7 +9,8 @@ Vue.use(Vuex);
 
 const state = {
   sections: [],
-  tiles: []
+  tiles: [],
+  labels: []
 }
 
 export default {
