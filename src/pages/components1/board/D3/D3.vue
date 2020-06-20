@@ -58,7 +58,24 @@
           .style("fill", '#999')
           .style("opacity", 0.5)
           .on("click", function() {
-            console.log(this.attributes)
+            console.log('SECTION CLICKED')
+            let rect = d3.select(this)
+
+            // IMPORTANT: Remove the old input color element with old event listeneres and place a new one with no event listener
+            // coppied from: https://stackoverflow.com/questions/9251837/how-to-remove-all-listeners-in-an-element
+            var old_element = document.querySelector('#color');
+            var new_element = old_element.cloneNode(true);
+            old_element.parentNode.replaceChild(new_element, old_element);
+
+            // Now select the new element
+            var colorInput = document.querySelector('#color');
+            // Click the new element
+            colorInput.click();
+            // Add event listener, whenever user clicks 'ok', this function fires
+            colorInput.addEventListener('input', () => {
+              var color = colorInput.value;
+              rect.style("fill", color)
+            })
           })
           .call(d3.drag()
             .on('start', function started() {
@@ -130,6 +147,9 @@
           .attr("rx", 6)
           .attr("ry", 6)
           .style("fill", function(d) { return d.color; })
+          .on("click", function() {
+            console.log('TILE CLICKED')
+          })
           .call(
             d3.drag()
               .on("start", function started() {
