@@ -23,16 +23,6 @@
       </el-popover>
     </template>
     <template slot="navbar-menu">
-      <li class="nav-item">
-        <a
-          class="nav-link"
-          href="javascript:void(0)"
-          @click="scrollToElement('board1')"
-        >
-          <i class="now-ui-icons arrows-1_cloud-download-93"></i>
-          <p>Download</p>
-        </a>
-      </li>
       <drop-down
               tag="li"
               title="Examples"
@@ -51,7 +41,7 @@
       </drop-down>
       <drop-down
         tag="li"
-        title="Components"
+        title="Boards"
         icon="now-ui-icons design_app"
         class="nav-item"
       >
@@ -65,12 +55,26 @@
         >
           Board 1
         </a>
+      </drop-down>
+      <drop-down
+        tag="li"
+        title="New"
+        icon="now-ui-icons ui-1_simple-add"
+        class="nav-item"
+      >
         <a
-          href="https://demos.creative-tim.com/vue-now-ui-kit/documentation"
-          target="_blank"
+          href="javascript:void(0)"
+          @click="pushSection()"
           class="dropdown-item"
         >
-          <i class="now-ui-icons design_bullet-list-67"></i> Documentation
+          Section
+        </a>
+        <a
+          href="javascript:void(0)"
+          @click="pushTile()"
+          class="dropdown-item"
+        >
+          Tile
         </a>
       </drop-down>
       <li class="nav-item">
@@ -155,17 +159,25 @@ export default {
     getBoard(board) {
       if (board === 'board1'){
         var sections =  [
-          { "x": 20, 'y': 20, 'width': 50, 'height': 100, "color" : "green" },
-          { "x": 220, 'y': 20, 'width': 50, 'height': 100, "color" : "purple"},
-          { "x": 420, 'y': 20, 'width': 50, 'height': 100, "color" : "red"}
+          { "x": 20, 'y': 20, 'width': 70, 'height': 100 },
+          { "x": 220, 'y': 20, 'width': 70, 'height': 100 },
+          { "x": 420, 'y': 20, 'width': 70, 'height': 100 }
         ], tiles = [
           { "x": 20, 'y': 20, 'width': 50, 'height': 20, "color" : "green" },
-          { "x": 220, 'y': 20, 'width': 50, 'height': 20, "color" : "purple"},
-          { "x": 420, 'y': 20, 'width': 50, 'height': 20, "color" : "red"}
+          { "x": 220, 'y': 20, 'width': 50, 'height': 20, "color" : "purple" },
+          { "x": 420, 'y': 20, 'width': 50, 'height': 20, "color" : "red" }
         ]
         this.$store.dispatch('setSections', sections)
         this.$store.dispatch('setTiles', tiles)
       }
+    },
+    pushSection() {
+      var section = { "x": 0, 'y': 0, 'width': 50, 'height': 100 }
+      this.$store.dispatch('pushSection', section)
+    },
+    pushTile() {
+      var tile = { "x": 0, 'y': 0, 'width': 50, 'height': 20, "color" : "yellow" }
+      this.$store.dispatch('pushTile', tile)
     }
   }
 };
