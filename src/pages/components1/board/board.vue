@@ -1,6 +1,6 @@
 
 <template>
-  <div id="d3">
+  <div id="board">
     <D3 
       :sections="sections" 
       :tiles="tiles"
@@ -28,9 +28,11 @@
     },
     watch: {
       sections: function (val) {
+        console.log('SECTIONS', val)
         this.d3 += 1
       },
       tiles: function (val) {
+        console.log('TILES', val)
         this.d3 += 1
       }
     },
@@ -39,3 +41,9 @@
     }
   }
 </script>
+
+<style scoped>
+#board {
+  border: 1ch solid grey;
+}
+</style>

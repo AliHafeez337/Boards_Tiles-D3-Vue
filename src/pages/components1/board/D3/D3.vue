@@ -42,16 +42,16 @@
         
         section
           .attr("width", function (d) {
-              return d.width + 12;
+              return d.width;
           })
           .attr("height", function (d) {
-              return d.height + 12;
+              return d.height;
           })
           .attr("x", function (d) {
-              return d.x - 6;
+              return d.x;
           })
           .attr("y", function (d) {
-              return d.y - 6;
+              return d.y;
           })
           .attr("rx", 6)
           .attr("ry", 6)
@@ -163,7 +163,7 @@
 
         const zoom = d3
                       .zoom()
-                      .scaleExtent([0.5, 32])
+                      .scaleExtent([0.3, 32])
                       .on("zoom", () => {
                         const transform = d3.event.transform;
                         const zx = transform.rescaleX(x).interpolate(d3.interpolateRound);
