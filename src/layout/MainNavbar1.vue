@@ -159,9 +159,9 @@ export default {
     getBoard(board) {
       if (board === 'board1'){
         var sections =  [
-          { "x": 20, 'y': 20, 'width': 180, 'height': 500 },
-          { "x": 250, 'y': 20, 'width': 180, 'height': 500 },
-          { "x": 520, 'y': 20, 'width': 180, 'height': 500 }
+          { "x": 20, 'y': 20, 'width': 180, 'height': 200 },
+          { "x": 250, 'y': 20, 'width': 180, 'height': 200 },
+          { "x": 520, 'y': 20, 'width': 180, 'height': 200 }
         ], tiles = [
           { 'id': 'zkbug6kyx', "x": 20, 'y': 20, 'width': 80, 'height': 30, "color" : "green" },
           { 'id': 'trnrt7tmm', "x": 250, 'y': 20, 'width': 80, 'height': 30, "color" : "purple" },
@@ -179,7 +179,7 @@ export default {
       return Math.random().toString(36).substr(2, 9);
     },
     pushSection() {
-      var section = { "x": 0, 'y': 0, 'width': 50, 'height': 100 }
+      var section = { "x": 0, 'y': 0, 'width': 180, 'height': 200 }
       this.$store.dispatch('pushSection', section)
     },
     pushTile() {

@@ -121,33 +121,58 @@
                   .enter()
                   .append('g')
                   .attr('class', d => 'g ' + d.x.toString() + '-' + d.y.toString())
-                  .attr('id', d => d.id + 'p');
+                  .attr('id', d => d.id + '-p');
         g
           .call(
             d3.drag()
               .on("start", function started(d) {
-                var rects = d3.select(this).selectAll('rect').classed("dragging", true);
-                const x = rects.attr("x"), y = rects.attr("y");
+                var rectsGroup = d3.select(this).selectAll('rect').classed("dragging", true);
+
+                var rects = [], selection;
+                rectsGroup._groups[0].forEach((rect, index) => {
+                  if (index > 0){
+                    selection = d3.select('#' + d.id + '-' + index.toString())
+                  } else {
+                    selection = d3.select('#' + d.id)
+                  }
+                  rects.push(selection)
+                })
 
                 d3.event.on("drag", dragged).on("end", ended);
 
+                var dd = d;
                 function dragged(d) {
-                  // var coords = d3.mouse(this);
-                  // console.log(coords)
-                  // rects.raise().attr("x", d.x = coords[0]).attr("y", d.y = coords[1]);
-                  rects
-                    .raise()
-                    .attr("x", d => {
-                      // console.log(Math.abs(d.x - x))
-                      return d.x = d3.event.x
-                    })
-                    .attr("y", d.y = d3.event.y);
-                    // .attr("y", d.y = d3.event.y + Math.abs(d.y - y));
+                  var bigBrother, x, y;
+
+                  rects.forEach((rect, index) => {
+                    bigBrother = d3.select('#' + dd.id)
+                    x = (bigBrother.attr('x')).toString()
+                    y = (bigBrother.attr('y')).toString();
+
+                    if (index > 0){
+                      rect
+                        .raise()
+                        .attr("x", (+x + +2) + (+index * +(+15 + +5)))
+                        .attr("y", (+y + +2));
+                    } else {
+                      rect
+                        .raise()
+                        .attr("x", d3.event.x)
+                        .attr("y", d3.event.y);
+                    }
+                  }) 
                 }
 
                 function ended() {
-                  console.log('tile drag ends at:', this.attributes.x, this.attributes.y)
-                  rects.classed("dragging", false);
+                  console.log('Group drag ends at:')
+                  var x, y;
+                  rects.forEach((rect, index) => {
+                    x = (rect.attr('x')).toString()
+                    y = (rect.attr('y')).toString();
+                    console.log(x, y)
+                  }) 
+                  
+                  rectsGroup.classed("dragging", false);
                 }
               })
           );
@@ -205,12 +230,12 @@
           var x = tile._groups[0][0].x.animVal.value;
           var y = tile._groups[0][0].y.animVal.value;
 
-          var parent = d3.select('#' + label.tile + 'p')
+          var parent = d3.select('#' + label.tile + '-p')
 
           var thisLabel = parent
                             .append('rect')
                             .attr('class', d => 'label ' + ((x + 2) + (number * d.width)) + '-' + (y + 2))
-                            .attr('id', number)
+                            .attr('id', label.tile + '-' + number)
           thisLabel
             .attr("width", label.width)
             .attr("height", label.height)
