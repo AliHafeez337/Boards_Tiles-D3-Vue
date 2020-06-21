@@ -160,19 +160,18 @@ export default {
       }
     },
     getBoard(board) {
-      console.log(config)
       if (board === 'board1'){
         var sections =  [
-          { "x": 20, 'y': 20, 'width': config.section_width, 'height': config.section_height, 'color': config.new_section_color },
-          { "x": 250, 'y': 20, 'width': config.section_width, 'height': config.section_height, 'color': config.new_section_color },
-          { "x": 520, 'y': 20, 'width': config.section_width, 'height': config.section_height, 'color': config.new_section_color }
+          { 'id': 'qxn9u0yv3', "x": 20, 'y': 20, 'width': config.section_width, 'height': config.section_height, 'color': config.new_section_color },
+          { 'id': '0nyn15mj3', "x": 250, 'y': 20, 'width': config.section_width, 'height': config.section_height, 'color': config.new_section_color },
+          { 'id': 'yquazchds', "x": 520, 'y': 20, 'width': config.section_width, 'height': config.section_height, 'color': config.new_section_color }
         ], tiles = [
           { 'id': 'zkbug6kyx', "x": 20, 'y': 20, 'width': 80, 'height': 30, "color" : "green" },
           { 'id': 'trnrt7tmm', "x": 250, 'y': 20, 'width': 80, 'height': 30, "color" : "purple" },
           { 'id': 'k693b4ofl', "x": 520, 'y': 20, 'width': 80, 'height': 30, "color" : "red" }
         ], labels = [
-          { 'id': '', 'tile': 'trnrt7tmm', 'width': 15, 'height': 7, "color" : "orange" },
-          { 'id': '', 'tile': 'trnrt7tmm', 'width': 15, 'height': 7, "color" : "red" }
+          { 'id': 'trnrt7tmm-1', 'tile': 'trnrt7tmm', 'width': 15, 'height': 7, "color" : "orange" },
+          { 'id': 'trnrt7tmm-2', 'tile': 'trnrt7tmm', 'width': 15, 'height': 7, "color" : "red" }
         ]
         this.$store.dispatch('setSections', sections)
         this.$store.dispatch('setTiles', tiles)
