@@ -35,6 +35,26 @@
           return Math.pow(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2), 0.5);
         };
 
+        var changeColor = function (el) {
+          let rect = d3.select(el)
+
+          // IMPORTANT: Remove the old input color element with old event listeneres and place a new one with no event listener
+          // coppied from: https://stackoverflow.com/questions/9251837/how-to-remove-all-listeners-in-an-element
+          var old_element = document.querySelector('#color');
+          var new_element = old_element.cloneNode(true);
+          old_element.parentNode.replaceChild(new_element, old_element);
+
+          // Now select the new element
+          var colorInput = document.querySelector('#color');
+          // Click the new element
+          colorInput.click();
+          // Add event listener, whenever user clicks 'ok', this function fires
+          colorInput.addEventListener('input', () => {
+            var color = colorInput.value;
+            rect.style("fill", color)
+          })
+        }
+
         var section = svgContainer.selectAll('.section')
                   .data(this.sections)
                   .enter()
@@ -53,29 +73,14 @@
           .style("opacity", config.section_opacity)
           .on("click", function() {
             console.log('SECTION CLICKED')
-            let rect = d3.select(this)
-
-            // IMPORTANT: Remove the old input color element with old event listeneres and place a new one with no event listener
-            // coppied from: https://stackoverflow.com/questions/9251837/how-to-remove-all-listeners-in-an-element
-            var old_element = document.querySelector('#color');
-            var new_element = old_element.cloneNode(true);
-            old_element.parentNode.replaceChild(new_element, old_element);
-
-            // Now select the new element
-            var colorInput = document.querySelector('#color');
-            // Click the new element
-            colorInput.click();
-            // Add event listener, whenever user clicks 'ok', this function fires
-            colorInput.addEventListener('input', () => {
-              var color = colorInput.value;
-              rect.style("fill", color)
-            })
+            changeColor(this)
           })
           .call(d3.drag()
             .on('start', function started() {
                 var rect = d3.select(this).classed("dragging", true);
                 var c = d3.select(this);
                 var firstChild = this.parentNode.firstChild;
+                var changeC = false;
                 
                 d3.event.on("drag", dragged).on("end", ended);
 
@@ -106,12 +111,18 @@
                     c
                       .attr('width', function () { return w + (e.x - c3.x); })
                       .attr('height', function () { return h + (e.y - c3.y); });
+                  } else if (min === m2) {
+                    changeC = true;
                   } else {
                     rect.raise().attr("x", d.x = e.x).attr("y", d.y = e.y);
                   }
                 }
 
                 function ended() {
+                  if (changeC){
+                    console.log(changeC)
+                    changeColor(this)
+                  }
                   console.log('section drag ends at:', this.attributes.x, this.attributes.y)
                   rect.classed("dragging", false);
 
