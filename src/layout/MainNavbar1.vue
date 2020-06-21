@@ -135,6 +135,9 @@
 <script>
 import { DropDown, NavbarToggleButton, Navbar, NavLink } from '@/components';
 import { Popover } from 'element-ui';
+
+import { config } from '../CONFIG';
+
 export default {
   name: 'main-navbar',
   props: {
@@ -157,11 +160,12 @@ export default {
       }
     },
     getBoard(board) {
+      console.log(config)
       if (board === 'board1'){
         var sections =  [
-          { "x": 20, 'y': 20, 'width': 180, 'height': 200 },
-          { "x": 250, 'y': 20, 'width': 180, 'height': 200 },
-          { "x": 520, 'y': 20, 'width': 180, 'height': 200 }
+          { "x": 20, 'y': 20, 'width': config.section_width, 'height': config.section_height, 'color': config.new_section_color },
+          { "x": 250, 'y': 20, 'width': config.section_width, 'height': config.section_height, 'color': config.new_section_color },
+          { "x": 520, 'y': 20, 'width': config.section_width, 'height': config.section_height, 'color': config.new_section_color }
         ], tiles = [
           { 'id': 'zkbug6kyx', "x": 20, 'y': 20, 'width': 80, 'height': 30, "color" : "green" },
           { 'id': 'trnrt7tmm', "x": 250, 'y': 20, 'width': 80, 'height': 30, "color" : "purple" },
@@ -179,11 +183,25 @@ export default {
       return Math.random().toString(36).substr(2, 9);
     },
     pushSection() {
-      var section = { "x": 0, 'y': 0, 'width': 180, 'height': 200 }
+      var section = { 
+        'id': this.ID(),
+        'x': config.new_section_x_axis, 
+        'y': config.new_section_y_axis, 
+        'width': config.section_width, 
+        'height': config.section_height,
+        'color': config.new_section_color
+      }
       this.$store.dispatch('pushSection', section)
     },
     pushTile() {
-      var tile = { 'id': 'veq3ik29w', "x": 0, 'y': 0, 'width': 50, 'height': 20, "color" : "yellow" }
+      var tile = { 
+        'id': this.ID(), 
+        'x': config.new_tile_x_axis, 
+        'y': config.new_tile_y_axis, 
+        'width': config.tile_width, 
+        'height': config.tile_height, 
+        'color' : config.new_tile_color
+      }
       this.$store.dispatch('pushTile', tile)
     }
   }

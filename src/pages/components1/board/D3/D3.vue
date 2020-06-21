@@ -8,6 +8,8 @@
   import * as d3 from "d3";
   import {event as d3Event, select, selectAll} from "d3-selection";
 
+  import { config } from '../../../../CONFIG';
+
   export default {
     props: ['sections', 'tiles', 'labels'],
     data() {
@@ -38,17 +40,17 @@
                   .enter()
                   .append('rect')
                   .attr('class', d => 'section ' + d.x.toString() + '-' + d.y.toString())
-                  .attr('id', d => d.x + d.y);
+                  .attr('id', d => d.id);
         
         section
           .attr("width", d => d.width)
           .attr("height", d => d.height)
           .attr("x", d => d.x)
           .attr("y", d => d.y)
-          .attr("rx", 6)
-          .attr("ry", 6)
-          .style("fill", '#999')
-          .style("opacity", 0.5)
+          .attr("rx", config.section_edges_round)
+          .attr("ry", config.section_edges_round)
+          .style("fill", d => d.color)
+          .style("opacity", config.section_opacity)
           .on("click", function() {
             console.log('SECTION CLICKED')
             let rect = d3.select(this)
@@ -142,7 +144,7 @@
 
                 var dd = d;
                 function dragged(d) {
-                  var bigBrother, x, y;
+                  var bigBrother, x, y, coords = d3.mouse(this);
 
                   rects.forEach((rect, index) => {
                     bigBrother = d3.select('#' + dd.id)
@@ -152,13 +154,15 @@
                     if (index > 0){
                       rect
                         .raise()
-                        .attr("x", (+x + +2) + (+index * +(+15 + +5)))
-                        .attr("y", (+y + +2));
+                        .attr("x", (+x + +config.padding_on_labels) + (+index * +(+config.label_width + +config.gap_between_labels)))
+                        .attr("y", (+y + +config.padding_on_labels));
                     } else {
                       rect
                         .raise()
-                        .attr("x", d3.event.x)
-                        .attr("y", d3.event.y);
+                        // .attr("x", d3.event.x)
+                        // .attr("y", d3.event.y);
+                        .attr("x", coords[0])
+                        .attr("y", coords[1]);
                     }
                   }) 
                 }
@@ -186,31 +190,13 @@
           .attr("height", d => d.height)
           .attr("x", d => d.x)
           .attr("y", d => d.y)
-          .attr("rx", 6)
-          .attr("ry", 6)
+          .attr("rx", config.tile_edges_round)
+          .attr("ry", config.tile_edges_round)
+          .style("opacity", config.tile_opacity)
           .style("fill", d => d.color)
           .on("click", function() {
             console.log('TILE CLICKED')
           })
-          // .call(
-          //   d3.drag()
-          //     .on("start", function started() {
-          //       var rect = d3.select(this).classed("dragging", true);
-
-          //       d3.event.on("drag", dragged).on("end", ended);
-
-          //       function dragged(d) {
-          //         // var coords = d3.mouse(this);
-          //         // rect.raise().attr("x", d.x = coords[0]).attr("y", d.y = coords[1]);
-          //         rect.raise().attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y);
-          //       }
-
-          //       function ended() {
-          //         console.log('tile drag ends at:', this.attributes.x, this.attributes.y)
-          //         rect.classed("dragging", false);
-          //       }
-          //     })
-          // );
 
         var a = [], b = []
 
@@ -241,8 +227,9 @@
             .attr("height", label.height)
             .attr("x", (x + 2) + (number * (label.width + 5)))
             .attr("y", (y + 2))
-            .attr("rx", 1)
-            .attr("ry", 1)
+            .attr("rx", config.labels_edges_round)
+            .attr("ry", config.labels_edges_round)
+            .style("opacity", config.label_opacity)
             .style("fill", label.color)
         })
              
@@ -265,7 +252,7 @@
                         const zx = transform.rescaleX(x).interpolate(d3.interpolateRound);
                         const zy = transform.rescaleY(y).interpolate(d3.interpolateRound);
                         section.attr("transform", transform).attr("stroke-width", 5 / transform.k);
-                        tile.attr("transform", transform).attr("stroke-width", 5 / transform.k);
+                        g.attr("transform", transform).attr("stroke-width", 5 / transform.k);
                       });
 
         svgContainer.call(zoom).call(zoom.transform, d3.zoomIdentity);
