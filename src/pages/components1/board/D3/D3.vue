@@ -74,8 +74,8 @@
           .call(d3.drag()
             .on('start', function started() {
                 var rect = d3.select(this).classed("dragging", true);
-                
-                var c = d3.select(this)
+                var c = d3.select(this);
+                var firstChild = this.parentNode.firstChild;
                 
                 d3.event.on("drag", dragged).on("end", ended);
 
@@ -114,6 +114,11 @@
                 function ended() {
                   console.log('section drag ends at:', this.attributes.x, this.attributes.y)
                   rect.classed("dragging", false);
+
+                  // IMPORTANT: Send the selected(the one you are dragging) on the back (according to z-axis) after you ended the drag other wise, the section will remain on top...
+                  if (firstChild) { 
+                    this.parentNode.insertBefore(this, firstChild); 
+                  }
                 }
             })
           );
