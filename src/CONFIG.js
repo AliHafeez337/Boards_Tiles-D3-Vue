@@ -37,5 +37,19 @@ export const config = {
   labels_edges_round: 1,
 
   gap_between_labels: 5,
-  padding_on_labels: 2
+  padding_on_labels: 2,
+
+  // Section text
+  section_text_color: 'black',
+  section_text_x: 70, // x pixels appart from the point(x) of the tile
+  section_text_y: 20, // y pixels appart from the point(y) of the tile
+  section_text_font: 'sans-serif',
+  section_text_size: '15',
+
+  // Tile text
+  tile_text_color: 'white',
+  tile_text_x: 8, // x pixels appart from the point(x) of the tile
+  tile_text_y: 25, // y pixels appart from the point(y) of the tile
+  tile_text_font: 'sans-serif',
+  tile_text_size: '15'
 }
