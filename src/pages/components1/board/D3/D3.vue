@@ -55,12 +55,82 @@
           })
         }
 
-        var section = svgContainer.selectAll('.section')
-                  .data(this.sections)
-                  .enter()
-                  .append('rect')
-                  .attr('class', d => 'section ' + d.x.toString() + '-' + d.y.toString())
-                  .attr('id', d => d.id);
+        var sectionGroup = svgContainer.selectAll('.section')
+                            .data(this.sections)
+                            .enter()
+                            .append('g')
+                            .attr('class', d => 'g ' + d.x.toString() + '-' + d.y.toString())
+                            .attr('id', d => d.id + '-p');
+        sectionGroup
+          .call(d3.drag()
+            .on('start', function started(dd) {
+                var rects = d3.select(this).selectAll('rect').classed("dragging", true);
+                var text = d3.select(this).selectAll('text').classed("dragging", true);
+                var rect = d3.select('#' + dd.id);
+                var firstChild = this.parentNode.firstChild;
+                var changeC = false;
+                // console.log(rects, rect)
+                
+                d3.event.on("drag", dragged).on("end", ended);
+
+                function dragged(d) {
+                  var coords = d3.mouse(this);
+                  var e = { x: coords[0], y: coords[1] }
+
+                  var x = Number(rect.attr('x'));
+                  var y = Number(rect.attr('y'));
+                  var w = Number(rect.attr('width'));
+                  var h = Number(rect.attr('height'));
+
+                  var c1 = { x: x, y: y };
+                  var c2 = { x: x + w, y: y };
+                  var c3 = { x: x + w, y: y + h };
+                  var c4 = { x: x, y: y + h };
+
+                  // // figure out which corner this is closest to
+                  var d = [];
+                  var m1 = distance(e, c1);
+                  var m2 = distance(e, c2);
+                  var m3 = distance(e, c3);
+                  var m4 = distance(e, c4);
+                  var min = Math.min(m1, m2, m3, m4)
+
+                  // console.log(min, m1, m2, m3, m4)
+                  if (min === m3) {
+                    rect
+                      .attr('width', function () { return w + (e.x - c3.x); })
+                      .attr('height', function () { return h + (e.y - c3.y); });
+                  } else if (min === m2) {
+                    changeC = true;
+                  } else {
+                    rect.raise().attr("x", d.x = e.x).attr("y", d.y = e.y);
+                  }
+                  text
+                    .raise()
+                    .attr("x", (+x + +config.section_text_x))
+                    .attr("y", (+y + +config.section_text_y));
+                }
+
+                function ended() {
+                  if (changeC){
+                    console.log(changeC)
+                    changeColor(rect)
+                  }
+                  console.log('section drag ends at:', rect.attr('x'), rect.attr('y'))
+                  rect.classed("dragging", false);
+
+                  // IMPORTANT: Send the selected(the one you are dragging) on the back (according to z-axis) after you ended the drag other wise, the section will remain on top...
+                  if (firstChild) { 
+                    this.parentNode.insertBefore(this, firstChild); 
+                  }
+                }
+            })
+          );
+
+        var section = sectionGroup
+                        .append('rect')
+                        .attr('class', d => 'section ' + d.x.toString() + '-' + d.y.toString())
+                        .attr('id', d => d.id);
         
         section
           .attr("width", d => d.width)
@@ -75,76 +145,31 @@
             console.log('SECTION CLICKED')
             changeColor(this)
           })
-          .call(d3.drag()
-            .on('start', function started() {
-                var rect = d3.select(this).classed("dragging", true);
-                var c = d3.select(this);
-                var firstChild = this.parentNode.firstChild;
-                var changeC = false;
-                
-                d3.event.on("drag", dragged).on("end", ended);
 
-                function dragged(d) {
-                  var coords = d3.mouse(this);
-                  var e = { x: coords[0], y: coords[1] }
+        var sectionText = sectionGroup
+                    .append('text')
+                    .attr('class', d => 'sectionText ' + d.x.toString() + '-' + d.y.toString())
+                    .attr('id', d => d.id + '-t');
+        sectionText
+          .attr("x", d => d.x + config.section_text_x)
+          .attr("y", d => d.y + config.section_text_y)
+          .text(d => d.name)
+          .attr("font-family", config.section_text_font)
+          .attr("font-size", config.section_text_size + 'px')
+          .attr("fill", config.section_text_color);
 
-                  var x = Number(this.attributes.x.value);
-                  var y = Number(this.attributes.y.value);
-                  var w = Number(this.attributes.width.value);
-                  var h = Number(this.attributes.height.value);
-
-                  var c1 = { x: x, y: y };
-                  var c2 = { x: x + w, y: y };
-                  var c3 = { x: x + w, y: y + h };
-                  var c4 = { x: x, y: y + h };
-
-                  // figure out which corner this is closest to
-                  var d = [];
-                  var m1 = distance(e, c1);
-                  var m2 = distance(e, c2);
-                  var m3 = distance(e, c3);
-                  var m4 = distance(e, c4);
-                  var min = Math.min(m1, m2, m3, m4)
-
-                  // console.log(min, m1, m2, m3, m4)
-                  if (min === m3) {
-                    c
-                      .attr('width', function () { return w + (e.x - c3.x); })
-                      .attr('height', function () { return h + (e.y - c3.y); });
-                  } else if (min === m2) {
-                    changeC = true;
-                  } else {
-                    rect.raise().attr("x", d.x = e.x).attr("y", d.y = e.y);
-                  }
-                }
-
-                function ended() {
-                  if (changeC){
-                    console.log(changeC)
-                    changeColor(this)
-                  }
-                  console.log('section drag ends at:', this.attributes.x, this.attributes.y)
-                  rect.classed("dragging", false);
-
-                  // IMPORTANT: Send the selected(the one you are dragging) on the back (according to z-axis) after you ended the drag other wise, the section will remain on top...
-                  if (firstChild) { 
-                    this.parentNode.insertBefore(this, firstChild); 
-                  }
-                }
-            })
-          );
-
-        var g = svgContainer.selectAll('.tile')
+        var tileGroup = svgContainer.selectAll('.tile')
                   .data(this.tiles)
                   .enter()
                   .append('g')
                   .attr('class', d => 'g ' + d.x.toString() + '-' + d.y.toString())
                   .attr('id', d => d.id + '-p');
-        g
+        tileGroup
           .call(
             d3.drag()
               .on("start", function started(d) {
                 var rectsGroup = d3.select(this).selectAll('rect').classed("dragging", true);
+                var text = d3.select(this).selectAll('text').classed("dragging", true);
 
                 var rects = [], selection;
                 rectsGroup._groups[0].forEach((rect, index) => {
@@ -162,10 +187,10 @@
                 function dragged(d) {
                   var bigBrother, x, y, coords = d3.mouse(this);
 
+                  bigBrother = d3.select('#' + dd.id)
+                  x = (bigBrother.attr('x')).toString()
+                  y = (bigBrother.attr('y')).toString();
                   rects.forEach((rect, index) => {
-                    bigBrother = d3.select('#' + dd.id)
-                    x = (bigBrother.attr('x')).toString()
-                    y = (bigBrother.attr('y')).toString();
 
                     if (index > 0){
                       rect
@@ -181,6 +206,10 @@
                         .attr("y", coords[1]);
                     }
                   }) 
+                  text
+                    .raise()
+                    .attr("x", (+x + +config.tile_text_x))
+                    .attr("y", (+y + +config.tile_text_y));
                 }
 
                 function ended() {
@@ -191,13 +220,14 @@
                     y = (rect.attr('y')).toString();
                     console.log(x, y)
                   }) 
+                  console.log(text.attr('x'), text.attr('x'))
                   
                   rectsGroup.classed("dragging", false);
                 }
               })
           );
 
-        var tile = g
+        var tile = tileGroup
                     .append('rect')
                     .attr('class', d => 'tile ' + d.x.toString() + '-' + d.y.toString())
                     .attr('id', d => d.id);
@@ -213,6 +243,18 @@
           .on("click", function() {
             console.log('TILE CLICKED')
           })
+
+        var tileText = tileGroup
+                    .append('text')
+                    .attr('class', d => 'tileText ' + d.x.toString() + '-' + d.y.toString())
+                    .attr('id', d => d.id + '-t');
+        tileText
+          .attr("x", d => d.x + config.tile_text_x)
+          .attr("y", d => d.y + config.tile_text_y)
+          .text(d => d.name)
+          .attr("font-family", config.tile_text_font)
+          .attr("font-size", config.tile_text_size + 'px')
+          .attr("fill", config.tile_text_color);
 
         var a = [], b = []
 
@@ -267,8 +309,8 @@
                         const transform = d3.event.transform;
                         const zx = transform.rescaleX(x).interpolate(d3.interpolateRound);
                         const zy = transform.rescaleY(y).interpolate(d3.interpolateRound);
-                        section.attr("transform", transform).attr("stroke-width", 5 / transform.k);
-                        g.attr("transform", transform).attr("stroke-width", 5 / transform.k);
+                        sectionGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
+                        tileGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
                       });
 
         svgContainer.call(zoom).call(zoom.transform, d3.zoomIdentity);
