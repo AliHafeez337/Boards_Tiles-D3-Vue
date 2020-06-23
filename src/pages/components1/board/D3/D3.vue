@@ -54,6 +54,20 @@
           });
         }
 
+        var removeLabel = (t, d) => {
+          const id = d3.select(t).attr('id');
+          const start = parseInt(id.substring(id.indexOf('-') + 1));
+          var rects = d3.select('#' + d.id + '-p').selectAll('rect');
+          var rect;
+
+          d3.select(t).remove()
+          for(let i = start + 1; i < rects._groups[0].length; i++){
+            rect = d3.select(rects._groups[0][i]);
+            rect.attr('x', rect.attr('x') - (config.label_width + config.gap_between_labels));
+            rect.attr('id', d => d.id + '-' + (i - 1).toString())
+          }
+        }
+
         var sectionGroup = svgContainer.selectAll('.section')
                             .data(this.sections)
                             .enter()
@@ -179,6 +193,7 @@
                     .append('text')
                     .attr('class', d => 'sectionText ' + d.x.toString() + '-' + d.y.toString())
                     .attr('id', d => d.id + '-t');
+
         sectionText
           .attr("x", d => d.x + config.section_text_x)
           .attr("y", d => d.y + config.section_text_y)
@@ -257,6 +272,9 @@
                     .attr("ry", config.labels_edges_round)
                     .style("opacity", config.label_opacity)
                     .style("fill", color)
+                    .on("click", function(d){
+                      removeLabel(this, d);
+                    });
                 })
             }
           })
@@ -405,6 +423,9 @@
             .attr("ry", config.labels_edges_round)
             .style("opacity", config.label_opacity)
             .style("fill", label.color)
+            .on("click", function(d){
+              removeLabel(this, d);
+            });
         })
              
         const k = this.height / this.width
