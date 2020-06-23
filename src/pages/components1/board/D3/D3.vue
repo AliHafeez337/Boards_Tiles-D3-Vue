@@ -35,9 +35,7 @@
           return Math.pow(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2), 0.5);
         };
 
-        var changeColor = function (el) {
-          let rect = d3.select(el)
-
+        var changeColor = function (rect) {
           // IMPORTANT: Remove the old input color element with old event listeneres and place a new one with no event listener
           // coppied from: https://stackoverflow.com/questions/9251837/how-to-remove-all-listeners-in-an-element
           var old_element = document.querySelector('#color');
@@ -61,15 +59,34 @@
                             .append('g')
                             .attr('class', d => 'g ' + d.x.toString() + '-' + d.y.toString())
                             .attr('id', d => d.id + '-p');
-        sectionGroup
+
+        var section = sectionGroup
+                        .append('rect')
+                        .attr('class', d => 'section ' + d.x.toString() + '-' + d.y.toString())
+                        .attr('id', d => d.id);
+        
+        section
+          .attr("width", d => d.width)
+          .attr("height", d => d.height)
+          .attr("x", d => d.x)
+          .attr("y", d => d.y)
+          .attr("rx", config.section_edges_round)
+          .attr("ry", config.section_edges_round)
+          .style("fill", d => d.color)
+          .style("opacity", config.section_opacity)
+          .on("click", function() {
+            console.log('SECTION CLICKED')
+            changeColor(this)
+          })
           .call(d3.drag()
             .on('start', function started(dd) {
-                var rects = d3.select(this).selectAll('rect').classed("dragging", true);
-                var text = d3.select(this).selectAll('text').classed("dragging", true);
-                var rect = d3.select('#' + dd.id);
-                var firstChild = this.parentNode.firstChild;
+                var rect = d3.select(this).classed("dragging", true);
+                var text = d3.select('#' + rect.attr('id') + '-t').classed("dragging", true);
+                var circle = d3.select('#' + rect.attr('id') + '-x').classed("dragging", true);
+                console.log(d3.select('#' + rect.attr('id') + '-p')._groups[0][0].parentNode.firstChild)
+                var t = d3.select('#' + rect.attr('id') + '-p')._groups[0][0]
+                var firstChild = t.parentNode.firstChild;
                 var changeC = false;
-                // console.log(rects, rect)
                 
                 d3.event.on("drag", dragged).on("end", ended);
 
@@ -109,42 +126,51 @@
                     .raise()
                     .attr("x", (+x + +config.section_text_x))
                     .attr("y", (+y + +config.section_text_y));
+                  circle
+                    .raise()
+                    .attr("cx", (+x + +config.section_x_x))
+                    .attr("cy", (+y + +config.section_x_y));
                 }
 
                 function ended() {
                   if (changeC){
-                    console.log(changeC)
+                    console.log(changeC, rect)
                     changeColor(rect)
                   }
-                  console.log('section drag ends at:', rect.attr('x'), rect.attr('y'))
+                  console.log('section drag ends at:', rect.attr('x'), rect.attr('y'));
+                  console.log(text.attr('x'), text.attr('y'));
+                  console.log(circle.attr('cx'), circle.attr('cy'));
                   rect.classed("dragging", false);
 
                   // IMPORTANT: Send the selected(the one you are dragging) on the back (according to z-axis) after you ended the drag other wise, the section will remain on top...
                   if (firstChild) { 
-                    this.parentNode.insertBefore(this, firstChild); 
+                    t.parentNode.insertBefore(t, firstChild); 
                   }
                 }
             })
           );
-
-        var section = sectionGroup
-                        .append('rect')
-                        .attr('class', d => 'section ' + d.x.toString() + '-' + d.y.toString())
-                        .attr('id', d => d.id);
         
-        section
-          .attr("width", d => d.width)
-          .attr("height", d => d.height)
-          .attr("x", d => d.x)
-          .attr("y", d => d.y)
-          .attr("rx", config.section_edges_round)
-          .attr("ry", config.section_edges_round)
-          .style("fill", d => d.color)
-          .style("opacity", config.section_opacity)
-          .on("click", function() {
-            console.log('SECTION CLICKED')
-            changeColor(this)
-          })
+        var sectionX = sectionGroup
+                          .append('circle')
+                          .attr('class', d => 'sectionX ' + d.x.toString() + '-' + d.y.toString())
+                          .attr('id', d => d.id + '-x');
+
+        sectionX
+          .attr("cx", d => d.x + config.section_x_x)
+          .attr("cy", d => d.y + config.section_x_y)
+          .attr("r", config.section_x_radius)
+          .style("opacity", config.section_x_opacity)
+          .style("fill", config.section_x_color)
+          .on("click", function(d) {
+            console.log('Section X clicked');
+            var rect = d3.select('#' + d.id).classed("dragging", true);
+            var text = d3.select('#' + d.id + '-t').classed("dragging", true);
+            var circle = d3.select('#' + d.id + '-x').classed("dragging", true);
+            
+            rect.remove();
+            text.remove();
+            circle.remove();
+          });
 
         var sectionText = sectionGroup
                     .append('text')
@@ -164,12 +190,30 @@
                   .append('g')
                   .attr('class', d => 'g ' + d.x.toString() + '-' + d.y.toString())
                   .attr('id', d => d.id + '-p');
-        tileGroup
+
+        var tile = tileGroup
+                    .append('rect')
+                    .attr('class', d => 'tile ' + d.x.toString() + '-' + d.y.toString())
+                    .attr('id', d => d.id);
+
+        tile
+          .attr("width", d => d.width)
+          .attr("height", d => d.height)
+          .attr("x", d => d.x)
+          .attr("y", d => d.y)
+          .attr("rx", config.tile_edges_round)
+          .attr("ry", config.tile_edges_round)
+          .style("opacity", config.tile_opacity)
+          .style("fill", d => d.color)
+          .on("click", function() {
+            console.log('TILE CLICKED')
+          })
           .call(
             d3.drag()
               .on("start", function started(d) {
-                var rectsGroup = d3.select(this).selectAll('rect').classed("dragging", true);
-                var text = d3.select(this).selectAll('text').classed("dragging", true);
+                var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
+                var text = d3.select('#' + d.id + '-t').classed("dragging", true);
+                var circle = d3.select('#' + d.id + '-x').classed("dragging", true);
 
                 var rects = [], selection;
                 rectsGroup._groups[0].forEach((rect, index) => {
@@ -210,38 +254,57 @@
                     .raise()
                     .attr("x", (+x + +config.tile_text_x))
                     .attr("y", (+y + +config.tile_text_y));
+                  circle
+                    .raise()
+                    .attr("cx", (+x + +config.tile_x_x))
+                    .attr("cy", (+y + +config.tile_x_y));
                 }
 
                 function ended() {
-                  console.log('Group drag ends at:')
+                  console.log('Tile group drag ends at:')
                   var x, y;
                   rects.forEach((rect, index) => {
                     x = (rect.attr('x')).toString()
                     y = (rect.attr('y')).toString();
                     console.log(x, y)
                   }) 
-                  console.log(text.attr('x'), text.attr('x'))
+                  console.log(text.attr('x'), text.attr('y'))
+                  console.log(circle.attr('cx'), circle.attr('cy'))
                   
                   rectsGroup.classed("dragging", false);
                 }
               })
           );
+        
+        var tileX = tileGroup
+                          .append('circle')
+                          .attr('class', d => 'tileX ' + d.x.toString() + '-' + d.y.toString())
+                          .attr('id', d => d.id + '-x');
 
-        var tile = tileGroup
-                    .append('rect')
-                    .attr('class', d => 'tile ' + d.x.toString() + '-' + d.y.toString())
-                    .attr('id', d => d.id);
-        tile
-          .attr("width", d => d.width)
-          .attr("height", d => d.height)
-          .attr("x", d => d.x)
-          .attr("y", d => d.y)
-          .attr("rx", config.tile_edges_round)
-          .attr("ry", config.tile_edges_round)
-          .style("opacity", config.tile_opacity)
-          .style("fill", d => d.color)
-          .on("click", function() {
-            console.log('TILE CLICKED')
+        tileX
+          .attr("cx", d => d.x + config.tile_x_x)
+          .attr("cy", d => d.y + config.tile_x_y)
+          .attr("r", config.tile_x_radius)
+          .style("opacity", config.tile_x_opacity)
+          .style("fill", config.tile_x_color)
+          .on("click", function(d) {
+            console.log('Tile X clicked');
+            var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
+            var text = d3.select('#' + d.id + '-t').classed("dragging", true);
+            var circle = d3.select('#' + d.id + '-x').classed("dragging", true);
+
+            text.remove()
+            circle.remove()
+
+            var selection;
+            rectsGroup._groups[0].forEach((rect, index) => {
+              if (index > 0){
+                selection = d3.select('#' + d.id + '-' + index.toString())
+              } else {
+                selection = d3.select('#' + d.id)
+              }
+              selection.remove()
+            })
           })
 
         var tileText = tileGroup

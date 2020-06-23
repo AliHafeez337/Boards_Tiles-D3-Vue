@@ -1,3 +1,8 @@
+// NEVER CHANGE ANYTHING EXCAPET THE NUMBER OR STRING(INSIDE QUOTES)
+// NEVER CHAGNE EVENT THE QUOMA OR THE QUOTATION
+// Order doesn't matter
+// Colors can be written as STRING or HEX value
+
 export const config = {
   // all values are in pixels except those whose details are written on their front
 
@@ -41,6 +46,7 @@ export const config = {
 
   // Section text
   section_text_color: 'black',
+  // relative distance (x, y) from the section
   section_text_x: 70, // x pixels appart from the point(x) of the tile
   section_text_y: 20, // y pixels appart from the point(y) of the tile
   section_text_font: 'sans-serif',
@@ -48,8 +54,25 @@ export const config = {
 
   // Tile text
   tile_text_color: 'white',
+  // relative distance (x, y) from the tile
   tile_text_x: 8, // x pixels appart from the point(x) of the tile
   tile_text_y: 25, // y pixels appart from the point(y) of the tile
   tile_text_font: 'sans-serif',
-  tile_text_size: '15'
+  tile_text_size: '15',
+
+  // Section Cross Circle
+  // relative distance (x, y) from the section
+  section_x_x: 16, // x pixels appart from the point(x) of the section
+  section_x_y: 14, // y pixels appart from the point(y) of the section
+  section_x_color: 'black',
+  section_x_radius: 6,
+  section_x_opacity: 1,
+
+  // Tile Cross Circle
+  // relative distance (x, y) from the tile
+  tile_x_x: 8, // x pixels appart from the point(x) of the tile
+  tile_x_y: 6, // y pixels appart from the point(y) of the tile
+  tile_x_color: 'white',
+  tile_x_radius: 4,
+  tile_x_opacity: 1,
 }
