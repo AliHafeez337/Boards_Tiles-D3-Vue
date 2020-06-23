@@ -207,6 +207,33 @@
           .style("fill", d => d.color)
           .on("click", function() {
             console.log('TILE CLICKED')
+            
+            var coords = d3.mouse(this);
+            var e = { x: coords[0], y: coords[1] }
+            var rect = d3.select(this)
+
+            var x = Number(rect.attr('x'));
+            var y = Number(rect.attr('y'));
+            var w = Number(rect.attr('width'));
+            var h = Number(rect.attr('height'));
+
+            var c1 = { x: x, y: y };
+            var c2 = { x: x + w, y: y };
+            var c3 = { x: x + w, y: y + h };
+            var c4 = { x: x, y: y + h };
+
+            // // figure out which corner this is closest to
+            var d = [];
+            var m1 = distance(e, c1);
+            var m2 = distance(e, c2);
+            var m3 = distance(e, c3);
+            var m4 = distance(e, c4);
+            var min = Math.min(m1, m2, m3, m4)
+
+            // console.log(min, m1, m2, m3, m4)
+            if (min === m1 || min === m4){
+              changeColor(rect)
+            }
           })
           .call(
             d3.drag()
