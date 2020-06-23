@@ -35,22 +35,23 @@
           return Math.pow(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2), 0.5);
         };
 
-        var changeColor = function (rect) {
-          // IMPORTANT: Remove the old input color element with old event listeneres and place a new one with no event listener
-          // coppied from: https://stackoverflow.com/questions/9251837/how-to-remove-all-listeners-in-an-element
-          var old_element = document.querySelector('#color');
-          var new_element = old_element.cloneNode(true);
-          old_element.parentNode.replaceChild(new_element, old_element);
+        var getColor = function () {
+          return new Promise(resolve => {
+            // IMPORTANT: Remove the old input color element with old event listeneres and place a new one with no event listener
+            // coppied from: https://stackoverflow.com/questions/9251837/how-to-remove-all-listeners-in-an-element
+            var old_element = document.querySelector('#color');
+            var new_element = old_element.cloneNode(true);
+            old_element.parentNode.replaceChild(new_element, old_element);
 
-          // Now select the new element
-          var colorInput = document.querySelector('#color');
-          // Click the new element
-          colorInput.click();
-          // Add event listener, whenever user clicks 'ok', this function fires
-          colorInput.addEventListener('input', () => {
-            var color = colorInput.value;
-            rect.style("fill", color)
-          })
+            // Now select the new element
+            var colorInput = document.querySelector('#color');
+            // Click the new element
+            colorInput.click();
+            // Add event listener, whenever user clicks 'ok', this function fires
+            colorInput.addEventListener('input', () => {
+              resolve(colorInput.value);
+            })
+          });
         }
 
         var sectionGroup = svgContainer.selectAll('.section')
@@ -76,7 +77,8 @@
           .style("opacity", config.section_opacity)
           .on("click", function() {
             console.log('SECTION CLICKED')
-            changeColor(this)
+            getColor()
+              .then(color => d3.select(this).style("fill", color))
           })
           .call(d3.drag()
             .on('start', function started(dd) {
@@ -135,7 +137,8 @@
                 function ended() {
                   if (changeC){
                     console.log(changeC, rect)
-                    changeColor(rect)
+                    getColor()
+                      .then(color => rect.style("fill", color))
                   }
                   console.log('section drag ends at:', rect.attr('x'), rect.attr('y'));
                   console.log(text.attr('x'), text.attr('y'));
@@ -205,12 +208,13 @@
           .attr("ry", config.tile_edges_round)
           .style("opacity", config.tile_opacity)
           .style("fill", d => d.color)
-          .on("click", function() {
+          .on("click", function(d) {
             console.log('TILE CLICKED')
             
             var coords = d3.mouse(this);
             var e = { x: coords[0], y: coords[1] }
             var rect = d3.select(this)
+            var parent = d3.select('#' + d.id + '-p');
 
             var x = Number(rect.attr('x'));
             var y = Number(rect.attr('y'));
@@ -232,7 +236,28 @@
 
             // console.log(min, m1, m2, m3, m4)
             if (min === m1 || min === m4){
-              changeColor(rect)
+              getColor()
+                .then(color => rect.style("fill", color))
+            } else if (min === m2 || min === m3) {
+              getColor()
+                .then(color => {
+                  var number = parent.selectAll('rect')._groups[0].length
+
+                  var thisLabel = parent
+                                    .append('rect')
+                                    .attr('class', d => 'label ' + ((x + 2) + (number * d.width)) + '-' + (y + 2))
+                                    .attr('id', d => d.id + '-' + number)
+
+                  thisLabel
+                    .attr("width", d => config.label_width)
+                    .attr("height", d => config.label_height)
+                    .attr("x", d => (x + 2) + (number * (config.label_width + 5)))
+                    .attr("y", (y + 2))
+                    .attr("rx", config.labels_edges_round)
+                    .attr("ry", config.labels_edges_round)
+                    .style("opacity", config.label_opacity)
+                    .style("fill", color)
+                })
             }
           })
           .call(
@@ -338,6 +363,7 @@
                     .append('text')
                     .attr('class', d => 'tileText ' + d.x.toString() + '-' + d.y.toString())
                     .attr('id', d => d.id + '-t');
+
         tileText
           .attr("x", d => d.x + config.tile_text_x)
           .attr("y", d => d.y + config.tile_text_y)
