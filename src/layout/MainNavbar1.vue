@@ -162,16 +162,19 @@ export default {
     getBoard(board) {
       if (board === 'board1'){
         var sections =  [
-          { 'id': 'aqxn9u0yv3', 'name': '0ABC', "x": 20, 'y': 20, 'width': config.section_width, 'height': config.section_height, 'color': config.new_section_color },
-          { 'id': 'a0nyn15mj3', 'name': '1BCD', "x": 250, 'y': 20, 'width': config.section_width, 'height': config.section_height, 'color': config.new_section_color },
-          { 'id': 'ayquazchds', 'name': '2CDE', "x": 520, 'y': 20, 'width': config.section_width, 'height': config.section_height, 'color': config.new_section_color }
+          { 'id': 'aqxn9u0yv3', 'name': '0ABC', 'width': config.section_width, 'height': config.section_height, "x": 20, 'y': 20, 'color': config.new_section_color },
+          { 'id': 'a0nyn15mj3', 'name': '1BCD', 'width': config.section_width, 'height': config.section_height, "x": 250, 'y': 20, 'color': config.new_section_color },
+          { 'id': 'ayquazchds', 'name': '2CDE', 'width': config.section_width, 'height': config.section_height, "x": 520, 'y': 20, 'color': config.new_section_color }
         ], tiles = [
-          { 'id': 'azkbug6kyx', 'name': '0ABC', "x": 30, 'y': 50, 'width': 80, 'height': 30, "color" : "green" },
-          { 'id': 'atrnrt7tmm', 'name': '1ABC', "x": 260, 'y': 50, 'width': 80, 'height': 30, "color" : "purple" },
-          { 'id': 'ak693b4ofl', 'name': '0ABC', "x": 530, 'y': 50, 'width': 80, 'height': 30, "color" : "red" }
+          { 'id': 'azkbug6kyx', 'name': '0ABC', "x": 30, 'y': 50, "color" : "green" },
+          { 'id': 'atrnrt7tmm', 'name': '1ABC', "x": 260, 'y': 50, "color" : "purple" },
+          { 'id': 'ak693b4ofl', 'name': '0ABC', "x": 530, 'y': 50, "color" : "red" }
         ], labels = [
-          { 'id': 'atrnrt7tmm-1', 'tile': 'atrnrt7tmm', 'width': 15, 'height': 7, "color" : "orange" },
-          { 'id': 'atrnrt7tmm-2', 'tile': 'atrnrt7tmm', 'width': 15, 'height': 7, "color" : "red" }
+          { 'tile': 'atrnrt7tmm', "color" : "orange" },
+          { 'tile': 'azkbug6kyx', "color" : "red" },
+          { 'tile': 'atrnrt7tmm', "color" : "red" },
+          { 'tile': 'ak693b4ofl', "color" : "green" },
+          { 'tile': 'atrnrt7tmm', "color" : "red" }
         ]
         this.$store.dispatch('setSections', sections)
         this.$store.dispatch('setTiles', tiles)
@@ -199,8 +202,6 @@ export default {
         'name': '2BCD',
         'x': config.new_tile_x_axis, 
         'y': config.new_tile_y_axis, 
-        'width': config.tile_width, 
-        'height': config.tile_height, 
         'color' : config.new_tile_color
       }
       this.$store.dispatch('pushTile', tile)

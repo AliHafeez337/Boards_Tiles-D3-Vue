@@ -24,12 +24,6 @@
     },
     methods: {
       renderD3() {
-        //Make an SVG Container
-        var chartDiv = d3.select("#d3")
-        var svgContainer = chartDiv
-                            .append("svg:svg")
-                            .attr("width", window.innerWidth)
-                            .attr("height", window.innerHeight);
 
         var distance = function (p1, p2) {
           return Math.pow(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2), 0.5);
@@ -54,13 +48,36 @@
           });
         }
 
+        var changeColor = (selection, color) => {
+          const id = selection.attr('id'), type = selection.attr('class').split(" ")[0];
+          // console.log(id, type)
+          selection.style("fill", color);
+
+          if (type === 'tile'){
+            this.$store.dispatch('changeTileColor', { id, color });
+          } else if (type === 'section'){
+            this.$store.dispatch('changeSectionColor', { id, color });
+          }
+        }
+
         var removeLabel = (t, d) => {
-          const id = d3.select(t).attr('id');
+          var label = d3.select(t);
+          const id = label.attr('id');
+          const color = label.style('fill');
+          const tile = id.substring(0, id.indexOf('-'));
           const start = parseInt(id.substring(id.indexOf('-') + 1));
           var rects = d3.select('#' + d.id + '-p').selectAll('rect');
           var rect;
 
-          d3.select(t).remove()
+          label.remove()
+          
+          this.$store.dispatch('removeLabel', {
+            id,
+            tile,
+            start,
+            color
+          })
+
           for(let i = start + 1; i < rects._groups[0].length; i++){
             rect = d3.select(rects._groups[0][i]);
             rect.attr('x', rect.attr('x') - (config.label_width + config.gap_between_labels));
@@ -68,7 +85,18 @@
           }
         }
 
-        var sectionGroup = svgContainer.selectAll('.section')
+        const store = this.$store;
+        
+        //Make an SVG Container
+        var chartDiv = d3.select("#d3")
+
+        var svgContainer = chartDiv
+                            .append("svg:svg")
+                            .attr("width", window.innerWidth)
+                            .attr("height", window.innerHeight);
+
+        var sectionGroup = svgContainer
+                            .selectAll('.section')
                             .data(this.sections)
                             .enter()
                             .append('g')
@@ -92,17 +120,17 @@
           .on("click", function() {
             console.log('SECTION CLICKED')
             getColor()
-              .then(color => d3.select(this).style("fill", color))
+              .then(color => changeColor(d3.select(this), color))
           })
           .call(d3.drag()
             .on('start', function started(dd) {
                 var rect = d3.select(this).classed("dragging", true);
                 var text = d3.select('#' + rect.attr('id') + '-t').classed("dragging", true);
-                var circle = d3.select('#' + rect.attr('id') + '-x').classed("dragging", true);
-                console.log(d3.select('#' + rect.attr('id') + '-p')._groups[0][0].parentNode.firstChild)
+                var circleC = d3.select('#' + rect.attr('id') + '-c').classed("dragging", true);
+                var circleX = d3.select('#' + rect.attr('id') + '-x').classed("dragging", true);
+                // console.log(d3.select('#' + rect.attr('id') + '-p')._groups[0][0].parentNode.firstChild)
                 var t = d3.select('#' + rect.attr('id') + '-p')._groups[0][0]
                 var firstChild = t.parentNode.firstChild;
-                var changeC = false;
                 
                 d3.event.on("drag", dragged).on("end", ended);
 
@@ -133,8 +161,6 @@
                     rect
                       .attr('width', function () { return w + (e.x - c3.x); })
                       .attr('height', function () { return h + (e.y - c3.y); });
-                  } else if (min === m2) {
-                    changeC = true;
                   } else {
                     rect.raise().attr("x", d.x = e.x).attr("y", d.y = e.y);
                   }
@@ -142,22 +168,28 @@
                     .raise()
                     .attr("x", (+x + +config.section_text_x))
                     .attr("y", (+y + +config.section_text_y));
-                  circle
+                  circleC
+                    .raise()
+                    .attr("cx", (+x + +config.section_color_x))
+                    .attr("cy", (+y + +config.section_color_y));
+                  circleX
                     .raise()
                     .attr("cx", (+x + +config.section_x_x))
                     .attr("cy", (+y + +config.section_x_y));
                 }
 
                 function ended() {
-                  if (changeC){
-                    console.log(changeC, rect)
-                    getColor()
-                      .then(color => rect.style("fill", color))
-                  }
                   console.log('section drag ends at:', rect.attr('x'), rect.attr('y'));
-                  console.log(text.attr('x'), text.attr('y'));
-                  console.log(circle.attr('cx'), circle.attr('cy'));
+                  // console.log(text.attr('x'), text.attr('y'));
+                  // console.log(circle.attr('cx'), circle.attr('cy'));
+
                   rect.classed("dragging", false);
+
+                  store.dispatch('changeSectionAxis', { 
+                    id: rect.attr('id'),
+                    x: rect.attr('x'),
+                    y: rect.attr('y')
+                  })
 
                   // IMPORTANT: Send the selected(the one you are dragging) on the back (according to z-axis) after you ended the drag other wise, the section will remain on top...
                   if (firstChild) { 
@@ -168,13 +200,13 @@
           );
         
         var sectionX = sectionGroup
-                          .append('circle')
-                          .attr('class', d => 'sectionX ' + d.x.toString() + '-' + d.y.toString())
-                          .attr('id', d => d.id + '-x');
+                        .append('circle')
+                        .attr('class', d => 'sectionX ' + d.x.toString() + '-' + d.y.toString())
+                        .attr('id', d => d.id + '-x');
 
         sectionX
-          .attr("cx", d => d.x + config.section_x_x)
-          .attr("cy", d => d.y + config.section_x_y)
+          .attr("cx", d => +d.x + +config.section_x_x)
+          .attr("cy", d => +d.y + +config.section_x_y)
           .attr("r", config.section_x_radius)
           .style("opacity", config.section_x_opacity)
           .style("fill", config.section_x_color)
@@ -182,32 +214,54 @@
             console.log('Section X clicked');
             var rect = d3.select('#' + d.id).classed("dragging", true);
             var text = d3.select('#' + d.id + '-t').classed("dragging", true);
-            var circle = d3.select('#' + d.id + '-x').classed("dragging", true);
+            var circleC = d3.select('#' + d.id + '-c').classed("dragging", true);
+            var circleX = d3.select('#' + d.id + '-x').classed("dragging", true);
             
             rect.remove();
             text.remove();
-            circle.remove();
+            circleC.remove();
+            circleX.remove();
+          });
+        
+        var sectionColor = sectionGroup
+                            .append('circle')
+                            .attr('class', d => 'sectionC ' + d.x.toString() + '-' + d.y.toString())
+                            .attr('id', d => d.id + '-c');
+
+        sectionColor
+          .attr("cx", d => +d.x + +config.section_color_x)
+          .attr("cy", d => +d.y + +config.section_color_y)
+          .attr("r", config.section_color_radius)
+          .style("opacity", config.section_color_opacity)
+          .style("fill", config.section_color_color)
+          .on("click", function(d) {
+            console.log('Section change color clicked');
+            
+            var rect = d3.select('#' + d.id);
+            getColor()
+              .then(color => changeColor(rect, color))
           });
 
         var sectionText = sectionGroup
-                    .append('text')
-                    .attr('class', d => 'sectionText ' + d.x.toString() + '-' + d.y.toString())
-                    .attr('id', d => d.id + '-t');
+                            .append('text')
+                            .attr('class', d => 'sectionText ' + d.x.toString() + '-' + d.y.toString())
+                            .attr('id', d => d.id + '-t');
 
         sectionText
-          .attr("x", d => d.x + config.section_text_x)
-          .attr("y", d => d.y + config.section_text_y)
+          .attr("x", d => +d.x + +config.section_text_x)
+          .attr("y", d => +d.y + +config.section_text_y)
           .text(d => d.name)
           .attr("font-family", config.section_text_font)
           .attr("font-size", config.section_text_size + 'px')
           .attr("fill", config.section_text_color);
 
-        var tileGroup = svgContainer.selectAll('.tile')
-                  .data(this.tiles)
-                  .enter()
-                  .append('g')
-                  .attr('class', d => 'g ' + d.x.toString() + '-' + d.y.toString())
-                  .attr('id', d => d.id + '-p');
+        var tileGroup = svgContainer
+                          .selectAll('.tile')
+                          .data(this.tiles)
+                          .enter()
+                          .append('g')
+                          .attr('class', d => 'g ' + d.x.toString() + '-' + d.y.toString())
+                          .attr('id', d => d.id + '-p');
 
         var tile = tileGroup
                     .append('rect')
@@ -215,8 +269,8 @@
                     .attr('id', d => d.id);
 
         tile
-          .attr("width", d => d.width)
-          .attr("height", d => d.height)
+          .attr("width", d => config.tile_width)
+          .attr("height", d => config.tile_height)
           .attr("x", d => d.x)
           .attr("y", d => d.y)
           .attr("rx", config.tile_edges_round)
@@ -225,65 +279,15 @@
           .style("fill", d => d.color)
           .on("click", function(d) {
             console.log('TILE CLICKED')
-            
-            var coords = d3.mouse(this);
-            var e = { x: coords[0], y: coords[1] }
-            var rect = d3.select(this)
-            var parent = d3.select('#' + d.id + '-p');
-
-            var x = Number(rect.attr('x'));
-            var y = Number(rect.attr('y'));
-            var w = Number(rect.attr('width'));
-            var h = Number(rect.attr('height'));
-
-            var c1 = { x: x, y: y };
-            var c2 = { x: x + w, y: y };
-            var c3 = { x: x + w, y: y + h };
-            var c4 = { x: x, y: y + h };
-
-            // // figure out which corner this is closest to
-            var d = [];
-            var m1 = distance(e, c1);
-            var m2 = distance(e, c2);
-            var m3 = distance(e, c3);
-            var m4 = distance(e, c4);
-            var min = Math.min(m1, m2, m3, m4)
-
-            // console.log(min, m1, m2, m3, m4)
-            if (min === m1 || min === m4){
-              getColor()
-                .then(color => rect.style("fill", color))
-            } else if (min === m2 || min === m3) {
-              getColor()
-                .then(color => {
-                  var number = parent.selectAll('rect')._groups[0].length
-
-                  var thisLabel = parent
-                                    .append('rect')
-                                    .attr('class', d => 'label ' + ((x + 2) + (number * d.width)) + '-' + (y + 2))
-                                    .attr('id', d => d.id + '-' + number)
-
-                  thisLabel
-                    .attr("width", d => config.label_width)
-                    .attr("height", d => config.label_height)
-                    .attr("x", d => (x + 2) + (number * (config.label_width + 5)))
-                    .attr("y", (y + 2))
-                    .attr("rx", config.labels_edges_round)
-                    .attr("ry", config.labels_edges_round)
-                    .style("opacity", config.label_opacity)
-                    .style("fill", color)
-                    .on("click", function(d){
-                      removeLabel(this, d);
-                    });
-                })
-            }
           })
           .call(
             d3.drag()
               .on("start", function started(d) {
                 var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
                 var text = d3.select('#' + d.id + '-t').classed("dragging", true);
-                var circle = d3.select('#' + d.id + '-x').classed("dragging", true);
+                var circleL = d3.select('#' + d.id + '-l').classed("dragging", true);
+                var circleC = d3.select('#' + d.id + '-c').classed("dragging", true);
+                var circleX = d3.select('#' + d.id + '-x').classed("dragging", true);
 
                 var rects = [], selection;
                 rectsGroup._groups[0].forEach((rect, index) => {
@@ -324,7 +328,15 @@
                     .raise()
                     .attr("x", (+x + +config.tile_text_x))
                     .attr("y", (+y + +config.tile_text_y));
-                  circle
+                  circleL
+                    .raise()
+                    .attr("cx", (+x + +config.tile_add_label_x))
+                    .attr("cy", (+y + +config.tile_add_label_y));
+                  circleC
+                    .raise()
+                    .attr("cx", (+x + +config.tile_color_x))
+                    .attr("cy", (+y + +config.tile_color_y));
+                  circleX
                     .raise()
                     .attr("cx", (+x + +config.tile_x_x))
                     .attr("cy", (+y + +config.tile_x_y));
@@ -332,19 +344,97 @@
 
                 function ended() {
                   console.log('Tile group drag ends at:')
-                  var x, y;
-                  rects.forEach((rect, index) => {
-                    x = (rect.attr('x')).toString()
-                    y = (rect.attr('y')).toString();
-                    console.log(x, y)
-                  }) 
-                  console.log(text.attr('x'), text.attr('y'))
-                  console.log(circle.attr('cx'), circle.attr('cy'))
+                  console.log(rects[0].attr('x'), rects[0].attr('y'));
+                  // var x, y;
+                  // rects.forEach((rect, index) => {
+                  //   x = (rect.attr('x')).toString()
+                  //   y = (rect.attr('y')).toString();
+                  //   console.log(x, y)
+                  // }) 
+                  // console.log(text.attr('x'), text.attr('y'))
+                  // console.log(circleL.attr('cx'), circleL.attr('cy'))
+                  // console.log(circleC.attr('cx'), circleC.attr('cy'))
+                  // console.log(circleX.attr('cx'), circleX.attr('cy'))
+                  
+                  store.dispatch('changeTileAxis', { 
+                    id: rects[0].attr('id'),
+                    x: rects[0].attr('x'),
+                    y: rects[0].attr('y')
+                  })
                   
                   rectsGroup.classed("dragging", false);
                 }
               })
           );
+        
+        var addLabel = tileGroup
+                          .append('circle')
+                          .attr('class', d => 'tileL ' + d.x.toString() + '-' + d.y.toString())
+                          .attr('id', d => d.id + '-l');
+
+        addLabel
+          .attr("cx", d => +d.x + +config.tile_add_label_x)
+          .attr("cy", d => +d.y + +config.tile_add_label_y)
+          .attr("r", config.tile_add_label_radius)
+          .style("opacity", config.tile_add_label_opacity)
+          .style("fill", config.tile_add_label_color)
+          .on("click", function(d) {
+            console.log('Tile add label clicked');
+            
+            const id = d.id
+            var rect = d3.select('#' + id)
+            var parent = d3.select('#' + d.id + '-p');
+
+            var x = Number(rect.attr('x'));
+            var y = Number(rect.attr('y'));
+
+            getColor()
+              .then(color => {
+                var number = parent.selectAll('rect')._groups[0].length
+
+                var thisLabel = parent
+                                  .append('rect')
+                                  .attr('class', d => 'label ' + ((x + 2) + (number * d.width)) + '-' + (y + 2))
+                                  .attr('id', d => d.id + '-' + number)
+
+                thisLabel
+                  .attr("width", d => config.label_width)
+                  .attr("height", d => config.label_height)
+                  .attr("x", d => (+x + +2) + +(+number * +(+config.label_width + +5)))
+                  .attr("y", (+y + +2))
+                  .attr("rx", config.labels_edges_round)
+                  .attr("ry", config.labels_edges_round)
+                  .style("opacity", config.label_opacity)
+                  .style("fill", color)
+                  .on("click", function(d){
+                    removeLabel(this, d);
+                  });
+
+                store.dispatch('pushLabel', {
+                  tile: id,
+                  color: color
+                })
+              })
+          })
+        
+        var tileColor = tileGroup
+                          .append('circle')
+                          .attr('class', d => 'tileC ' + d.x.toString() + '-' + d.y.toString())
+                          .attr('id', d => d.id + '-c');
+
+        tileColor
+          .attr("cx", d => +d.x + +config.tile_color_x)
+          .attr("cy", d => +d.y + +config.tile_color_y)
+          .attr("r", config.tile_color_radius)
+          .style("opacity", config.tile_color_opacity)
+          .style("fill", config.tile_color_color)
+          .on("click", function(d) {
+            console.log('Tile color button clicked');
+
+            var rect = d3.select('#' + d.id)
+            getColor()
+              .then(color => changeColor(rect, color))
+          })
         
         var tileX = tileGroup
                           .append('circle')
@@ -352,19 +442,24 @@
                           .attr('id', d => d.id + '-x');
 
         tileX
-          .attr("cx", d => d.x + config.tile_x_x)
-          .attr("cy", d => d.y + config.tile_x_y)
+          .attr("cx", d => +d.x + +config.tile_x_x)
+          .attr("cy", d => +d.y + +config.tile_x_y)
           .attr("r", config.tile_x_radius)
           .style("opacity", config.tile_x_opacity)
           .style("fill", config.tile_x_color)
           .on("click", function(d) {
             console.log('Tile X clicked');
+
             var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
             var text = d3.select('#' + d.id + '-t').classed("dragging", true);
-            var circle = d3.select('#' + d.id + '-x').classed("dragging", true);
+            var circleL = d3.select('#' + d.id + '-l').classed("dragging", true);
+            var circleC = d3.select('#' + d.id + '-c').classed("dragging", true);
+            var circleX = d3.select('#' + d.id + '-x').classed("dragging", true);
 
             text.remove()
-            circle.remove()
+            circleL.remove()
+            circleC.remove()
+            circleX.remove()
 
             var selection;
             rectsGroup._groups[0].forEach((rect, index) => {
@@ -383,8 +478,8 @@
                     .attr('id', d => d.id + '-t');
 
         tileText
-          .attr("x", d => d.x + config.tile_text_x)
-          .attr("y", d => d.y + config.tile_text_y)
+          .attr("x", d => +d.x + +config.tile_text_x)
+          .attr("y", d => +d.y + +config.tile_text_y)
           .text(d => d.name)
           .attr("font-family", config.tile_text_font)
           .attr("font-size", config.tile_text_size + 'px')
@@ -412,12 +507,12 @@
 
           var thisLabel = parent
                             .append('rect')
-                            .attr('class', d => 'label ' + ((x + 2) + (number * d.width)) + '-' + (y + 2))
+                            .attr('class', d => 'label ' + ((x + 2) + (number * config.tile_width)) + '-' + (y + 2))
                             .attr('id', label.tile + '-' + number)
           thisLabel
-            .attr("width", label.width)
-            .attr("height", label.height)
-            .attr("x", (x + 2) + (number * (label.width + 5)))
+            .attr("width", config.label_width)
+            .attr("height", config.label_height)
+            .attr("x", (x + 2) + (number * (config.label_width + 5)))
             .attr("y", (y + 2))
             .attr("rx", config.labels_edges_round)
             .attr("ry", config.labels_edges_round)

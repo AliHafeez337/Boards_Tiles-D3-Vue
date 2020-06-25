@@ -55,7 +55,7 @@ export const config = {
   // Tile text
   tile_text_color: 'white',
   // relative distance (x, y) from the tile
-  tile_text_x: 8, // x pixels appart from the point(x) of the tile
+  tile_text_x: 21, // x pixels appart from the point(x) of the tile
   tile_text_y: 25, // y pixels appart from the point(y) of the tile
   tile_text_font: 'sans-serif',
   tile_text_size: '15',
@@ -68,10 +68,34 @@ export const config = {
   section_x_radius: 6,
   section_x_opacity: 1,
 
+  // Section Color Circle
+  // relative distance (x, y) from the section
+  section_color_x: 30, // x pixels appart from the point(x) of the section
+  section_color_y: 14, // y pixels appart from the point(y) of the section
+  section_color_color: 'black',
+  section_color_radius: 6,
+  section_color_opacity: 1,
+
+  // Tile Add Label Circle
+  // relative distance (x, y) from the tile
+  tile_add_label_x: 13, // x pixels appart from the point(x) of the tile
+  tile_add_label_y: 6, // y pixels appart from the point(y) of the tile
+  tile_add_label_color: 'white',
+  tile_add_label_radius: 4,
+  tile_add_label_opacity: 1,
+
+  // Tile Color Circle
+  // relative distance (x, y) from the tile
+  tile_color_x: 13, // x pixels appart from the point(x) of the tile
+  tile_color_y: 15, // y pixels appart from the point(y) of the tile
+  tile_color_color: 'white',
+  tile_color_radius: 4,
+  tile_color_opacity: 1,
+
   // Tile Cross Circle
   // relative distance (x, y) from the tile
-  tile_x_x: 8, // x pixels appart from the point(x) of the tile
-  tile_x_y: 6, // y pixels appart from the point(y) of the tile
+  tile_x_x: 13, // x pixels appart from the point(x) of the tile
+  tile_x_y: 24, // y pixels appart from the point(y) of the tile
   tile_x_color: 'white',
   tile_x_radius: 4,
   tile_x_opacity: 1,
