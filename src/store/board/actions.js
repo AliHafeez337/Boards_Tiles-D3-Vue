@@ -36,3 +36,76 @@ export const pushTile = ({ commit, getters }, tile) => {
   }, 1000)
   // save into the database
 };
+
+export const pushLabel = ({ commit, getters }, label) => {
+  var labels = [...getters.getLabels]
+  setTimeout(() => {
+    labels.push(label)
+    commit('SET_LABELS', labels)
+  }, 1000)
+  // save into the database
+};
+
+export const changeSectionColor = ({ commit, getters }, data) => {
+  var sections = getters.getSections.map(section => {
+    section.id === data.id ? section.color = data.color : null
+    return section
+  })
+  setTimeout(() => {
+    commit('SET_SECTIONS', sections)
+  }, 1000)
+  // save into the database
+};
+
+export const changeTileColor = ({ commit, getters }, data) => {
+  var tiles = getters.getTiles.map(tile => {
+    tile.id === data.id ? tile.color = data.color : null
+    return tile
+  })
+  setTimeout(() => {
+    commit('SET_TILES', tiles)
+  }, 1000)
+  // save into the database
+};
+
+export const changeSectionAxis = ({ commit, getters }, data) => {
+  var sections = getters.getSections.map(section => {
+    if (section.id === data.id) {
+      section.x = data.x;
+      section.y = data.y;
+    }
+    return section
+  })
+  setTimeout(() => {
+    commit('SET_SECTIONS', sections)
+  }, 1000)
+  // save into the database
+};
+
+export const changeTileAxis = ({ commit, getters }, data) => {
+  var tiles = getters.getTiles.map(tile => {
+    if (tile.id === data.id) {
+      tile.x = data.x;
+      tile.y = data.y;
+    }
+    return tile
+  })
+  setTimeout(() => {
+    commit('SET_TILES', tiles)
+  }, 1000)
+  // save into the database
+};
+
+export const removeLabel = ({ commit, getters }, data) => {
+  var index = 0
+  var labels = getters.getLabels.filter(label => {
+    if (label.tile === data.tile)
+      index++
+    if (!(label.color === data.color && index === data.start))
+      return label
+  })
+  setTimeout(() => {
+    commit('SET_LABELS', labels)
+  }, 1000)
+  // save into the database
+};
