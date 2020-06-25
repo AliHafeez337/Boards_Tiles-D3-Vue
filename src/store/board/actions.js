@@ -101,7 +101,7 @@ export const removeLabel = ({ commit, getters }, data) => {
   var labels = getters.getLabels.filter(label => {
     if (label.tile === data.tile)
       index++
-    if (!(label.color === data.color && index === data.start))
+    if (!(index === data.start))
       return label
   })
   setTimeout(() => {
