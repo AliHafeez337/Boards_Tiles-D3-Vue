@@ -55,7 +55,7 @@ export const config = {
   // Tile text
   tile_text_color: 'white',
   // relative distance (x, y) from the tile
-  tile_text_x: 21, // x pixels appart from the point(x) of the tile
+  tile_text_x: 7, // x pixels appart from the point(x) of the tile
   tile_text_y: 25, // y pixels appart from the point(y) of the tile
   tile_text_font: 'sans-serif',
   tile_text_size: '15',
@@ -76,27 +76,22 @@ export const config = {
   section_color_radius: 6,
   section_color_opacity: 1,
 
-  // Tile Add Label Circle
-  // relative distance (x, y) from the tile
-  tile_add_label_x: 13, // x pixels appart from the point(x) of the tile
-  tile_add_label_y: 6, // y pixels appart from the point(y) of the tile
-  tile_add_label_color: 'white',
-  tile_add_label_radius: 4,
-  tile_add_label_opacity: 1,
+  // CONTEXT MENU (on right mouse click)
+  whole_context_oppacity: 1,
+  context_background_color: '#ffffff',
+  context_border: '#00557d',
+  context_menu_x: 0, // Distance (in x-axis) of context menu rectangles from the click of the mouse pointer
+  context_menu_y: 0, // Distance (in y-axis) of context menu rectangles from the click of the mouse pointer,
+  context_menu_rounded_x: 5, // You can test it by changing the values
+  context_menu_rounded_y: 5, // You can test it by changing the values
+  context_menu_width: 150,
+  context_menu_height: 30,
+  context_menu_opacity: 0.5,
+  context_menu_text_x: -10, // Distance (in x-axis) of context menu text from the context menu
+  context_menu_text_y: 0, // Distance (in y-axis) of context menu text from the context menu
+  context_menu_text_opacity: 1,
+  context_menu_text_font_size: 12,
+  context_menu_text_color: '#00557d',
 
-  // Tile Color Circle
-  // relative distance (x, y) from the tile
-  tile_color_x: 13, // x pixels appart from the point(x) of the tile
-  tile_color_y: 15, // y pixels appart from the point(y) of the tile
-  tile_color_color: 'white',
-  tile_color_radius: 4,
-  tile_color_opacity: 1,
 
-  // Tile Cross Circle
-  // relative distance (x, y) from the tile
-  tile_x_x: 13, // x pixels appart from the point(x) of the tile
-  tile_x_y: 24, // y pixels appart from the point(y) of the tile
-  tile_x_color: 'white',
-  tile_x_radius: 4,
-  tile_x_opacity: 1,
 }

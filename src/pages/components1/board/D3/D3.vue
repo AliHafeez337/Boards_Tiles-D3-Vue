@@ -6,7 +6,8 @@
  
 <script>
   import * as d3 from "d3";
-  import {event as d3Event, select, selectAll} from "d3-selection";
+  import { event as d3Event, select, selectAll } from "d3-selection";
+  import { createContextMenu } from "./contextMenu";
 
   import { config } from '../../../../CONFIG';
 
@@ -25,6 +26,90 @@
     methods: {
       renderD3() {
 
+        const menuItems = [
+          {
+            title: 'Add label',
+            action: (d) => {
+              console.log('Tile add label clicked');
+              
+              const id = d.id
+              var rect = d3.select('#' + id)
+              var parent = d3.select('#' + d.id + '-p');
+
+              var x = Number(rect.attr('x'));
+              var y = Number(rect.attr('y'));
+
+              getColor()
+                .then(color => {
+                  var number = parent.selectAll('rect')._groups[0].length
+
+                  var thisLabel = parent
+                                    .append('rect')
+                                    .attr('class', d => 'label ' + ((x + 2) + (number * d.width)) + '-' + (y + 2))
+                                    .attr('id', d => d.id + '-' + number)
+
+                  thisLabel
+                    .attr("width", d => config.label_width)
+                    .attr("height", d => config.label_height)
+                    .attr("x", d => (+x + +2) + +(+number * +(+config.label_width + +5)) - +config.label_width)
+                    .attr("y", (+y + +2))
+                    .attr("rx", config.labels_edges_round)
+                    .attr("ry", config.labels_edges_round)
+                    .style("opacity", config.label_opacity)
+                    .style("fill", color)
+                    .on("click", function(d){
+                      removeLabel(this, d);
+                    });
+
+                  store.dispatch('pushLabel', {
+                    tile: id,
+                    color: color
+                  })
+                })
+            }
+          },
+          {
+            title: 'Change color',
+            action: (d) => {
+              console.log('Tile color button clicked');
+
+              var rect = d3.select('#' + d.id)
+              getColor()
+                .then(color => changeColor(rect, color))
+            }
+          },
+          {
+            title: 'Remove tile',
+            action: (d) => {
+              console.log('Tile X clicked');
+
+              var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
+              var text = d3.select('#' + d.id + '-t').classed("dragging", true);
+              var circleL = d3.select('#' + d.id + '-l').classed("dragging", true);
+              var circleC = d3.select('#' + d.id + '-c').classed("dragging", true);
+              var circleX = d3.select('#' + d.id + '-x').classed("dragging", true);
+
+              text.remove()
+              circleL.remove()
+              circleC.remove()
+              circleX.remove()
+
+              var selection;
+              rectsGroup._groups[0].forEach((rect, index) => {
+                if (index > 0){
+                  selection = d3.select('#' + d.id + '-' + index.toString())
+                } else {
+                  selection = d3.select('#' + d.id)
+                }
+                selection.remove()
+              })
+
+              this.$store.dispatch('removeTile', d.id)
+
+            }
+          }
+        ];
+        
         var distance = function (p1, p2) {
           return Math.pow(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2), 0.5);
         };
@@ -93,7 +178,8 @@
         var svgContainer = chartDiv
                             .append("svg:svg")
                             .attr("width", window.innerWidth)
-                            .attr("height", window.innerHeight);
+                            .attr("height", window.innerHeight)
+                            .attr("id", "svg");
 
         var sectionGroup = svgContainer
                             .selectAll('.section')
@@ -280,6 +366,10 @@
           .on("click", function(d) {
             console.log('TILE CLICKED')
           })
+          .on('contextmenu', function (d) {
+            var coords = d3.mouse(this);
+            createContextMenu(d, coords[0], coords[1], menuItems, 300, 300, '#svg');
+          })
           .call(
             d3.drag()
               .on("start", function started(d) {
@@ -313,7 +403,7 @@
                     if (index > 0){
                       rect
                         .raise()
-                        .attr("x", (+x + +config.padding_on_labels) + (+index * +(+config.label_width + +config.gap_between_labels)))
+                        .attr("x", (+x + +config.padding_on_labels) + (+index * +(+config.label_width + +config.gap_between_labels) - +config.label_width))
                         .attr("y", (+y + +config.padding_on_labels));
                     } else {
                       rect
@@ -366,111 +456,6 @@
                 }
               })
           );
-        
-        var addLabel = tileGroup
-                          .append('circle')
-                          .attr('class', d => 'tileL ' + d.x.toString() + '-' + d.y.toString())
-                          .attr('id', d => d.id + '-l');
-
-        addLabel
-          .attr("cx", d => +d.x + +config.tile_add_label_x)
-          .attr("cy", d => +d.y + +config.tile_add_label_y)
-          .attr("r", config.tile_add_label_radius)
-          .style("opacity", config.tile_add_label_opacity)
-          .style("fill", config.tile_add_label_color)
-          .on("click", function(d) {
-            console.log('Tile add label clicked');
-            
-            const id = d.id
-            var rect = d3.select('#' + id)
-            var parent = d3.select('#' + d.id + '-p');
-
-            var x = Number(rect.attr('x'));
-            var y = Number(rect.attr('y'));
-
-            getColor()
-              .then(color => {
-                var number = parent.selectAll('rect')._groups[0].length
-
-                var thisLabel = parent
-                                  .append('rect')
-                                  .attr('class', d => 'label ' + ((x + 2) + (number * d.width)) + '-' + (y + 2))
-                                  .attr('id', d => d.id + '-' + number)
-
-                thisLabel
-                  .attr("width", d => config.label_width)
-                  .attr("height", d => config.label_height)
-                  .attr("x", d => (+x + +2) + +(+number * +(+config.label_width + +5)))
-                  .attr("y", (+y + +2))
-                  .attr("rx", config.labels_edges_round)
-                  .attr("ry", config.labels_edges_round)
-                  .style("opacity", config.label_opacity)
-                  .style("fill", color)
-                  .on("click", function(d){
-                    removeLabel(this, d);
-                  });
-
-                store.dispatch('pushLabel', {
-                  tile: id,
-                  color: color
-                })
-              })
-          })
-        
-        var tileColor = tileGroup
-                          .append('circle')
-                          .attr('class', d => 'tileC ' + d.x.toString() + '-' + d.y.toString())
-                          .attr('id', d => d.id + '-c');
-
-        tileColor
-          .attr("cx", d => +d.x + +config.tile_color_x)
-          .attr("cy", d => +d.y + +config.tile_color_y)
-          .attr("r", config.tile_color_radius)
-          .style("opacity", config.tile_color_opacity)
-          .style("fill", config.tile_color_color)
-          .on("click", function(d) {
-            console.log('Tile color button clicked');
-
-            var rect = d3.select('#' + d.id)
-            getColor()
-              .then(color => changeColor(rect, color))
-          })
-        
-        var tileX = tileGroup
-                          .append('circle')
-                          .attr('class', d => 'tileX ' + d.x.toString() + '-' + d.y.toString())
-                          .attr('id', d => d.id + '-x');
-
-        tileX
-          .attr("cx", d => +d.x + +config.tile_x_x)
-          .attr("cy", d => +d.y + +config.tile_x_y)
-          .attr("r", config.tile_x_radius)
-          .style("opacity", config.tile_x_opacity)
-          .style("fill", config.tile_x_color)
-          .on("click", function(d) {
-            console.log('Tile X clicked');
-
-            var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
-            var text = d3.select('#' + d.id + '-t').classed("dragging", true);
-            var circleL = d3.select('#' + d.id + '-l').classed("dragging", true);
-            var circleC = d3.select('#' + d.id + '-c').classed("dragging", true);
-            var circleX = d3.select('#' + d.id + '-x').classed("dragging", true);
-
-            text.remove()
-            circleL.remove()
-            circleC.remove()
-            circleX.remove()
-
-            var selection;
-            rectsGroup._groups[0].forEach((rect, index) => {
-              if (index > 0){
-                selection = d3.select('#' + d.id + '-' + index.toString())
-              } else {
-                selection = d3.select('#' + d.id)
-              }
-              selection.remove()
-            })
-          })
 
         var tileText = tileGroup
                     .append('text')
@@ -512,7 +497,7 @@
           thisLabel
             .attr("width", config.label_width)
             .attr("height", config.label_height)
-            .attr("x", (x + 2) + (number * (config.label_width + 5)))
+            .attr("x", (x + 2) + (number * (config.label_width + 5)) - +config.label_width)
             .attr("y", (y + 2))
             .attr("rx", config.labels_edges_round)
             .attr("ry", config.labels_edges_round)

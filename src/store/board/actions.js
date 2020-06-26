@@ -109,3 +109,23 @@ export const removeLabel = ({ commit, getters }, data) => {
   }, 1000)
   // save into the database
 };
+
+export const removeTile = ({ commit, getters }, id) => {
+  var deleted = 0
+  var tiles = getters.getTiles.filter(tile => {
+    if (tile.id === id){
+      deleted = tile
+    } else {
+      return tile
+    }
+  })
+  var labels = getters.getLabels.filter(label => {
+    if (!(label.tile === deleted.id))
+      return label
+  })
+  setTimeout(() => {
+    commit('SET_TILES', tiles)
+    commit('SET_LABELS', labels)
+  }, 1000)
+  // save into the database
+};
