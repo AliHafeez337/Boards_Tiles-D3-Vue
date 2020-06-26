@@ -26,7 +26,38 @@
     methods: {
       renderD3() {
 
-        const menuItems = [
+        const sectionMenuItems = [
+          {
+            title: 'Change color',
+            action: (d) => {
+              console.log('Section change color clicked');
+              
+              var rect = d3.select('#' + d.id);
+              getColor()
+                .then(color => changeColor(rect, color))
+            }
+          },
+          {
+            title: 'Remove section',
+            action: (d) => {
+              console.log('Section X clicked');
+
+              var rect = d3.select('#' + d.id).classed("dragging", true);
+              var text = d3.select('#' + d.id + '-t').classed("dragging", true);
+              var circleC = d3.select('#' + d.id + '-c').classed("dragging", true);
+              var circleX = d3.select('#' + d.id + '-x').classed("dragging", true);
+              
+              rect.remove();
+              text.remove();
+              circleC.remove();
+              circleX.remove();
+
+              this.$store.dispatch('removeSection', d.id)
+            }
+          }
+        ];
+
+        const tileMenuItems = [
           {
             title: 'Add label',
             action: (d) => {
@@ -208,13 +239,15 @@
             getColor()
               .then(color => changeColor(d3.select(this), color))
           })
+          .on('contextmenu', function (d) {
+            var coords = d3.mouse(this);
+            createContextMenu(d, coords[0], coords[1], sectionMenuItems, '#svg');
+          })
           .call(d3.drag()
             .on('start', function started(dd) {
+
                 var rect = d3.select(this).classed("dragging", true);
                 var text = d3.select('#' + rect.attr('id') + '-t').classed("dragging", true);
-                var circleC = d3.select('#' + rect.attr('id') + '-c').classed("dragging", true);
-                var circleX = d3.select('#' + rect.attr('id') + '-x').classed("dragging", true);
-                // console.log(d3.select('#' + rect.attr('id') + '-p')._groups[0][0].parentNode.firstChild)
                 var t = d3.select('#' + rect.attr('id') + '-p')._groups[0][0]
                 var firstChild = t.parentNode.firstChild;
                 
@@ -244,35 +277,36 @@
 
                   // console.log(min, m1, m2, m3, m4)
                   if (min === m3) {
+                    let newWidth = w + (e.x - c3.x), newHeight = h + (e.y - c3.y);
                     rect
-                      .attr('width', function () { return w + (e.x - c3.x); })
-                      .attr('height', function () { return h + (e.y - c3.y); });
+                      .attr('width', newWidth)
+                      .attr('height', newHeight);
                   } else {
                     rect.raise().attr("x", d.x = e.x).attr("y", d.y = e.y);
+                    text
+                      .raise()
+                      .attr("x", (+x + +config.section_text_x))
+                      .attr("y", (+y + +config.section_text_y));
                   }
-                  text
-                    .raise()
-                    .attr("x", (+x + +config.section_text_x))
-                    .attr("y", (+y + +config.section_text_y));
-                  circleC
-                    .raise()
-                    .attr("cx", (+x + +config.section_color_x))
-                    .attr("cy", (+y + +config.section_color_y));
-                  circleX
-                    .raise()
-                    .attr("cx", (+x + +config.section_x_x))
-                    .attr("cy", (+y + +config.section_x_y));
                 }
 
                 function ended() {
                   console.log('section drag ends at:', rect.attr('x'), rect.attr('y'));
                   // console.log(text.attr('x'), text.attr('y'));
-                  // console.log(circle.attr('cx'), circle.attr('cy'));
 
                   rect.classed("dragging", false);
 
-                  store.dispatch('changeSectionAxis', { 
+                  // console.log(
+                  //   rect.attr('id'),
+                  //   rect.attr('width'),
+                  //   rect.attr('height'),
+                  //   rect.attr('x'),
+                  //   rect.attr('y')
+                  // )
+                  store.dispatch('changeSection', { 
                     id: rect.attr('id'),
+                    width: rect.attr('width'),
+                    height: rect.attr('height'),
                     x: rect.attr('x'),
                     y: rect.attr('y')
                   })
@@ -284,49 +318,6 @@
                 }
             })
           );
-        
-        var sectionX = sectionGroup
-                        .append('circle')
-                        .attr('class', d => 'sectionX ' + d.x.toString() + '-' + d.y.toString())
-                        .attr('id', d => d.id + '-x');
-
-        sectionX
-          .attr("cx", d => +d.x + +config.section_x_x)
-          .attr("cy", d => +d.y + +config.section_x_y)
-          .attr("r", config.section_x_radius)
-          .style("opacity", config.section_x_opacity)
-          .style("fill", config.section_x_color)
-          .on("click", function(d) {
-            console.log('Section X clicked');
-            var rect = d3.select('#' + d.id).classed("dragging", true);
-            var text = d3.select('#' + d.id + '-t').classed("dragging", true);
-            var circleC = d3.select('#' + d.id + '-c').classed("dragging", true);
-            var circleX = d3.select('#' + d.id + '-x').classed("dragging", true);
-            
-            rect.remove();
-            text.remove();
-            circleC.remove();
-            circleX.remove();
-          });
-        
-        var sectionColor = sectionGroup
-                            .append('circle')
-                            .attr('class', d => 'sectionC ' + d.x.toString() + '-' + d.y.toString())
-                            .attr('id', d => d.id + '-c');
-
-        sectionColor
-          .attr("cx", d => +d.x + +config.section_color_x)
-          .attr("cy", d => +d.y + +config.section_color_y)
-          .attr("r", config.section_color_radius)
-          .style("opacity", config.section_color_opacity)
-          .style("fill", config.section_color_color)
-          .on("click", function(d) {
-            console.log('Section change color clicked');
-            
-            var rect = d3.select('#' + d.id);
-            getColor()
-              .then(color => changeColor(rect, color))
-          });
 
         var sectionText = sectionGroup
                             .append('text')
@@ -368,16 +359,13 @@
           })
           .on('contextmenu', function (d) {
             var coords = d3.mouse(this);
-            createContextMenu(d, coords[0], coords[1], menuItems, 300, 300, '#svg');
+            createContextMenu(d, coords[0], coords[1], tileMenuItems, '#svg');
           })
           .call(
             d3.drag()
               .on("start", function started(d) {
                 var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
                 var text = d3.select('#' + d.id + '-t').classed("dragging", true);
-                var circleL = d3.select('#' + d.id + '-l').classed("dragging", true);
-                var circleC = d3.select('#' + d.id + '-c').classed("dragging", true);
-                var circleX = d3.select('#' + d.id + '-x').classed("dragging", true);
 
                 var rects = [], selection;
                 rectsGroup._groups[0].forEach((rect, index) => {
@@ -418,18 +406,6 @@
                     .raise()
                     .attr("x", (+x + +config.tile_text_x))
                     .attr("y", (+y + +config.tile_text_y));
-                  circleL
-                    .raise()
-                    .attr("cx", (+x + +config.tile_add_label_x))
-                    .attr("cy", (+y + +config.tile_add_label_y));
-                  circleC
-                    .raise()
-                    .attr("cx", (+x + +config.tile_color_x))
-                    .attr("cy", (+y + +config.tile_color_y));
-                  circleX
-                    .raise()
-                    .attr("cx", (+x + +config.tile_x_x))
-                    .attr("cy", (+y + +config.tile_x_y));
                 }
 
                 function ended() {
@@ -442,9 +418,6 @@
                   //   console.log(x, y)
                   // }) 
                   // console.log(text.attr('x'), text.attr('y'))
-                  // console.log(circleL.attr('cx'), circleL.attr('cy'))
-                  // console.log(circleC.attr('cx'), circleC.attr('cy'))
-                  // console.log(circleX.attr('cx'), circleX.attr('cy'))
                   
                   store.dispatch('changeTileAxis', { 
                     id: rects[0].attr('id'),
