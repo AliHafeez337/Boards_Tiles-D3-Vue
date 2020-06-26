@@ -68,11 +68,13 @@ export const changeTileColor = ({ commit, getters }, data) => {
   // save into the database
 };
 
-export const changeSectionAxis = ({ commit, getters }, data) => {
+export const changeSection = ({ commit, getters }, data) => {
   var sections = getters.getSections.map(section => {
     if (section.id === data.id) {
       section.x = data.x;
       section.y = data.y;
+      section.width = data.width;
+      section.height = data.height;
     }
     return section
   })
@@ -126,6 +128,17 @@ export const removeTile = ({ commit, getters }, id) => {
   setTimeout(() => {
     commit('SET_TILES', tiles)
     commit('SET_LABELS', labels)
+  }, 1000)
+  // save into the database
+};
+
+export const removeSection = ({ commit, getters }, id) => {
+  var sections = getters.getSections.filter(section => {
+    if (!(section.id === id))
+      return section
+  })
+  setTimeout(() => {
+    commit('SET_SECTIONS', sections)
   }, 1000)
   // save into the database
 };

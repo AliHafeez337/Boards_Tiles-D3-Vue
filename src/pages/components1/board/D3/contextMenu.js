@@ -50,7 +50,7 @@ export const menuFactory = (x, y, menuItems, data, svgId) => {
         });
 }
 
-export const createContextMenu = (d, x, y, menuItems, width, height, svgId) => {
+export const createContextMenu = (d, x, y, menuItems, svgId) => {
   menuFactory(x, y, menuItems, d, svgId);
   d3.event.preventDefault();
 }
