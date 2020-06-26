@@ -7,8 +7,7 @@
 <script>
   import * as d3 from "d3";
   import { event as d3Event, select, selectAll } from "d3-selection";
-  import { createContextMenu } from "./contextMenu";
-
+  import { createContextMenu, filter } from './externalD3';
   import { config } from '../../../../CONFIG';
 
   export default {
@@ -212,6 +211,8 @@
                             .attr("height", window.innerHeight)
                             .attr("id", "svg");
 
+        filter(svgContainer)
+
         var sectionGroup = svgContainer
                             .selectAll('.section')
                             .data(this.sections)
@@ -354,6 +355,8 @@
           .attr("ry", config.tile_edges_round)
           .style("opacity", config.tile_opacity)
           .style("fill", d => d.color)
+          .attr("stroke-width", 2)
+          .style("filter", "url(#drop-shadow)")
           .on("click", function(d) {
             console.log('TILE CLICKED')
           })
