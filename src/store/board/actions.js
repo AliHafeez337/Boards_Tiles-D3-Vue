@@ -84,11 +84,13 @@ export const changeSection = ({ commit, getters }, data) => {
   // save into the database
 };
 
-export const changeTileAxis = ({ commit, getters }, data) => {
+export const changeTile = ({ commit, getters }, data) => {
   var tiles = getters.getTiles.map(tile => {
     if (tile.id === data.id) {
       tile.x = data.x;
       tile.y = data.y;
+      tile.backLeft = data.backLeft;
+      tile.backRight = data.backRight;
     }
     return tile
   })
