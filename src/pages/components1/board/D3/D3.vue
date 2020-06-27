@@ -41,15 +41,11 @@
             action: (d) => {
               console.log('Section X clicked');
 
-              var rect = d3.select('#' + d.id).classed("dragging", true);
-              var text = d3.select('#' + d.id + '-t').classed("dragging", true);
-              var circleC = d3.select('#' + d.id + '-c').classed("dragging", true);
-              var circleX = d3.select('#' + d.id + '-x').classed("dragging", true);
+              var rect = d3.select('#' + d.id);
+              var text = d3.select('#' + d.id + '-t');
               
               rect.remove();
               text.remove();
-              circleC.remove();
-              circleX.remove();
 
               this.$store.dispatch('removeSection', d.id)
             }
@@ -110,10 +106,11 @@
                                     .attr('class', d => 'label ' + ((x + 2) + (number * d.width)) + '-' + (y + 2))
                                     .attr('id', d => d.id + '-' + number)
 
+                  // Number - 2 (2 represents that there are 2 rects before the labels)
                   thisLabel
                     .attr("width", d => config.label_width)
                     .attr("height", d => config.label_height)
-                    .attr("x", d => (+x + +2) + +((number * (config.label_width + config.gap_between_labels)) + config.lebel_padding_from_left) - +config.label_width)
+                    .attr("x", d => (+x + +2) + +(((number - 2) * (config.label_width + config.gap_between_labels)) + config.lebel_padding_from_left) - +config.label_width)
                     .attr("y", (+y + +2))
                     .attr("rx", config.labels_edges_round)
                     .attr("ry", config.labels_edges_round)
@@ -146,15 +143,13 @@
               console.log('Tile X clicked');
 
               var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
-              var text = d3.select('#' + d.id + '-t').classed("dragging", true);
-              var circleL = d3.select('#' + d.id + '-l').classed("dragging", true);
-              var circleC = d3.select('#' + d.id + '-c').classed("dragging", true);
-              var circleX = d3.select('#' + d.id + '-x').classed("dragging", true);
+              var text = d3.select('#' + d.id + '-t');
+              var backLeft = d3.select('#' + d.id + '-bl');
+              var backRight = d3.select('#' + d.id + '-br');
 
-              text.remove()
-              circleL.remove()
-              circleC.remove()
-              circleX.remove()
+              text.remove();
+              backLeft.remove();
+              backRight.remove();
 
               var selection;
               rectsGroup._groups[0].forEach((rect, index) => {

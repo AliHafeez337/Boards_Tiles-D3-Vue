@@ -103,7 +103,7 @@ export const config = {
   back_left_rounded_edges_y: 2,
 
   // Backloaded Right
-  back_right_color: 'green',
+  back_right_color: 'red',
   back_right_width: 5,
   back_right_height: 40,
   back_right_padding_from_right_x: 9,

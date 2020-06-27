@@ -166,9 +166,9 @@ export default {
           { 'id': 'a0nyn15mj3', 'name': '1BCD', 'width': config.section_width, 'height': config.section_height, "x": 250, 'y': 20, 'color': config.new_section_color },
           { 'id': 'ayquazchds', 'name': '2CDE', 'width': config.section_width, 'height': config.section_height, "x": 520, 'y': 20, 'color': config.new_section_color }
         ], tiles = [
-          { 'id': 'azkbug6kyx', 'name': '0ABC', "x": 30, 'y': 50, "color" : "green", 'backLeft': true, 'backRight': false },
+          { 'id': 'azkbug6kyx', 'name': '0ABC', "x": 30, 'y': 50, "color" : "brown", 'backLeft': true, 'backRight': false },
           { 'id': 'atrnrt7tmm', 'name': '1ABC', "x": 260, 'y': 50, "color" : "purple", 'backLeft': false, 'backRight': true },
-          { 'id': 'ak693b4ofl', 'name': '0ABC', "x": 530, 'y': 50, "color" : "red", 'backLeft': true, 'backRight': true }
+          { 'id': 'ak693b4ofl', 'name': '0ABC', "x": 530, 'y': 50, "color" : "#DA70D6", 'backLeft': true, 'backRight': true }
         ], labels = [
           { 'tile': 'atrnrt7tmm', "color" : "orange" },
           { 'tile': 'azkbug6kyx', "color" : "red" },
