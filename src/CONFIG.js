@@ -93,10 +93,22 @@ export const config = {
   context_menu_text_font_size: '12',
   context_menu_text_color: '#00557d',
 
+  // Tile Warning
+  tile_warning_width: 80,
+  tile_warning_height: 10,
+  tile_warning_x: 0, // Distance appart (in x-axis) from the start of the tile
+  tile_warning_y: 30, // Distance appart (in y-axis) from the start of the tile
+  tile_warning_rounded_edge_x: 2,
+  tile_warning_rounded_edge_y: 2,
+  tile_3_days_warning_color: 'red',
+  tile_7_days_warning_color: 'yellow',
+
   // Backloaded Left
   back_left_color: 'green',
   back_left_width: 5,
   back_left_height: 40,
+  back_left_stroke_color: 'black',
+  back_left_stroke_width: 0.5,
   back_left_padding_from_x: 4,
   back_left_padding_from_y: 0,
   back_left_rounded_edges_x: 2,
@@ -106,6 +118,8 @@ export const config = {
   back_right_color: 'red',
   back_right_width: 5,
   back_right_height: 40,
+  back_right_stroke_color: 'black',
+  back_right_stroke_width: 0.5,
   back_right_padding_from_right_x: 9,
   back_right_padding_from_y: 0,
   back_right_rounded_edges_x: 2,

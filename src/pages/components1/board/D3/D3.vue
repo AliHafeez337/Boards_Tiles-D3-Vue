@@ -28,7 +28,7 @@
         const sectionMenuItems = [
           {
             title: 'Change color',
-            action: (d) => {
+            action: (d, _this) => {
               console.log('Section change color clicked');
               
               var rect = d3.select('#' + d.id);
@@ -38,7 +38,7 @@
           },
           {
             title: 'Remove section',
-            action: (d) => {
+            action: (d, _this) => {
               console.log('Section X clicked');
 
               var rect = d3.select('#' + d.id);
@@ -55,7 +55,7 @@
         const tileMenuItems = [
           {
             title: 'Back Loaded Left',
-            action: (d) => {
+            action: (d, _this) => {
               console.log('Tile back loaded left clicked');
               
               d3.select('#' + d.id + '-bl').style('opacity', 1);
@@ -71,7 +71,7 @@
           },
           {
             title: 'Back Loaded Right',
-            action: (d) => {
+            action: (d, _this) => {
               console.log('Tile back loaded right clicked');
               
               d3.select('#' + d.id + '-br').style('opacity', 1);
@@ -87,7 +87,7 @@
           },
           {
             title: 'Add label',
-            action: (d) => {
+            action: (d, _this) => {
               console.log('Tile add label clicked');
               
               const id = d.id
@@ -106,18 +106,22 @@
                                     .attr('class', d => 'label ' + ((x + 2) + (number * d.width)) + '-' + (y + 2))
                                     .attr('id', d => d.id + '-' + number)
 
-                  // Number - 2 (2 represents that there are 2 rects before the labels)
+                  // Number - 3 (3 represents that there are 3 rects before the labels)
                   thisLabel
                     .attr("width", d => config.label_width)
                     .attr("height", d => config.label_height)
-                    .attr("x", d => (+x + +2) + +(((number - 2) * (config.label_width + config.gap_between_labels)) + config.lebel_padding_from_left) - +config.label_width)
+                    .attr("x", d => (+x + +2) + +(((number - 3) * (config.label_width + config.gap_between_labels)) + config.lebel_padding_from_left) - +config.label_width)
                     .attr("y", (+y + +2))
                     .attr("rx", config.labels_edges_round)
                     .attr("ry", config.labels_edges_round)
                     .style("opacity", config.label_opacity)
                     .style("fill", color)
-                    .on("click", function(d){
-                      removeLabel(this, d);
+                    // .on("click", function(d){
+                    //   removeLabel(this, d);
+                    // })
+                    .on('contextmenu', function (d) {
+                      var coords = d3.mouse(this);
+                      createContextMenu(d, coords[0], coords[1], labelMenu, '#svg', this);
                     });
 
                   store.dispatch('pushLabel', {
@@ -129,7 +133,7 @@
           },
           {
             title: 'Change color',
-            action: (d) => {
+            action: (d, _this) => {
               console.log('Tile color button clicked');
 
               var rect = d3.select('#' + d.id)
@@ -139,7 +143,7 @@
           },
           {
             title: 'Remove tile',
-            action: (d) => {
+            action: (d, _this) => {
               console.log('Tile X clicked');
 
               var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
@@ -170,8 +174,8 @@
         const backLoadedLeft = [
           {
             title: 'Remove back-loaded',
-            action: (d) => {
-              console.log('Remove back loaded clicked', d);
+            action: (d, _this) => {
+              console.log('Remove back loaded clicked');
               
               d3.select('#' + d.id + '-bl').style('opacity', 0);
 
@@ -189,8 +193,8 @@
         const backLoadedRight = [
           {
             title: 'Remove back-loaded',
-            action: (d) => {
-              console.log('Remove back loaded clicked', d);
+            action: (d, _this) => {
+              console.log('Remove back loaded clicked');
               
               d3.select('#' + d.id + '-br').style('opacity', 0);
               
@@ -201,6 +205,17 @@
                 backLeft: d.backLeft,
                 backRight: false,
               })
+            }
+          },
+        ]
+
+        const labelMenu = [
+          {
+            title: 'Remove label',
+            action: (d, _this) => {
+              console.log('Remove label clicked');
+              
+              removeLabel(_this, d);
             }
           },
         ]
@@ -258,7 +273,8 @@
             color
           })
 
-          for(let i = start + 1; i < rects._groups[0].length; i++){
+          // start + 3, 3 represents the number of rectangles before the labels
+          for(let i = start + 3; i < rects._groups[0].length; i++){
             rect = d3.select(rects._groups[0][i]);
             rect.attr('x', rect.attr('x') - (config.label_width + config.gap_between_labels));
             rect.attr('id', d => d.id + '-' + (i - 1).toString())
@@ -398,6 +414,89 @@
           .attr("font-size", config.section_text_size + 'px')
           .attr("fill", config.section_text_color);
 
+        const tileDrag = d => {
+          var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
+          var backL = d3.select('#' + d.id + '-bl').classed("dragging", true);
+          var backR = d3.select('#' + d.id + '-br').classed("dragging", true);
+          var warning = d3.select('#' + d.id + '-w').classed("dragging", true);
+          var text = d3.select('#' + d.id + '-t').classed("dragging", true);
+
+          var rects = [], selection;
+          rectsGroup._groups[0].forEach((rect, index) => {
+            if (index > 0){
+              selection = d3.select('#' + d.id + '-' + index.toString())
+            } else {
+              selection = d3.select('#' + d.id)
+            }
+            rects.push(selection)
+          })
+
+          d3.event.on("drag", dragged).on("end", ended);
+
+          var dd = d;
+          function dragged(d) {
+            var bigBrother, x, y, coords = d3.mouse(this);
+
+            bigBrother = d3.select('#' + dd.id)
+            x = (bigBrother.attr('x')).toString()
+            y = (bigBrother.attr('y')).toString();
+            rects.forEach((rect, index) => {
+
+              if (index > 0){
+                rect
+                  .raise()
+                  .attr("x", (+x + +config.padding_on_labels) + ((index * (config.label_width + config.gap_between_labels)) + config.lebel_padding_from_left) - +config.label_width)
+                  .attr("y", (+y + +config.padding_on_labels));
+              } else {
+                rect
+                  .raise()
+                  // .attr("x", d3.event.x)
+                  // .attr("y", d3.event.y);
+                  .attr("x", coords[0])
+                  .attr("y", coords[1]);
+              }
+            }) 
+            backL
+              .raise()
+              .attr("x", (+x + +config.back_left_padding_from_x))
+              .attr("y", (+y + +config.back_left_padding_from_y));
+            backR
+              .raise()
+              .attr("x", (+x + (+config.tile_width - +config.back_right_padding_from_right_x)))
+              .attr("y", (+y + +config.back_right_padding_from_y));
+            warning
+              .raise()
+              .attr("x", +x + +config.tile_warning_x)
+              .attr("y", +y + +config.tile_warning_y);
+            text
+              .raise()
+              .attr("x", (+x + +config.tile_text_x))
+              .attr("y", (+y + +config.tile_text_y));
+          }
+
+          function ended() {
+            console.log('Tile group drag ends at:')
+            console.log(rects[0].attr('x'), rects[0].attr('y'));
+            // var x, y;
+            // rects.forEach((rect, index) => {
+            //   x = (rect.attr('x')).toString()
+            //   y = (rect.attr('y')).toString();
+            //   console.log(x, y)
+            // }) 
+            // console.log(text.attr('x'), text.attr('y'))
+            
+            store.dispatch('changeTile', { 
+              id: d.id,
+              x: rects[0].attr('x'),
+              y: rects[0].attr('y'),
+              backLeft: d.backLeft,
+              backRight: d.backRight,
+            })
+            
+            rectsGroup.classed("dragging", false);
+          }
+        }
+
         var tileGroup = svgContainer
                           .selectAll('.tile')
                           .data(this.tiles)
@@ -432,88 +531,66 @@
           .call(
             d3.drag()
               .on("start", function started(d) {
-                var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
-                var backL = d3.select('#' + d.id + '-bl').classed("dragging", true);
-                var backR = d3.select('#' + d.id + '-br').classed("dragging", true);
-                var text = d3.select('#' + d.id + '-t').classed("dragging", true);
+                tileDrag(d)
+              })
+          );
 
-                var rects = [], selection;
-                rectsGroup._groups[0].forEach((rect, index) => {
-                  if (index > 0){
-                    selection = d3.select('#' + d.id + '-' + index.toString())
-                  } else {
-                    selection = d3.select('#' + d.id)
-                  }
-                  rects.push(selection)
-                })
+        var tileWarning = tileGroup
+                            .append('rect')
+                            .attr('class', d => 'tileWarning ' + d.x.toString() + '-' + d.y.toString())
+                            .attr('id', d => d.id + '-w');
 
-                d3.event.on("drag", dragged).on("end", ended);
+        tileWarning
+          .attr("width", config.tile_warning_width)
+          .attr("height", config.tile_warning_height)
+          .attr("x", d => +d.x + +config.tile_warning_x)
+          .attr("y", d => +d.y + +config.tile_warning_y)
+          .attr("rx", config.tile_warning_rounded_edge_x)
+          .attr("ry", config.tile_warning_rounded_edge_y)
+          .style("opacity", d => {
+            const time = Date.now(), due = +d.event_due * +1000
+            // console.log(time, d.event_due)
+            // console.log((+d.event_due * +1000) - time)
 
-                var dd = d;
-                function dragged(d) {
-                  var bigBrother, x, y, coords = d3.mouse(this);
-
-                  bigBrother = d3.select('#' + dd.id)
-                  x = (bigBrother.attr('x')).toString()
-                  y = (bigBrother.attr('y')).toString();
-                  rects.forEach((rect, index) => {
-
-                    if (index > 0){
-                      rect
-                        .raise()
-                        .attr("x", (+x + +config.padding_on_labels) + ((index * (config.label_width + config.gap_between_labels)) + config.lebel_padding_from_left) - +config.label_width)
-                        .attr("y", (+y + +config.padding_on_labels));
-                    } else {
-                      rect
-                        .raise()
-                        // .attr("x", d3.event.x)
-                        // .attr("y", d3.event.y);
-                        .attr("x", coords[0])
-                        .attr("y", coords[1]);
-                    }
-                  }) 
-                  backL
-                    .raise()
-                    .attr("x", (+x + +config.back_left_padding_from_x))
-                    .attr("y", (+y + +config.back_left_padding_from_y));
-                  backR
-                    .raise()
-                    .attr("x", (+x + (+config.tile_width - +config.back_right_padding_from_right_x)))
-                    .attr("y", (+y + +config.back_right_padding_from_y));
-                  text
-                    .raise()
-                    .attr("x", (+x + +config.tile_text_x))
-                    .attr("y", (+y + +config.tile_text_y));
-                }
-
-                function ended() {
-                  console.log('Tile group drag ends at:')
-                  console.log(rects[0].attr('x'), rects[0].attr('y'));
-                  // var x, y;
-                  // rects.forEach((rect, index) => {
-                  //   x = (rect.attr('x')).toString()
-                  //   y = (rect.attr('y')).toString();
-                  //   console.log(x, y)
-                  // }) 
-                  // console.log(text.attr('x'), text.attr('y'))
-                  
-                  store.dispatch('changeTile', { 
-                    id: d.id,
-                    x: rects[0].attr('x'),
-                    y: rects[0].attr('y'),
-                    backLeft: d.backLeft,
-                    backRight: d.backRight,
-                  })
-                  
-                  rectsGroup.classed("dragging", false);
-                }
+            // 259200000 are 3 days and 604800 are 1 week
+            // get times from https://www.epochconverter.com/timestamp-list
+            if (d.event_due && due - time < 604800000){
+              return 1
+            } else {
+              return 0
+            }
+          })
+          .style("fill", d => {
+            const time = Date.now(), due = +d.event_due * +1000
+            
+            if (d.event_due && due - time < 259200000){
+              return config.tile_3_days_warning_color
+            } else if (d.event_due && due - time < 604800000){
+              return config.tile_7_days_warning_color
+            } else {
+              return d.color
+            }
+          })
+          .on("click", function(d) {
+            console.log('Tile warning CLICKED')
+          })
+          .on('contextmenu', function (d) {
+            if (d.backLeft){
+              var coords = d3.mouse(this);
+              createContextMenu(d, coords[0], coords[1], tileMenuItems, '#svg');
+            }
+          })
+          .call(
+            d3.drag()
+              .on("start", function started(d) {
+                tileDrag(d)
               })
           );
 
         var tileBackLeft = tileGroup
-                    .append('rect')
-                    .attr('class', d => 'back backLeft ' + d.x.toString() + '-' + d.y.toString())
-                    .attr('id', d => d.id + '-bl');
+                            .append('rect')
+                            .attr('class', d => 'back backLeft ' + d.x.toString() + '-' + d.y.toString())
+                            .attr('id', d => d.id + '-bl');
 
         tileBackLeft
           .attr("width", config.back_left_width)
@@ -522,6 +599,8 @@
           .attr("y", d => +d.y + +config.back_left_padding_from_y)
           .attr("rx", config.back_left_rounded_edges_y)
           .attr("ry", config.back_left_rounded_edges_y)
+          .attr("stroke-width", config.back_left_stroke_width)
+          .attr("stroke", config.back_left_stroke_color)
           .style("opacity", d => d.backLeft ? 1 : 0)
           .style("fill", config.back_left_color)
           .on("click", function(d) {
@@ -534,11 +613,10 @@
             }
           });
 
-
         var tileBackRight = tileGroup
-                    .append('rect')
-                    .attr('class', d => 'back backRight ' + d.x.toString() + '-' + d.y.toString())
-                    .attr('id', d => d.id + '-br');
+                              .append('rect')
+                              .attr('class', d => 'back backRight ' + d.x.toString() + '-' + d.y.toString())
+                              .attr('id', d => d.id + '-br');
 
         tileBackRight
           .attr("width", config.back_right_width)
@@ -547,6 +625,8 @@
           .attr("y", d => +d.y + +config.back_right_padding_from_y)
           .attr("rx", config.back_right_rounded_edges_x)
           .attr("ry", config.back_right_rounded_edges_y)
+          .attr("stroke-width", config.back_right_stroke_width)
+          .attr("stroke", config.back_right_stroke_color)
           .style("opacity", d => d.backRight ? 1 : 0)
           .style("fill", d => config.back_right_color)
           .on("click", function(d) {
@@ -570,7 +650,13 @@
           .text(d => d.name)
           .attr("font-family", config.tile_text_font)
           .attr("font-size", config.tile_text_size + 'px')
-          .attr("fill", config.tile_text_color);
+          .attr("fill", config.tile_text_color)
+          .on('contextmenu', function (d) {
+            if (d.backLeft){
+              var coords = d3.mouse(this);
+              createContextMenu(d, coords[0], coords[1], tileMenuItems, '#svg');
+            }
+          });
 
         var a = [], b = []
 
@@ -605,8 +691,12 @@
             .attr("ry", config.labels_edges_round)
             .style("opacity", config.label_opacity)
             .style("fill", label.color)
-            .on("click", function(d){
-              removeLabel(this, d);
+            // .on("click", function(d){
+            //   removeLabel(this, d);
+            // })
+            .on('contextmenu', function (d) {
+              var coords = d3.mouse(this);
+              createContextMenu(d, coords[0], coords[1], labelMenu, '#svg', this);
             });
         })
              
