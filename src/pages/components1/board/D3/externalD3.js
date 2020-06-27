@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import styles from "./contextMenu.css";
 import { config } from '../../../../CONFIG';
 
-export const menuFactory = (x, y, menuItems, data, svgId) => {
+export const menuFactory = (x, y, menuItems, data, svgId, _this) => {
     d3.select(`.contextMenu`).remove();
 
     // Draw the menu
@@ -29,7 +29,7 @@ export const menuFactory = (x, y, menuItems, data, svgId) => {
         .attr('width', config.context_menu_width)
         .attr('height', config.context_menu_height)
         .style("opacity", config.context_menu_opacity)
-        .on('click', (d) => { d.action(data) });
+        .on('click', (d) => { d.action(data, _this) });
 
     d3.selectAll(`.menuEntry`)
         .append('text')
@@ -41,7 +41,7 @@ export const menuFactory = (x, y, menuItems, data, svgId) => {
         .attr("font-size", config.context_menu_text_font_size + 'px')
         .style("opacity", config.context_menu_text_opacity)
         .style("stroke", config.context_menu_text_color)
-        .on('click', (d) => { d.action(data) });
+        .on('click', (d) => { d.action(data, _this) });
 
     // Other interactions
     d3.select('body')
@@ -50,8 +50,8 @@ export const menuFactory = (x, y, menuItems, data, svgId) => {
         });
 }
 
-export const createContextMenu = (d, x, y, menuItems, svgId) => {
-  menuFactory(x, y, menuItems, d, svgId);
+export const createContextMenu = (d, x, y, menuItems, svgId, _this = null) => {
+  menuFactory(x, y, menuItems, d, svgId, _this);
   d3.event.preventDefault();
 }
 
