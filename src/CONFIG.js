@@ -29,7 +29,7 @@ export const config = {
   
   // New tile dimensions
   tile_width: 80,
-  tile_height: 30,
+  tile_height: 40,
 
   tile_opacity: 1, // not in pixels, ranges from 0 to 1
   tile_edges_round: 4,
@@ -37,9 +37,9 @@ export const config = {
   // New label dimensions
   label_width: 15,
   label_height: 7,
-
   label_opacity: 1, // not in pixels, ranges from 0 to 1
   labels_edges_round: 1,
+  lebel_padding_from_left: 6,
 
   gap_between_labels: 5,
   padding_on_labels: 2,
@@ -55,7 +55,7 @@ export const config = {
   // Tile text
   tile_text_color: 'white',
   // relative distance (x, y) from the tile
-  tile_text_x: 7, // x pixels appart from the point(x) of the tile
+  tile_text_x: 13, // x pixels appart from the point(x) of the tile
   tile_text_y: 25, // y pixels appart from the point(y) of the tile
   tile_text_font: 'sans-serif',
   tile_text_size: '15',
@@ -87,11 +87,28 @@ export const config = {
   context_menu_width: 150,
   context_menu_height: 30,
   context_menu_opacity: 0.5,
-  context_menu_text_x: -10, // Distance (in x-axis) of context menu text from the context menu
+  context_menu_text_x: 35, // Distance (in x-axis) of context menu text from the context menu
   context_menu_text_y: 0, // Distance (in y-axis) of context menu text from the context menu
   context_menu_text_opacity: 1,
-  context_menu_text_font_size: 12,
+  context_menu_text_font_size: '12',
   context_menu_text_color: '#00557d',
 
+  // Backloaded Left
+  back_left_color: 'green',
+  back_left_width: 5,
+  back_left_height: 40,
+  back_left_padding_from_x: 4,
+  back_left_padding_from_y: 0,
+  back_left_rounded_edges_x: 2,
+  back_left_rounded_edges_y: 2,
+
+  // Backloaded Right
+  back_right_color: 'green',
+  back_right_width: 5,
+  back_right_height: 40,
+  back_right_padding_from_right_x: 9,
+  back_right_padding_from_y: 0,
+  back_right_rounded_edges_x: 2,
+  back_right_rounded_edges_y: 2,
 
 }

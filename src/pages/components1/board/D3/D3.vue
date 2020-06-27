@@ -58,6 +58,38 @@
 
         const tileMenuItems = [
           {
+            title: 'Back Loaded Left',
+            action: (d) => {
+              console.log('Tile back loaded left clicked');
+              
+              d3.select('#' + d.id + '-bl').style('opacity', 1);
+              
+              store.dispatch('changeTile', { 
+                id: d.id,
+                x: d.x,
+                y: d.y,
+                backLeft: true,
+                backRight: d.backRight,
+              })
+            }
+          },
+          {
+            title: 'Back Loaded Right',
+            action: (d) => {
+              console.log('Tile back loaded right clicked');
+              
+              d3.select('#' + d.id + '-br').style('opacity', 1);
+
+              store.dispatch('changeTile', { 
+                id: d.id,
+                x: d.x,
+                y: d.y,
+                backLeft: d.backLeft,
+                backRight: true,
+              })
+            }
+          },
+          {
             title: 'Add label',
             action: (d) => {
               console.log('Tile add label clicked');
@@ -81,7 +113,7 @@
                   thisLabel
                     .attr("width", d => config.label_width)
                     .attr("height", d => config.label_height)
-                    .attr("x", d => (+x + +2) + +(+number * +(+config.label_width + +5)) - +config.label_width)
+                    .attr("x", d => (+x + +2) + +((number * (config.label_width + config.gap_between_labels)) + config.lebel_padding_from_left) - +config.label_width)
                     .attr("y", (+y + +2))
                     .attr("rx", config.labels_edges_round)
                     .attr("ry", config.labels_edges_round)
@@ -139,6 +171,44 @@
             }
           }
         ];
+
+        const backLoadedLeft = [
+          {
+            title: 'Remove back-loaded',
+            action: (d) => {
+              console.log('Remove back loaded clicked', d);
+              
+              d3.select('#' + d.id + '-bl').style('opacity', 0);
+
+              store.dispatch('changeTile', { 
+                id: d.id,
+                x: d.x,
+                y: d.y,
+                backLeft: false,
+                backRight: d.backRight,
+              })
+            }
+          },
+        ]
+
+        const backLoadedRight = [
+          {
+            title: 'Remove back-loaded',
+            action: (d) => {
+              console.log('Remove back loaded clicked', d);
+              
+              d3.select('#' + d.id + '-br').style('opacity', 0);
+              
+              store.dispatch('changeTile', { 
+                id: d.id,
+                x: d.x,
+                y: d.y,
+                backLeft: d.backLeft,
+                backRight: false,
+              })
+            }
+          },
+        ]
         
         var distance = function (p1, p2) {
           return Math.pow(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2), 0.5);
@@ -347,8 +417,8 @@
                     .attr('id', d => d.id);
 
         tile
-          .attr("width", d => config.tile_width)
-          .attr("height", d => config.tile_height)
+          .attr("width", config.tile_width)
+          .attr("height", config.tile_height)
           .attr("x", d => d.x)
           .attr("y", d => d.y)
           .attr("rx", config.tile_edges_round)
@@ -368,6 +438,8 @@
             d3.drag()
               .on("start", function started(d) {
                 var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
+                var backL = d3.select('#' + d.id + '-bl').classed("dragging", true);
+                var backR = d3.select('#' + d.id + '-br').classed("dragging", true);
                 var text = d3.select('#' + d.id + '-t').classed("dragging", true);
 
                 var rects = [], selection;
@@ -394,7 +466,7 @@
                     if (index > 0){
                       rect
                         .raise()
-                        .attr("x", (+x + +config.padding_on_labels) + (+index * +(+config.label_width + +config.gap_between_labels) - +config.label_width))
+                        .attr("x", (+x + +config.padding_on_labels) + ((index * (config.label_width + config.gap_between_labels)) + config.lebel_padding_from_left) - +config.label_width)
                         .attr("y", (+y + +config.padding_on_labels));
                     } else {
                       rect
@@ -405,6 +477,14 @@
                         .attr("y", coords[1]);
                     }
                   }) 
+                  backL
+                    .raise()
+                    .attr("x", (+x + +config.back_left_padding_from_x))
+                    .attr("y", (+y + +config.back_left_padding_from_y));
+                  backR
+                    .raise()
+                    .attr("x", (+x + (+config.tile_width - +config.back_right_padding_from_right_x)))
+                    .attr("y", (+y + +config.back_right_padding_from_y));
                   text
                     .raise()
                     .attr("x", (+x + +config.tile_text_x))
@@ -422,16 +502,67 @@
                   // }) 
                   // console.log(text.attr('x'), text.attr('y'))
                   
-                  store.dispatch('changeTileAxis', { 
-                    id: rects[0].attr('id'),
+                  store.dispatch('changeTile', { 
+                    id: d.id,
                     x: rects[0].attr('x'),
-                    y: rects[0].attr('y')
+                    y: rects[0].attr('y'),
+                    backLeft: d.backLeft,
+                    backRight: d.backRight,
                   })
                   
                   rectsGroup.classed("dragging", false);
                 }
               })
           );
+
+        var tileBackLeft = tileGroup
+                    .append('rect')
+                    .attr('class', d => 'back backLeft ' + d.x.toString() + '-' + d.y.toString())
+                    .attr('id', d => d.id + '-bl');
+
+        tileBackLeft
+          .attr("width", config.back_left_width)
+          .attr("height", config.back_left_height)
+          .attr("x", d => +d.x + +config.back_left_padding_from_x)
+          .attr("y", d => +d.y + +config.back_left_padding_from_y)
+          .attr("rx", config.back_left_rounded_edges_y)
+          .attr("ry", config.back_left_rounded_edges_y)
+          .style("opacity", d => d.backLeft ? 1 : 0)
+          .style("fill", config.back_left_color)
+          .on("click", function(d) {
+            console.log('Back Loaded Left CLICKED')
+          })
+          .on('contextmenu', function (d) {
+            if (d.backLeft){
+              var coords = d3.mouse(this);
+              createContextMenu(d, coords[0], coords[1], backLoadedLeft, '#svg');
+            }
+          });
+
+
+        var tileBackRight = tileGroup
+                    .append('rect')
+                    .attr('class', d => 'back backRight ' + d.x.toString() + '-' + d.y.toString())
+                    .attr('id', d => d.id + '-br');
+
+        tileBackRight
+          .attr("width", config.back_right_width)
+          .attr("height", config.back_right_height)
+          .attr("x", d => +d.x + (+config.tile_width - +config.back_right_padding_from_right_x))
+          .attr("y", d => +d.y + +config.back_right_padding_from_y)
+          .attr("rx", config.back_right_rounded_edges_x)
+          .attr("ry", config.back_right_rounded_edges_y)
+          .style("opacity", d => d.backRight ? 1 : 0)
+          .style("fill", d => config.back_right_color)
+          .on("click", function(d) {
+            console.log('Back Loaded Right CLICKED')
+          })
+          .on('contextmenu', function (d) {
+            if (d.backRight){
+              var coords = d3.mouse(this);
+              createContextMenu(d, coords[0], coords[1], backLoadedRight, '#svg');
+            }
+          });
 
         var tileText = tileGroup
                     .append('text')
@@ -473,7 +604,7 @@
           thisLabel
             .attr("width", config.label_width)
             .attr("height", config.label_height)
-            .attr("x", (x + 2) + (number * (config.label_width + 5)) - +config.label_width)
+            .attr("x", (x + 2) + ((number * (config.label_width + config.gap_between_labels)) + config.lebel_padding_from_left) - +config.label_width)
             .attr("y", (y + 2))
             .attr("rx", config.labels_edges_round)
             .attr("ry", config.labels_edges_round)
