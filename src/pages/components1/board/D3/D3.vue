@@ -309,6 +309,44 @@
           var text = d3.select('#' + dd.id + '-t').classed("dragging", true);
           var t = d3.select('#' + dd.id + '-p')._groups[0][0]
           var firstChild = t.parentNode.firstChild;
+
+          var x = Number(rect.attr('x'));
+          var y = Number(rect.attr('y'));
+          var w = Number(rect.attr('width'));
+          var h = Number(rect.attr('height'));
+
+          var orignialX = x, originalY = y;
+          
+          var groups = []
+          d3.selectAll('.gTile')._groups[0].forEach(group => {
+
+            let g = d3.select(group);
+            let id = g.attr('id');
+            let tile = d3.select('#' + id.substring(0, id.indexOf('-')))
+
+            let tileX = tile.attr('x'), 
+              tileY = tile.attr('y'),
+              tileW = tile.attr('width'),
+              tileH = tile.attr('height');
+              
+            let c1x = +tileX, c1y = tileY,
+              c2x = +tileX + +tileW, c2y = +tileY,
+              c3x = +tileX + +tileW, c3y = +tileY + +tileH,
+              c4x = +tileX, c4y =  +tileY + +tileH;
+
+            if (
+              (c1x > x && c1x < (x + w) && c1y > y && c1y < (y + h)) ||
+              (c2x > x && c2x < (x + w) && c2y > y && c2y < (y + h)) ||
+              (c3x > x && c3x < (x + w) && c3y > y && c3y < (y + h)) ||
+              (c4x > x && c4x < (x + w) && c4y > y && c4y < (y + h))
+            ){
+              console.log(`Some point of ${id} is inside the section`);
+              tile.style("opacity", 0.2)
+              groups.push(g)
+            }
+
+          })
+          // console.log(inTiles)
           
           d3.event.on("drag", dragged).on("end", ended);
 
@@ -316,10 +354,10 @@
             var coords = d3.mouse(_this);
             var e = { x: coords[0], y: coords[1] }
 
-            var x = Number(rect.attr('x'));
-            var y = Number(rect.attr('y'));
-            var w = Number(rect.attr('width'));
-            var h = Number(rect.attr('height'));
+            x = Number(rect.attr('x'));
+            y = Number(rect.attr('y'));
+            w = Number(rect.attr('width'));
+            h = Number(rect.attr('height'));
 
             var c1 = { x: x, y: y };
             var c2 = { x: x + w, y: y };
@@ -355,6 +393,48 @@
 
             rect.classed("dragging", false);
 
+            var diffX = x - orignialX, diffY = y - originalY
+            var tiles = [], tile = {}
+            
+            groups.forEach(group => {
+              let rects = group.selectAll('rect'), texts = group.selectAll('text')
+              // console.log(group, rects, texts)
+              rects._groups[0].forEach(rect => {
+                let _rect = d3.select(rect);
+                let _rectX = _rect.attr('x'), _rectY = _rect.attr('y')
+                
+                if (diffX >= 0){
+                  _rect.attr('x', +_rectX + +diffX)
+                  _rect.attr('y', +_rectY + +diffY)
+                } else {
+                  _rect.attr('x', +diffX + +_rectX)
+                  _rect.attr('y', +diffY + +_rectY)
+                }
+              })
+
+              texts._groups[0].forEach(text => {
+                let _text = d3.select(text);
+                let _textX = _text.attr('x'), _textY = _text.attr('y')
+                
+                if (diffX >= 0){
+                  _text.attr('x', +_textX + +diffX)
+                  _text.attr('y', +_textY + +diffY)
+                } else {
+                  _text.attr('x', +diffX + +_textX)
+                  _text.attr('y', +diffY + +_textY)
+                }
+              })
+
+              var mainRect = d3.select(rects._groups[0][0])
+              mainRect.style("opacity", 1)
+              tile = {
+                id: mainRect.attr('id'),
+                x: mainRect.attr('x'),
+                y: mainRect.attr('y')
+              }
+              tiles.push(tile)
+            })
+
             // console.log(
             //   rect.attr('id'),
             //   rect.attr('width'),
@@ -368,7 +448,7 @@
               height: rect.attr('height'),
               x: rect.attr('x'),
               y: rect.attr('y'),
-              // zoom: thisComponent.currentZoom
+              tiles
             })
 
             // IMPORTANT: Send the selected(the one you are dragging) on the back (according to z-axis) after you ended the drag other wise, the section will remain on top...
@@ -521,7 +601,7 @@
                           .data(this.tiles)
                           .enter()
                           .append('g')
-                          .attr('class', d => 'g ' + d.x.toString() + '-' + d.y.toString())
+                          .attr('class', d => 'g gTile ' + d.x.toString() + '-' + d.y.toString())
                           .attr('id', d => d.id + '-p');
 
         var tile = tileGroup
