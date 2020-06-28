@@ -78,8 +78,14 @@ export const changeSection = ({ commit, getters }, data) => {
     }
     return section
   })
+  // , zoom = {
+  //   k: data.zoom.k,
+  //   x: data.zoom.x,
+  //   y: data.zoom.y
+  // };
   setTimeout(() => {
     commit('SET_SECTIONS', sections)
+    // commit('SET_ZOOM', zoom)
   }, 1000)
   // save into the database
 };
@@ -139,8 +145,25 @@ export const removeSection = ({ commit, getters }, id) => {
     if (!(section.id === id))
       return section
   })
+  //, zoom = {
+  //   k: data.zoom.k,
+  //   x: data.zoom.x,
+  //   y: data.zoom.y
+  // };
   setTimeout(() => {
     commit('SET_SECTIONS', sections)
+    // commit('SET_ZOOM', zoom)
   }, 1000)
   // save into the database
+};
+
+export const changeZoom = ({ commit, getters }, data) => {
+  const zoom = {
+    k: data.zoom.k,
+    x: data.zoom.x,
+    y: data.zoom.y
+  }
+  setTimeout(() => {
+    commit('SET_ZOOM', zoom)
+  }, 1000)
 };

@@ -1,3 +1,4 @@
-export const getSections = state => { return state.sections; };
-export const getTiles = state => { return state.tiles; };
-export const getLabels = state => { return state.labels; };
+export const getSections = state => state.sections;
+export const getTiles = state => state.tiles;
+export const getLabels = state => state.labels;
+export const getZoom = state => state.zoom;
