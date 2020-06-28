@@ -10,7 +10,12 @@ Vue.use(Vuex);
 const state = {
   sections: [],
   tiles: [],
-  labels: []
+  labels: [],
+  zoom: {
+    k: null,
+    x: null,
+    y: null
+  }
 }
 
 export default {

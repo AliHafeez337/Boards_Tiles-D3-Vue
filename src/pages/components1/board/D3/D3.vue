@@ -15,7 +15,8 @@
     data() {
       return {
         height: window.innerWidth,
-        width: window.innerWidth
+        width: window.innerWidth,
+        justOnce: false,
       }
     },
     mounted() {
@@ -24,6 +25,7 @@
     },
     methods: {
       renderD3() {
+        var thisComponent = this
 
         const sectionMenuItems = [
           {
@@ -65,7 +67,7 @@
                 x: d.x,
                 y: d.y,
                 backLeft: true,
-                backRight: d.backRight,
+                backRight: d.backRight
               })
             }
           },
@@ -156,10 +158,12 @@
               var text = d3.select('#' + d.id + '-t');
               var backLeft = d3.select('#' + d.id + '-bl');
               var backRight = d3.select('#' + d.id + '-br');
+              var warning = d3.select('#' + d.id + '-w');
 
               text.remove();
               backLeft.remove();
               backRight.remove();
+              warning.remove();
 
               var selection;
               rectsGroup._groups[0].forEach((rect, index) => {
@@ -172,7 +176,6 @@
               })
 
               this.$store.dispatch('removeTile', d.id)
-
             }
           }
         ];
@@ -364,7 +367,8 @@
               width: rect.attr('width'),
               height: rect.attr('height'),
               x: rect.attr('x'),
-              y: rect.attr('y')
+              y: rect.attr('y'),
+              // zoom: thisComponent.currentZoom
             })
 
             // IMPORTANT: Send the selected(the one you are dragging) on the back (according to z-axis) after you ended the drag other wise, the section will remain on top...
@@ -757,8 +761,28 @@
                         const transform = d3.event.transform;
                         const zx = transform.rescaleX(x).interpolate(d3.interpolateRound);
                         const zy = transform.rescaleY(y).interpolate(d3.interpolateRound);
+
                         sectionGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
                         tileGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
+
+                        var oldZoom = null;
+                        if (!this.justOnce){
+                          oldZoom = this.$store.getters.getZoom;
+                          this.justOnce = true
+                        }
+
+                        if (oldZoom && oldZoom.x && oldZoom.y && oldZoom.k){
+                          sectionGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
+                          tileGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
+
+                          store.dispatch('changeZoom', { 
+                            zoom: oldZoom
+                          })
+                        } else {
+                          store.dispatch('changeZoom', { 
+                            zoom: d3.event.transform
+                          })
+                        }
                       });
 
         svgContainer.call(zoom).call(zoom.transform, d3.zoomIdentity);
