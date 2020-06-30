@@ -19,12 +19,7 @@ const state = {
     x: null,
     y: null
   },
-  search: {
-    word: '',
-    k: null,
-    x: null,
-    y: null
-  }
+  search: null
 }
 
 export default {

@@ -160,6 +160,7 @@ export default {
   },
   watch: {
     search: function (val) {
+      // this.$store.dispatch('copyBoard')
       this.$store.dispatch('setSearch', val)
     }
   },

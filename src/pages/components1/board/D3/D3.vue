@@ -11,7 +11,7 @@
   import { config } from '../../../../CONFIG';
 
   export default {
-    props: ['sections', 'tiles', 'labels'],
+    props: ['sections', 'tiles', 'labels', 'search'],
     data() {
       return {
         height: window.innerWidth,
@@ -541,7 +541,11 @@
             bigBrother = d3.select('#' + dd.id)
             x = (bigBrother.attr('x')).toString()
             y = (bigBrother.attr('y')).toString();
-            
+
+            //   console.log(rects[0])
+            // rects[0]
+            //   .attr("x", coords[0])
+            //   .attr("y", coords[1]);
             rects.forEach((rect, index) => {
 
               if (index > 0){
@@ -551,7 +555,7 @@
                   .attr("y", (+y + +config.padding_on_labels));
               } else {
                 rect
-                  .raise()
+                  // .raise()
                   // .attr("x", d3.event.x)
                   // .attr("y", d3.event.y);
                   .attr("x", coords[0])
@@ -848,14 +852,17 @@
                         sectionGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
                         tileGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
 
-
                         var oldZoom = null;
                         if (!this.justOnce){
                           oldZoom = this.$store.getters.getZoom;
                           this.justOnce = true
                         }
 
-                        if (oldZoom && oldZoom.x && oldZoom.y && oldZoom.k){
+                        if (this.search){
+                          sectionGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                          tileGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+
+                        } else if (oldZoom && oldZoom.x && oldZoom.y && oldZoom.k){
                           sectionGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
                           tileGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
 
