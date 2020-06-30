@@ -18,7 +18,8 @@ const state = {
     k: null,
     x: null,
     y: null
-  }
+  },
+  search: null
 }
 
 export default {

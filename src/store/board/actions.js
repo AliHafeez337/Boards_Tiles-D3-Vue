@@ -1,11 +1,33 @@
+import { config } from './../../CONFIG';
+
+export const setSearch = ({ commit, getters }, data) => {
+  commit('SET_SECTIONS', getters.getSections1)
+  commit('SET_TILES', getters.getTiles1)
+  commit('SET_LABELS', getters.getLabels1)
+
+  var search = null
+  getters.getTiles1.forEach(tile => {
+    if (tile.name === data){
+      search = {
+        word: tile.name,
+        k: 1,
+        x: -Math.abs(+tile.x) + (window.innerWidth / 2) - (config.section_width / 2),
+        y: -Math.abs(+tile.y) + (window.innerHeight / 2) - (config.section_height / 2)
+      }
+    }
+  })
+  if (!search){
+    search = null
+  }
+  commit('SET_SEARCH', search)
+};
+
 // Actaully we don't need copyBoard (to copy from the duplicate data to the original data)
 // why ?, see in pushSection and pushTile, we are already coppying, sort of...
 export const copyBoard = ({ commit, getters }) => {
-  setTimeout(() => {
-    commit('SET_SECTIONS', getters.getSections1)
-    commit('SET_TILES', getters.getTiles1)
-    commit('SET_LABELS', getters.getLabels1)
-  }, 1000)
+  commit('SET_SECTIONS', getters.getSections1)
+  commit('SET_TILES', getters.getTiles1)
+  commit('SET_LABELS', getters.getLabels1)
 };
 
 export const setSections = ({ commit }, sections) => {

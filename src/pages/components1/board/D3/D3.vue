@@ -7,18 +7,11 @@
 <script>
   import * as d3 from "d3";
   import { event as d3Event, select, selectAll } from "d3-selection";
+  import { createContextMenu, filter } from './externalD3';
   import { config } from '../../../../CONFIG';
-  import { 
-    createContextMenu, 
-    filter,
-    distance,
-    getColor,
-    mouseover,
-    mousemove,
-    mouseleave } from './externalD3';
 
   export default {
-    props: ['sections', 'tiles', 'labels'],
+    props: ['sections', 'tiles', 'labels', 'search'],
     data() {
       return {
         height: window.innerWidth,
@@ -32,6 +25,8 @@
     },
     methods: {
       renderD3() {
+        console.log("D3 Loading...")
+        
         var thisComponent = this
 
         const sectionMenuItems = [
@@ -235,6 +230,29 @@
             }
           },
         ]
+        
+        var distance = function (p1, p2) {
+          return Math.pow(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2), 0.5);
+        };
+
+        var getColor = function () {
+          return new Promise(resolve => {
+            // IMPORTANT: Remove the old input color element with old event listeneres and place a new one with no event listener
+            // coppied from: https://stackoverflow.com/questions/9251837/how-to-remove-all-listeners-in-an-element
+            var old_element = document.querySelector('#color');
+            var new_element = old_element.cloneNode(true);
+            old_element.parentNode.replaceChild(new_element, old_element);
+
+            // Now select the new element
+            var colorInput = document.querySelector('#color');
+            // Click the new element
+            colorInput.click();
+            // Add event listener, whenever user clicks 'ok', this function fires
+            colorInput.addEventListener('input', () => {
+              resolve(colorInput.value);
+            })
+          });
+        }
 
         var changeColor = (selection, color) => {
           const id = selection.attr('id'), type = selection.attr('class').split(" ")[0];
@@ -523,7 +541,11 @@
             bigBrother = d3.select('#' + dd.id)
             x = (bigBrother.attr('x')).toString()
             y = (bigBrother.attr('y')).toString();
-            
+
+            //   console.log(rects[0])
+            // rects[0]
+            //   .attr("x", coords[0])
+            //   .attr("y", coords[1]);
             rects.forEach((rect, index) => {
 
               if (index > 0){
@@ -533,7 +555,7 @@
                   .attr("y", (+y + +config.padding_on_labels));
               } else {
                 rect
-                  .raise()
+                  // .raise()
                   // .attr("x", d3.event.x)
                   // .attr("y", d3.event.y);
                   .attr("x", coords[0])
@@ -589,11 +611,6 @@
                           .attr('class', d => 'g gTile ' + d.x.toString() + '-' + d.y.toString())
                           .attr('id', d => d.id + '-p');
 
-        var tooltip = svgContainer
-          .append("text")
-          .style("opacity", 0)
-          .attr("class", "tooltip");
-            
         var tile = tileGroup
                     .append('rect')
                     .attr('class', d => 'tile ' + d.x.toString() + '-' + d.y.toString())
@@ -622,10 +639,7 @@
               .on("start", function started(d) {
                 tileDrag(d)
               })
-          )
-          .on("mouseover", mouseover)
-          .on("mousemove", mousemove)
-          .on("mouseleave", mouseleave);
+          );
 
         var tileWarning = tileGroup
                             .append('rect')
@@ -677,10 +691,7 @@
               .on("start", function started(d) {
                 tileDrag(d)
               })
-          )
-          .on("mouseover", mouseover)
-          .on("mousemove", mousemove)
-          .on("mouseleave", mouseleave);
+          );
 
         var tileBackLeft = tileGroup
                             .append('rect')
@@ -712,10 +723,7 @@
               .on("start", function started(d) {
                 tileDrag(d)
               })
-          )
-          .on("mouseover", mouseover)
-          .on("mousemove", mousemove)
-          .on("mouseleave", mouseleave);
+          );
 
         var tileBackRight = tileGroup
                               .append('rect')
@@ -747,10 +755,7 @@
               .on("start", function started(d) {
                 tileDrag(d)
               })
-          )
-          .on("mouseover", mouseover)
-          .on("mousemove", mousemove)
-          .on("mouseleave", mouseleave);
+          );
 
         var tileText = tileGroup
                     .append('text')
@@ -775,10 +780,7 @@
               .on("start", function started(d) {
                 tileDrag(d)
               })
-          )
-          .on("mouseover", mouseover)
-          .on("mousemove", mousemove)
-          .on("mouseleave", mouseleave);
+          );
 
         var a = [], b = []
 
@@ -850,14 +852,17 @@
                         sectionGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
                         tileGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
 
-
                         var oldZoom = null;
                         if (!this.justOnce){
                           oldZoom = this.$store.getters.getZoom;
                           this.justOnce = true
                         }
 
-                        if (oldZoom && oldZoom.x && oldZoom.y && oldZoom.k){
+                        if (this.search){
+                          sectionGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                          tileGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+
+                        } else if (oldZoom && oldZoom.x && oldZoom.y && oldZoom.k){
                           sectionGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
                           tileGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
 

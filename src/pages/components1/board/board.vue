@@ -6,6 +6,7 @@
       :sections="sections" 
       :tiles="tiles"
       :labels="labels"
+      :search="search"
       :key="d3"
     />
   </div>
@@ -29,6 +30,9 @@
       },
       labels() {
         return this.$store.getters.getLabels;
+      },
+      search() {
+        return this.$store.getters.getSearch;
       }
     },
     watch: {
@@ -42,6 +46,10 @@
       },
       labels: function (val) {
         console.log('LABELS', val)
+        this.d3 += 1
+      },
+      search: function (val) {
+        console.log('SEARCH', val)
         this.d3 += 1
       }
     },
