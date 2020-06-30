@@ -185,9 +185,9 @@ export default {
           { 'id': 'a0nyn15mj3', 'name': '1BCD', 'width': config.section_width, 'height': config.section_height, "x": 250, 'y': 20, 'color': config.new_section_color },
           { 'id': 'ayquazchds', 'name': '2CDE', 'width': config.section_width, 'height': config.section_height, "x": 520, 'y': 20, 'color': config.new_section_color }
         ], tiles = [
-          { 'id': 'azkbug6kyx', 'name': '0ABC', "x": 30, 'y': 50, "color" : "brown", 'backLeft': true, 'backRight': false, 'event_name': 'Event1', 'event_due': 1593537002 }, // due in next 3 days
-          { 'id': 'atrnrt7tmm', 'name': '1ABC', "x": 260, 'y': 50, "color" : "purple", 'backLeft': false, 'backRight': true, 'event_name': 'Event2', 'event_due': 1593882602 }, // due in next 7 days
-          { 'id': 'ak693b4ofl', 'name': '0ABC', "x": 530, 'y': 50, "color" : "#DA70D6", 'backLeft': true, 'backRight': true, 'event_name': 'Event3', 'event_due': null } // 1595869802 = due in next 30 days
+          { 'id': 'azkbug6kyx', 'name': '0ABC', "x": 30, 'y': 50, "color" : "brown", 'backLeft': true, 'backRight': false, 'event_name': 'Event', 'event_due': 1593537002 }, // due in next 3 days
+          { 'id': 'atrnrt7tmm', 'name': '1ABC', "x": 260, 'y': 50, "color" : "purple", 'backLeft': false, 'backRight': true, 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
+          { 'id': 'ak693b4ofl', 'name': '0ABC', "x": 530, 'y': 50, "color" : "#DA70D6", 'backLeft': true, 'backRight': true, 'event_name': 'Event', 'event_due': null } // 1595869802 = due in next 30 days
         ], labels = [
           { 'tile': 'atrnrt7tmm', "color" : "orange" },
           { 'tile': 'azkbug6kyx', "color" : "red" },
