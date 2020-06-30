@@ -11,6 +11,9 @@ const state = {
   sections: [],
   tiles: [],
   labels: [],
+  sections1: [],
+  tiles1: [],
+  labels1: [],
   zoom: {
     k: null,
     x: null,

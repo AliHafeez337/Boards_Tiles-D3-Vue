@@ -92,3 +92,19 @@ export const filter = (svg) => {
   feMerge.append("feMergeNode")
       .attr("in", "SourceGraphic");
 }
+
+export const noOfLabels = parent => {
+  return new Promise(resolve => {
+    var number = 0
+    parent.selectAll('rect')._groups[0].forEach(rect => {
+      let tempRec = d3.select(rect)
+      let tempRecId = tempRec.attr('id')
+      let indexOf = tempRecId.indexOf('-')
+      let number = parseInt(tempRecId[indexOf + 1]);
+      if (number){
+        number++
+      }
+    })
+    resolve(number)
+  })
+}
