@@ -106,7 +106,7 @@
                   var thisLabel = parent
                                     .append('rect')
                                     .attr('class', d => 'label ' + ((x + 2) + (number * d.width)) + '-' + (y + 2))
-                                    .attr('id', d => d.id + '-' + number)
+                                    .attr('id', d => d.id + '-' + (number - 3))
 
                   // Number - 3 (3 represents that there are 3 rects before the labels)
                   thisLabel
@@ -346,7 +346,6 @@
             }
 
           })
-          // console.log(inTiles)
           
           d3.event.on("drag", dragged).on("end", ended);
 
@@ -522,6 +521,7 @@
 
           var rects = [], selection;
           rectsGroup._groups[0].forEach((rect, index) => {
+
             if (index > 0){
               selection = d3.select('#' + d.id + '-' + index.toString())
             } else {
@@ -539,12 +539,13 @@
             bigBrother = d3.select('#' + dd.id)
             x = (bigBrother.attr('x')).toString()
             y = (bigBrother.attr('y')).toString();
+            
             rects.forEach((rect, index) => {
 
               if (index > 0){
                 rect
                   .raise()
-                  .attr("x", (+x + +config.padding_on_labels) + ((index * (config.label_width + config.gap_between_labels)) + config.lebel_padding_from_left) - +config.label_width)
+                  .attr("x", (+x + +config.padding_on_labels) + (((index) * (config.label_width + config.gap_between_labels)) + config.lebel_padding_from_left) - +config.label_width)
                   .attr("y", (+y + +config.padding_on_labels));
               } else {
                 rect
@@ -845,6 +846,7 @@
                         sectionGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
                         tileGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
 
+
                         var oldZoom = null;
                         if (!this.justOnce){
                           oldZoom = this.$store.getters.getZoom;
@@ -859,6 +861,7 @@
                             zoom: oldZoom
                           })
                         } else {
+                          // console.log(d3.event.transform)
                           store.dispatch('changeZoom', { 
                             zoom: d3.event.transform
                           })
