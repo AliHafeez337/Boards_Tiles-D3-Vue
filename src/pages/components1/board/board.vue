@@ -6,7 +6,7 @@
       :sections="sections" 
       :tiles="tiles"
       :labels="labels"
-      :key="d3"
+      :key="d3
     />
   </div>
 </template>

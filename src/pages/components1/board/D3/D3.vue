@@ -32,6 +32,8 @@
     },
     methods: {
       renderD3() {
+        console.log("D3 Loading...")
+        
         var thisComponent = this
 
         const sectionMenuItems = [

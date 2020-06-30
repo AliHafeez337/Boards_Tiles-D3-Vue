@@ -18,6 +18,12 @@ const state = {
     k: null,
     x: null,
     y: null
+  },
+  search: {
+    word: '',
+    k: null,
+    x: null,
+    y: null
   }
 }
 

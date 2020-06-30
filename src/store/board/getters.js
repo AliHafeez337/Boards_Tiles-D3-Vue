@@ -1,3 +1,4 @@
+export const getSearch = state => state.search;
 export const getSections = state => state.sections;
 export const getTiles = state => state.tiles;
 export const getLabels = state => state.labels;

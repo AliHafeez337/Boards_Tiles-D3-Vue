@@ -23,6 +23,15 @@
       </el-popover>
     </template>
     <template slot="navbar-menu">
+      <input type="text" v-model="search"/>
+      <!-- <div class="col-sm-6 col-lg-3"> -->
+        <!-- <fg-input
+          addon-right-icon="now-ui-icons users_single-02"
+          placeholder="Right Nucleo Icon"
+        >
+        </fg-input> -->
+        <!-- <fg-input placeholder="Regular"></fg-input> -->
+      <!-- </div> -->
       <drop-down
               tag="li"
               title="Examples"
@@ -143,6 +152,16 @@ export default {
   props: {
     transparent: Boolean,
     colorOnScroll: Number
+  },
+  data() {
+    return {
+      search: ''
+    }
+  },
+  watch: {
+    search: function (val) {
+      this.$store.dispatch('setSearch', val)
+    }
   },
   components: {
     DropDown,

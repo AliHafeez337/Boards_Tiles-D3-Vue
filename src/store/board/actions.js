@@ -1,3 +1,20 @@
+export const setSearch = ({ commit, getters }, data) => {
+  var search = {}
+  getters.getTiles1.forEach(tile => {
+    if (tile.name === data){
+      search = {
+        word: tile.name,
+        k: 20,
+        x: tile.x - 10,
+        y: tile.y - 10
+      }
+    }
+  })
+  setTimeout(() => {
+    commit('SET_SEARCH', search)
+  }, 1000)
+};
+
 // Actaully we don't need copyBoard (to copy from the duplicate data to the original data)
 // why ?, see in pushSection and pushTile, we are already coppying, sort of...
 export const copyBoard = ({ commit, getters }) => {
