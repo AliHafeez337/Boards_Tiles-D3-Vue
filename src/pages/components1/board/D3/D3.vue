@@ -7,8 +7,15 @@
 <script>
   import * as d3 from "d3";
   import { event as d3Event, select, selectAll } from "d3-selection";
-  import { createContextMenu, filter } from './externalD3';
   import { config } from '../../../../CONFIG';
+  import { 
+    createContextMenu, 
+    filter,
+    distance,
+    getColor,
+    mouseover,
+    mousemove,
+    mouseleave } from './externalD3';
 
   export default {
     props: ['sections', 'tiles', 'labels'],
@@ -228,29 +235,6 @@
             }
           },
         ]
-        
-        var distance = function (p1, p2) {
-          return Math.pow(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2), 0.5);
-        };
-
-        var getColor = function () {
-          return new Promise(resolve => {
-            // IMPORTANT: Remove the old input color element with old event listeneres and place a new one with no event listener
-            // coppied from: https://stackoverflow.com/questions/9251837/how-to-remove-all-listeners-in-an-element
-            var old_element = document.querySelector('#color');
-            var new_element = old_element.cloneNode(true);
-            old_element.parentNode.replaceChild(new_element, old_element);
-
-            // Now select the new element
-            var colorInput = document.querySelector('#color');
-            // Click the new element
-            colorInput.click();
-            // Add event listener, whenever user clicks 'ok', this function fires
-            colorInput.addEventListener('input', () => {
-              resolve(colorInput.value);
-            })
-          });
-        }
 
         var changeColor = (selection, color) => {
           const id = selection.attr('id'), type = selection.attr('class').split(" ")[0];
@@ -605,6 +589,11 @@
                           .attr('class', d => 'g gTile ' + d.x.toString() + '-' + d.y.toString())
                           .attr('id', d => d.id + '-p');
 
+        var tooltip = svgContainer
+          .append("text")
+          .style("opacity", 0)
+          .attr("class", "tooltip");
+            
         var tile = tileGroup
                     .append('rect')
                     .attr('class', d => 'tile ' + d.x.toString() + '-' + d.y.toString())
@@ -633,7 +622,10 @@
               .on("start", function started(d) {
                 tileDrag(d)
               })
-          );
+          )
+          .on("mouseover", mouseover)
+          .on("mousemove", mousemove)
+          .on("mouseleave", mouseleave);
 
         var tileWarning = tileGroup
                             .append('rect')
@@ -685,7 +677,10 @@
               .on("start", function started(d) {
                 tileDrag(d)
               })
-          );
+          )
+          .on("mouseover", mouseover)
+          .on("mousemove", mousemove)
+          .on("mouseleave", mouseleave);
 
         var tileBackLeft = tileGroup
                             .append('rect')
@@ -717,7 +712,10 @@
               .on("start", function started(d) {
                 tileDrag(d)
               })
-          );
+          )
+          .on("mouseover", mouseover)
+          .on("mousemove", mousemove)
+          .on("mouseleave", mouseleave);
 
         var tileBackRight = tileGroup
                               .append('rect')
@@ -749,7 +747,10 @@
               .on("start", function started(d) {
                 tileDrag(d)
               })
-          );
+          )
+          .on("mouseover", mouseover)
+          .on("mousemove", mousemove)
+          .on("mouseleave", mouseleave);
 
         var tileText = tileGroup
                     .append('text')
@@ -774,7 +775,10 @@
               .on("start", function started(d) {
                 tileDrag(d)
               })
-          );
+          )
+          .on("mouseover", mouseover)
+          .on("mousemove", mousemove)
+          .on("mouseleave", mouseleave);
 
         var a = [], b = []
 
