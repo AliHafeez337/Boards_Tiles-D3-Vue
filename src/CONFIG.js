@@ -125,4 +125,12 @@ export const config = {
   back_right_rounded_edges_x: 2,
   back_right_rounded_edges_y: 2,
 
+  // ToolTip
+  mouse_over_opacity: 1,
+  text_x_appart_on_mouse_move: 50,
+  text_y_appart_on_mouse_move: 0,
+  text_font: 'sans-serif',
+  text_size: '15',
+  text_color: 'Black',
+  mouse_leave_opacity: 0,
 }

@@ -142,7 +142,10 @@ export const mousemove = function(d) {
   let date = d.event_due * 1000, name = d.event_name;
 
   d3.select('.tooltip')
-    .attr("x", (coords[0] + config.text_x_appart_on_mouse_move) + "px")
+    .attr("x", () => {
+      // console.log(coords[0], config.text_x_appart_on_mouse_move)
+      return coords[0] + config.text_x_appart_on_mouse_move + "px"
+    })
     .attr("y", (coords[1] + config.text_y_appart_on_mouse_move) + "px")
     .text(() => {
       if (date){
