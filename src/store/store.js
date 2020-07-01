@@ -9,7 +9,10 @@ import board from './board/board';
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
-  state: {},
+  state: {
+    modalTile: false,
+    modalSection: false
+  },
   mutations,
   actions,
   getters,

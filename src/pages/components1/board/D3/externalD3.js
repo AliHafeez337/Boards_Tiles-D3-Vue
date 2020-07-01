@@ -108,3 +108,61 @@ export const noOfLabels = parent => {
     resolve(number)
   })
 }
+
+export const distance = function (p1, p2) {
+  return Math.pow(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2), 0.5);
+}
+
+export const getColor = function () {
+  return new Promise(resolve => {
+    // IMPORTANT: Remove the old input color element with old event listeneres and place a new one with no event listener
+    // coppied from: https://stackoverflow.com/questions/9251837/how-to-remove-all-listeners-in-an-element
+    var old_element = document.querySelector('#color');
+    var new_element = old_element.cloneNode(true);
+    old_element.parentNode.replaceChild(new_element, old_element);
+
+    // Now select the new element
+    var colorInput = document.querySelector('#color');
+    // Click the new element
+    colorInput.click();
+    // Add event listener, whenever user clicks 'ok', this function fires
+    colorInput.addEventListener('input', () => {
+      resolve(colorInput.value);
+    })
+  });
+}
+
+export const mouseover = function(d) {
+  d3.select('.tooltip')
+    .style("opacity", config.mouse_over_opacity)
+}
+
+export const mousemove = function(d) {
+  let coords = d3.mouse(this);
+  let date = d.event_due * 1000, name = d.event_name;
+
+  d3.select('.tooltip')
+    .attr("x", () => {
+      // console.log(coords[0], config.text_x_appart_on_mouse_move)
+      return coords[0] + config.text_x_appart_on_mouse_move + "px"
+    })
+    .attr("y", (coords[1] + config.text_y_appart_on_mouse_move) + "px")
+    .text(() => {
+      if (date){
+        var d = new Date(date)
+        return name + ' ( ' + d.getDate() + ' / ' + d.getMonth() + ' / ' + d.getFullYear() + ' ) '
+      } else {
+        return name
+      }
+    })
+    .attr("font-family", config.text_font)
+    .attr("font-size", config.text_size + 'px')
+    .attr("fill", config.text_color)
+}
+
+export const mouseleave = function(d) {
+  d3.select('.tooltip')
+    // .transition()
+    // .duration(200)
+    .style("opacity", config.mouse_leave_opacity)
+}
