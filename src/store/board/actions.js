@@ -67,6 +67,7 @@ export const pushSection = ({ commit, getters }, section) => {
 };
 
 export const pushTile = ({ commit, getters }, tile) => {
+  console.log(tile, getters.getTiles, getters.getTiles1)
   var tiles = [...getters.getTiles1]
   setTimeout(() => {
     tiles.push(tile)

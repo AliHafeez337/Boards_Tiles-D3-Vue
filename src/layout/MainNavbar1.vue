@@ -23,20 +23,17 @@
       </el-popover>
     </template>
     <template slot="navbar-menu">
-      <input type="text" v-model="search"/>
-      <!-- <div class="col-sm-6 col-lg-3"> -->
-        <!-- <fg-input
-          addon-right-icon="now-ui-icons users_single-02"
-          placeholder="Right Nucleo Icon"
-        >
-        </fg-input> -->
-        <!-- <fg-input placeholder="Regular"></fg-input> -->
-      <!-- </div> -->
+        <!-- addon-right-icon="now-ui-icons users_single-02" -->
+      <fginput
+        placeholder="Search the tile"
+        v-model="search"
+      >
+      </fginput>
       <drop-down
-              tag="li"
-              title="Examples"
-              icon="now-ui-icons design_image"
-              class="nav-item"
+        tag="li"
+        title="Examples"
+        icon="now-ui-icons design_image"
+        class="nav-item"
       >
         <nav-link to="/landing">
           <i class="now-ui-icons education_paper"></i> Landing
@@ -144,6 +141,7 @@
 <script>
 import { DropDown, NavbarToggleButton, Navbar, NavLink } from '@/components';
 import { Popover } from 'element-ui';
+import fginput from '../components/Inputs/formGroupInput-duplicate';
 
 import { config } from '../CONFIG';
 
@@ -155,7 +153,10 @@ export default {
   },
   data() {
     return {
-      search: ''
+      search: '',
+      pickers: {
+        datePicker: ''
+      }
     }
   },
   watch: {
@@ -169,7 +170,8 @@ export default {
     Navbar,
     NavbarToggleButton,
     NavLink,
-    [Popover.name]: Popover
+    [Popover.name]: Popover,
+    fginput
   },
   methods: {
     scrollToElement(board) {
@@ -205,26 +207,28 @@ export default {
       return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 1) + Math.random().toString(36).substr(2, 9);
     },
     pushSection() {
-      var section = { 
-        'id': this.ID(),
-        'name': '3EFG',
-        'x': config.new_section_x_axis, 
-        'y': config.new_section_y_axis, 
-        'width': config.section_width, 
-        'height': config.section_height,
-        'color': config.new_section_color
-      }
-      this.$store.dispatch('pushSection', section)
+      // var section = { 
+      //   'id': this.ID(),
+      //   'name': '3EFG',
+      //   'x': config.new_section_x_axis, 
+      //   'y': config.new_section_y_axis, 
+      //   'width': config.section_width, 
+      //   'height': config.section_height,
+      //   'color': config.new_section_color
+      // }
+      // this.$store.dispatch('pushSection', section)
+      this.$store.dispatch('setModalSection', true)
     },
     pushTile() {
-      var tile = { 
-        'id': this.ID(), 
-        'name': '2BCD',
-        'x': config.new_tile_x_axis, 
-        'y': config.new_tile_y_axis, 
-        'color' : config.new_tile_color
-      }
-      this.$store.dispatch('pushTile', tile)
+      // var tile = { 
+      //   'id': this.ID(), 
+      //   'name': '2BCD',
+      //   'x': config.new_tile_x_axis, 
+      //   'y': config.new_tile_y_axis, 
+      //   'color' : config.new_tile_color
+      // }
+      // this.$store.dispatch('pushTile', tile)
+      this.$store.dispatch('setModalTile', true)
     }
   }
 };
