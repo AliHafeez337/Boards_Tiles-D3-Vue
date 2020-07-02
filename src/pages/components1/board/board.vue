@@ -1,6 +1,16 @@
 
 <template>
   <div id="board">
+    <!-- Navbar Warning -->
+    <!-- style="position: static;" -->
+    <navbar type="warning" menu-classes="ml-auto" v-if="ifBoard">
+      <div class="navbar-translate">
+        <span style="color: white; text-align: center;">
+          Please select a board first...
+        </span>
+      </div>
+    </navbar>
+    <!-- End Navbar Warning -->
     <!-- Modal Tile -->
     <modal :show="modalTile" headerClasses="justify-content-center">
       <h4 slot="header" class="title title-up">Tile basic info</h4>
@@ -68,6 +78,7 @@
   import fginput from '../../../components/Inputs/formGroupInput-duplicate';;
   import { DatePicker } from 'element-ui';
   import { config } from '../../../CONFIG';
+  import { Navbar, DropDown } from '@/components';
 
   export default {
     components: {
@@ -76,6 +87,8 @@
       nbutton,
       fginput,
       [DatePicker.name]: DatePicker,
+      Navbar,
+      DropDown
     },
     data() {
       return {
@@ -91,6 +104,13 @@
       }
     },
     computed: {
+      ifBoard() {
+       if (this.$store.getters.getBoard){
+         return false
+       } else {
+         return true
+       }
+      },
       modalTile() {
         return this.$store.getters.getModalTile;
       },
