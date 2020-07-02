@@ -30,6 +30,10 @@ export const copyBoard = ({ commit, getters }) => {
   commit('SET_LABELS', getters.getLabels1)
 };
 
+export const setBoard = ({ commit }, name) => {
+  commit('SET_BOARD', name)
+};
+
 export const setSections = ({ commit }, sections) => {
   // get from the database
   setTimeout(() => {

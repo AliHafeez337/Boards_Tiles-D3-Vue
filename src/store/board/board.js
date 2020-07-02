@@ -8,6 +8,7 @@ import * as getters from './getters';
 Vue.use(Vuex);
 
 const state = {
+  board: '',
   sections: [],
   tiles: [],
   labels: [],

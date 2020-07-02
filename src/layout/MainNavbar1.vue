@@ -25,6 +25,7 @@
     <template slot="navbar-menu">
         <!-- addon-right-icon="now-ui-icons users_single-02" -->
       <fginput
+        v-if="ifBoard"
         placeholder="Search the tile"
         v-model="search"
       >
@@ -56,13 +57,14 @@
         </nav-link> -->
         <a
           href="javascript:void(0)"
-          @click="scrollToElement('board1')"
+          @click="getBoard('board1')"
           class="dropdown-item"
         >
           Board 1
         </a>
       </drop-down>
       <drop-down
+        v-if="ifBoard"
         tag="li"
         title="New"
         icon="now-ui-icons ui-1_simple-add"
@@ -87,7 +89,7 @@
         <a
           class="nav-link btn btn-neutral"
           href="javascript:void(0)"
-          @click="scrollToElement('board1')"
+          @click="getBoard('board1')"
         >
           <i class="now-ui-icons ui-1_check"></i>
           &nbsp;
@@ -147,6 +149,14 @@ import { config } from '../CONFIG';
 
 export default {
   name: 'main-navbar',
+  components: {
+    DropDown,
+    Navbar,
+    NavbarToggleButton,
+    NavLink,
+    [Popover.name]: Popover,
+    fginput
+  },
   props: {
     transparent: Boolean,
     colorOnScroll: Number
@@ -165,23 +175,24 @@ export default {
       this.$store.dispatch('setSearch', val)
     }
   },
-  components: {
-    DropDown,
-    Navbar,
-    NavbarToggleButton,
-    NavLink,
-    [Popover.name]: Popover,
-    fginput
+  computed: {
+    ifBoard() {
+      if (this.$store.getters.getBoard){
+        return true
+      } else {
+        return false
+      }
+    }
   },
   methods: {
-    scrollToElement(board) {
-      this.getBoard(board);
+    scrollToElement() {
       let element_id = document.getElementById("downloadSection");
       if (element_id) {
         element_id.scrollIntoView({ block: "end", behavior: "smooth" });
       }
     },
     getBoard(board) {
+      this.scrollToElement();
       if (board === 'board1'){
         var sections =  [
           { 'id': 'aqxn9u0yv3', 'name': '0ABC', 'width': config.section_width, 'height': config.section_height, "x": 20, 'y': 20, 'color': config.new_section_color },
@@ -198,37 +209,23 @@ export default {
           { 'tile': 'ak693b4ofl', "color" : "green" },
           { 'tile': 'atrnrt7tmm', "color" : "red" }
         ]
+        this.$store.dispatch('setBoard', board)
         this.$store.dispatch('setSections', sections)
         this.$store.dispatch('setTiles', tiles)
         this.$store.dispatch('setLabels', labels)
       }
     },
-    ID() {
-      return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 1) + Math.random().toString(36).substr(2, 9);
-    },
     pushSection() {
-      // var section = { 
-      //   'id': this.ID(),
-      //   'name': '3EFG',
-      //   'x': config.new_section_x_axis, 
-      //   'y': config.new_section_y_axis, 
-      //   'width': config.section_width, 
-      //   'height': config.section_height,
-      //   'color': config.new_section_color
-      // }
-      // this.$store.dispatch('pushSection', section)
-      this.$store.dispatch('setModalSection', true)
+      this.scrollToElement();
+      if (this.$store.getters.getBoard){
+        this.$store.dispatch('setModalSection', true)
+      }
     },
     pushTile() {
-      // var tile = { 
-      //   'id': this.ID(), 
-      //   'name': '2BCD',
-      //   'x': config.new_tile_x_axis, 
-      //   'y': config.new_tile_y_axis, 
-      //   'color' : config.new_tile_color
-      // }
-      // this.$store.dispatch('pushTile', tile)
-      this.$store.dispatch('setModalTile', true)
+      this.scrollToElement();
+      if (this.$store.getters.getBoard){
+        this.$store.dispatch('setModalTile', true)
+      }
     }
   }
 };
