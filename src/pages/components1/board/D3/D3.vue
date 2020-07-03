@@ -275,12 +275,14 @@
               console.log('Remove back loaded clicked');
               
               d3.select('#' + d.id + '-bl').style('opacity', 0);
+              d.backLTitle = ''
 
               store.dispatch('changeTile', { 
                 id: d.id,
                 x: d.x,
                 y: d.y,
                 backLeft: false,
+                backLTitle: '',
                 backRight: d.backRight,
               })
             }
@@ -294,6 +296,7 @@
               console.log('Remove back loaded clicked');
               
               d3.select('#' + d.id + '-br').style('opacity', 0);
+              d.backRTitle = ''
               
               store.dispatch('changeTile', { 
                 id: d.id,
@@ -301,6 +304,7 @@
                 y: d.y,
                 backLeft: d.backLeft,
                 backRight: false,
+                backRTitle: ''
               })
             }
           },
