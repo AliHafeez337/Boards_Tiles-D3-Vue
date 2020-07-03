@@ -404,10 +404,10 @@
               c4x = +tileX, c4y =  +tileY + +tileH;
 
             if (
-              (c1x > x && c1x < (x + w) && c1y > y && c1y < (y + h)) ||
-              (c2x > x && c2x < (x + w) && c2y > y && c2y < (y + h)) ||
-              (c3x > x && c3x < (x + w) && c3y > y && c3y < (y + h)) ||
-              (c4x > x && c4x < (x + w) && c4y > y && c4y < (y + h))
+              (c1x > x && c1x < (+x + +w) && c1y > y && c1y < (+y + +h)) ||
+              (c2x > x && c2x < (+x + +w) && c2y > y && c2y < (+y + +h)) ||
+              (c3x > x && c3x < (+x + +w) && c3y > y && c3y < (+y + +h)) ||
+              (c4x > x && c4x < (+x + +w) && c4y > y && c4y < (+y + +h))
             ){
               console.log(`Some point of ${id} is inside the section`);
               tile.style("opacity", 0.2)

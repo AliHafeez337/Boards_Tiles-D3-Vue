@@ -21,7 +21,7 @@ export const config = {
   new_tile_color: '#5c9aff',
   
   // New section dimensions
-  section_width: 180,
+  section_width: 200,
   section_height: 200,
 
   section_opacity: 0.5, // not in pixels, ranges from 0 to 1
