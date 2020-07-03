@@ -1,6 +1,15 @@
 
 <template>
-  <div id="d3">
+  <div>    
+    <!-- <backLLeft 
+      v-if="this.BackLoadedL"
+      @acceptLeft="BackLeftAccepted"
+      @closeLeft="BackLeftRejected"
+      :key="bLL"
+    /> -->
+    <!-- <BackRight /> -->
+    <div id="d3">
+    </div>
   </div>
 </template>
  
@@ -15,12 +24,26 @@
     getColor,
     mouseover,
     mousemove,
+    mousemoveBackLeft,
+    mousemoveBackRight,
     mouseleave } from './externalD3';
-
+  import backLLeft from './BackLoaded/BackLeft';
+  import backLRight from './BackLoaded/BackRight';
+  
   export default {
+    components: {
+      backLLeft,
+      backLRight
+    },
     props: ['sections', 'tiles', 'labels', 'search'],
     data() {
       return {
+        // bLL: 0,
+        // BackLoadedL: false,
+        // BackLSelection: null,
+        // BackLoadedR: false,
+        // BackRSelection: null,
+        // back_title: '',
         height: window.innerWidth,
         width: window.innerWidth,
         justOnce: false,
@@ -30,7 +53,33 @@
       d3.select("svg").remove();
       this.renderD3();
     },
+    watch: {
+      // BackLoadedL: function () {
+      //   console.log('load BackL')
+      //   this.bLL += 1
+      // },
+    },
     methods: {
+      // isDisabled: function() {
+      //   if (this.back_title){
+      //     return false
+      //   } else {
+      //     return true
+      //   }
+      // },
+      // BackLeftAccepted: function() {
+      //   console.log(this.back_title)
+      // },
+      // BackLeftRejected: function() {
+      //   console.log('rejected')
+      //   this.BackLoadedL = false
+      // },
+      // BackRightAccepted: function() {
+      //   console.log(this.back_title)
+      // },
+      // BackRightRejected: function() {
+      //   this.BackLoadeR = false
+      // },
       renderD3() {
         console.log("D3 Loading...")
         
@@ -71,13 +120,28 @@
               
               d3.select('#' + d.id + '-bl').style('opacity', 1);
               
-              store.dispatch('changeTile', { 
-                id: d.id,
-                x: d.x,
-                y: d.y,
-                backLeft: true,
-                backRight: d.backRight
-              })
+              // this.BackLoadedL = true
+              var back_title = prompt("Please enter the left BackLoaded title.");
+              if (back_title) {
+                d.backLTitle = back_title
+                
+                store.dispatch('changeTile', { 
+                  id: d.id,
+                  x: d.x,
+                  y: d.y,
+                  backLeft: true,
+                  back_title: back_title,
+                  backRight: d.backRight
+                })
+              } else {
+                store.dispatch('changeTile', { 
+                  id: d.id,
+                  x: d.x,
+                  y: d.y,
+                  backLeft: true,
+                  backRight: d.backRight
+                })
+              }
             }
           },
           {
@@ -87,13 +151,28 @@
               
               d3.select('#' + d.id + '-br').style('opacity', 1);
 
-              store.dispatch('changeTile', { 
-                id: d.id,
-                x: d.x,
-                y: d.y,
-                backLeft: d.backLeft,
-                backRight: true,
-              })
+              // this.BackLoadedR = true
+              var back_title = prompt("Please enter the right BackLoaded title.");
+              if (back_title) {
+                d.backRTitle = back_title
+
+                store.dispatch('changeTile', { 
+                  id: d.id,
+                  x: d.x,
+                  y: d.y,
+                  backLeft: d.backLeft,
+                  backRight: true,
+                  backRTitle: back_title
+                })
+              } else {
+                store.dispatch('changeTile', { 
+                  id: d.id,
+                  x: d.x,
+                  y: d.y,
+                  backLeft: d.backLeft,
+                  backRight: true
+                })
+              }
             }
           },
           {
@@ -587,11 +666,6 @@
           }
         }
 
-        var tooltip = svgContainer
-          .append("text")
-          .style("opacity", 0)
-          .attr("class", "tooltip");
-
         var tileGroup = svgContainer
                           .selectAll('.tile')
                           .data(this.tiles)
@@ -632,6 +706,11 @@
           .on("mouseover", mouseover)
           .on("mousemove", mousemove)
           .on("mouseleave", mouseleave);
+
+        var tooltip = svgContainer
+          .append("text")
+          .style("opacity", 0)
+          .attr("class", "tooltip");
 
         var tileWarning = tileGroup
                             .append('rect')
@@ -720,7 +799,7 @@
               })
           )
           .on("mouseover", mouseover)
-          .on("mousemove", mousemove)
+          .on("mousemove", mousemoveBackLeft)
           .on("mouseleave", mouseleave);
 
         var tileBackRight = tileGroup
@@ -755,7 +834,7 @@
               })
           )
           .on("mouseover", mouseover)
-          .on("mousemove", mousemove)
+          .on("mousemove", mousemoveBackRight)
           .on("mouseleave", mouseleave);
 
         var tileText = tileGroup

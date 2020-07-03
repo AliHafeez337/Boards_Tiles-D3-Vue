@@ -160,6 +160,30 @@ export const mousemove = function(d) {
     .attr("fill", config.text_color)
 }
 
+export const mousemoveBackLeft = function(d) {
+  let coords = d3.mouse(this);
+
+  d3.select('.tooltip')
+    .attr("x", coords[0] + config.text_x_appart_on_mouse_move + "px")
+    .attr("y", (coords[1] + config.text_y_appart_on_mouse_move) + "px")
+    .text(d.backLTitle)
+    .attr("font-family", config.text_font)
+    .attr("font-size", config.text_size + 'px')
+    .attr("fill", config.text_color)
+}
+
+export const mousemoveBackRight = function(d) {
+  let coords = d3.mouse(this);
+
+  d3.select('.tooltip')
+    .attr("x", coords[0] + config.text_x_appart_on_mouse_move + "px")
+    .attr("y", (coords[1] + config.text_y_appart_on_mouse_move) + "px")
+    .text(d.backRTitle)
+    .attr("font-family", config.text_font)
+    .attr("font-size", config.text_size + 'px')
+    .attr("fill", config.text_color)
+}
+
 export const mouseleave = function(d) {
   d3.select('.tooltip')
     // .transition()
