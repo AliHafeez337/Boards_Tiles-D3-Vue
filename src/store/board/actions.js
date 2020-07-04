@@ -213,3 +213,26 @@ export const changeZoom = ({ commit }, data) => {
     commit('SET_ZOOM', zoom)
   }, 1000)
 };
+
+export const arrangeTiles = ({ commit, getters }) => {
+  var tiles = [...getters.getTiles1]
+  var sections = [...getters.getSections1]
+
+  // See each tile, in what section does it lie
+  tiles.forEach(tile => {
+    console.log(tile)
+  })
+
+  // store each tile in array of each section
+
+  // loop through each array of section
+
+  // see which tile is first in the section, if the tile has any tile (trailer) in front of it
+
+  // arrange it
+
+  // setTimeout(() => {
+  //   commit('SET_TILES1', tiles)
+  // }, 1000)
+  // save into the database
+};

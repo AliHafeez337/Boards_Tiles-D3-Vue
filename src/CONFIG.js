@@ -21,7 +21,7 @@ export const config = {
   new_tile_color: '#5c9aff',
   
   // New section dimensions
-  section_width: 180,
+  section_width: 200,
   section_height: 200,
 
   section_opacity: 0.5, // not in pixels, ranges from 0 to 1
@@ -133,4 +133,12 @@ export const config = {
   text_size: '15',
   text_color: 'Black',
   mouse_leave_opacity: 0,
+
+  // Arrange
+  y_gap_between_tiles: 10,
+  x_gap_between_tiles: 10,
+  y_appart_from_section: 30,
+  x_appart_from_section: 10,
+  no_of_tiles_in_a_row: 2,
+
 }
