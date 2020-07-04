@@ -139,6 +139,6 @@ export const config = {
   x_gap_between_tiles: 10,
   y_appart_from_section: 30,
   x_appart_from_section: 10,
-  no_of_tiles_in_a_row: 3,
+  no_of_tiles_in_a_row: 2,
 
 }

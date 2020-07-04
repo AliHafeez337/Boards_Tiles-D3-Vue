@@ -424,13 +424,14 @@ export default {
       }
       console.log('rows ', rows)
       
-      var times = 0, times1 = 0
+      var times;
       for(let detailedSection in sectionDetails2){
+        times = 0;
         if (rows[detailedSection] === undefined){
           rows[detailedSection] = 0
         }
-        row = rows[detailedSection] +times1
-        console.log('rows', row)
+        row = rows[detailedSection]
+        console.log('rows', row, 'times', times)
         // console.log(sectionDetails2[detailedSection])
         for (let j = 0; j < sectionDetails2[detailedSection].length; j++){
           
@@ -449,14 +450,47 @@ export default {
           if (times === config.no_of_tiles_in_a_row){
             times = 0;
             rows[detailedSection]++
-            times1++
             row++
           }
         }
         rows[detailedSection]++
-        times1++
       }
       console.log('rows ', rows)
+      
+      var times;
+      for(let detailedSection in sectionDetails4){
+        times = 0;
+        if (rows[detailedSection] === undefined){
+          rows[detailedSection] = 0
+        }
+        row = rows[detailedSection]
+        console.log('rows', row)
+        // console.log(sectionDetails2[detailedSection])
+        for (let j = 0; j < sectionDetails4[detailedSection].length; j++){
+
+          console.log('subject', sectionDetails4[detailedSection][j])
+          if (row > 0){
+            sectionDetails4[detailedSection][j].y = +sections[detailedSection].y + config.y_appart_from_section + (+row * (+config.tile_height + +config.y_gap_between_tiles))
+            sectionDetails4[detailedSection][j].x = +sections[detailedSection].x + config.x_appart_from_section + (+times * (+config.tile_width + +config.x_gap_between_tiles))
+          } else {
+            sectionDetails4[detailedSection][j].y = +sections[detailedSection].y + +config.y_appart_from_section
+            sectionDetails4[detailedSection][j].x = +sections[detailedSection].x + config.x_appart_from_section + (+times * (+config.tile_width + +config.x_gap_between_tiles))
+          }
+          tiles1.push(sectionDetails4[detailedSection][j])
+          // console.log(sectionDetails2[detailedSection][j])
+          
+          times++
+          if (times === config.no_of_tiles_in_a_row){
+            times = 0;
+            rows[detailedSection]++
+            row++
+          }
+        }
+        rows[detailedSection]++
+      }
+
+
+
       console.log('Final result', tiles1)
       this.$store.dispatch('setTiles', tiles1)
       // setTimeout(() => console.log(this.$store.getters.getTiles), 1000)
