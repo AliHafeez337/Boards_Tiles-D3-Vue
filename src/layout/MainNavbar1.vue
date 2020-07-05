@@ -195,9 +195,9 @@ export default {
       this.scrollToElement();
       if (board === 'board1'){
         var sections =  [
-          { 'id': 'aqxn9u0yv3', 'name': '0ABC', 'width': config.section_width, 'height': config.section_height, "x": 20, 'y': 20, 'color': config.new_section_color },
-          { 'id': 'a0nyn15mj3', 'name': '1BCD', 'width': config.section_width, 'height': config.section_height, "x": 250, 'y': 20, 'color': config.new_section_color },
-          { 'id': 'ayquazchds', 'name': '2CDE', 'width': config.section_width, 'height': config.section_height, "x": 520, 'y': 20, 'color': config.new_section_color }
+          { 'id': 'aqxn9u0yv3', 'name': '0ABC', 'max_trucks': 1, 'max_trailers': 1, 'width': config.section_width, 'height': config.section_height, "x": 20, 'y': 20, 'color': config.new_section_color },
+          { 'id': 'a0nyn15mj3', 'name': '1BCD', 'max_trucks': 1, 'max_trailers': 2, 'width': config.section_width, 'height': config.section_height, "x": 250, 'y': 20, 'color': config.new_section_color },
+          { 'id': 'ayquazchds', 'name': '2CDE', 'max_trucks': 2, 'max_trailers': 1, 'width': config.section_width, 'height': config.section_height, "x": 520, 'y': 20, 'color': config.new_section_color }
         ], tiles = [
           { 'id': 'azkbug6kyx', 'name': 'A1PSL', "x": 30, 'y': 50, "color" : "brown", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593537002 }, // due in next 3 days
           { 'id': 'atrnrt7tmm', 'name': 'B02PSL', "x": 260, 'y': 50, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': true, 'backRTitle': 'ccc', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
@@ -241,8 +241,9 @@ export default {
       // See each tile, in what section does it lie
 
       tiles.forEach(tile => {
+        const forSection = 'a0nyn15mj3'
 
-        console.log(tile)
+        // console.log(tile)
         let tileX = tile.x, 
           tileY = tile.y,
           tileW = config.tile_width,
@@ -257,24 +258,27 @@ export default {
         // console.log(c1x, c1y, c2x, c2y, c3x, c3y, c4x, c4y)
 
         sections.forEach((section, index1) => {
-          x = +section.x, y = +section.y;
-          w = +section.width, h = +section.height;
-          // console.log(x, y, x + w, y + h)
-          
-          if (
-            (c1x > x && c1x < (+x + +w) && c1y > y && c1y < (+y + +h)) ||
-            (c2x > x && c2x < (+x + +w) && c2y > y && c2y < (+y + +h)) ||
-            (c3x > x && c3x < (+x + +w) && c3y > y && c3y < (+y + +h)) ||
-            (c4x > x && c4x < (+x + +w) && c4y > y && c4y < (+y + +h))
-          ){
-            console.log(`Some point of ${tile.name} is inside the ${section.name}`);
+          if (section.id === forSection){
 
-            // store each tile in array of each section
+            x = +section.x, y = +section.y;
+            w = +section.width, h = +section.height;
+            // console.log(x, y, x + w, y + h)
+            
+            if (
+              (c1x > x && c1x < (+x + +w) && c1y > y && c1y < (+y + +h)) ||
+              (c2x > x && c2x < (+x + +w) && c2y > y && c2y < (+y + +h)) ||
+              (c3x > x && c3x < (+x + +w) && c3y > y && c3y < (+y + +h)) ||
+              (c4x > x && c4x < (+x + +w) && c4y > y && c4y < (+y + +h))
+            ){
+              console.log(`Some point of ${tile.name} is inside the ${section.name}`);
 
-            if (sectionDetails[index1] === undefined){
-              sectionDetails[index1] = [tile]
-            } else {
-              sectionDetails[index1].push(tile)
+              // store each tile in array of each section
+
+              if (sectionDetails[index1] === undefined){
+                sectionDetails[index1] = [tile]
+              } else {
+                sectionDetails[index1].push(tile)
+              }
             }
           }
         })
@@ -386,6 +390,7 @@ export default {
 
       // arrange it
 
+      // trucks and trailers both
       var tiles1 = [], rows = {}, row;
       for(let detailedSection in sectionDetails1){
         row = 0;
@@ -424,6 +429,9 @@ export default {
       }
       console.log('rows ', rows)
       
+      // IMPORTANT: The gap you'll see sometimes between the lonely trucks and the lonely trailer in a section is because when it is time to move to the next row and also the next loop isn't going to run so it will just update the row and the next line (row) would be empty...
+
+      // trucks only
       var times;
       for(let detailedSection in sectionDetails2){
         times = 0;
@@ -447,7 +455,7 @@ export default {
           // console.log(sectionDetails2[detailedSection][j])
           
           times++
-          if (times === config.no_of_tiles_in_a_row){
+          if (times === sections[detailedSection].max_trucks){
             times = 0;
             rows[detailedSection]++
             row++
@@ -457,6 +465,9 @@ export default {
       }
       console.log('rows ', rows)
       
+      // IMPORTANT: The gap you'll see sometimes between the lonely trucks and the lonely trailer in a section is because when it is time to move to the next row and also the next loop isn't going to run so it will just update the row and the next line (row) would be empty...
+
+      // trailers only
       var times;
       for(let detailedSection in sectionDetails4){
         times = 0;
@@ -480,7 +491,7 @@ export default {
           // console.log(sectionDetails2[detailedSection][j])
           
           times++
-          if (times === config.no_of_tiles_in_a_row){
+          if (times === sections[detailedSection].max_trailers){
             times = 0;
             rows[detailedSection]++
             row++
@@ -489,7 +500,18 @@ export default {
         rows[detailedSection]++
       }
 
+      // Push extra tiles (tiles which are out of concern and we don't want to arrange them) into the tiles array without changing
 
+      tiles.forEach(tile => {
+
+        // Remember there would be just 1 element inside the sectionDetails because we are arranging just 1 section
+
+        for(let detailedSection in sectionDetails){
+          if (!sectionDetails[detailedSection].includes(tile)){
+            tiles1.push(tile)
+          }
+        }
+      })
 
       console.log('Final result', tiles1)
       this.$store.dispatch('setTiles', tiles1)
