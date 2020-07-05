@@ -50,6 +50,14 @@
           placeholder="Section Name"
           v-model="section.name"
         />
+        <fginput
+          placeholder="Max lonely trucks in a row"
+          v-model="section.max_trucks"
+        />
+        <fginput
+          placeholder="Max lonely trailers in a row"
+          v-model="section.max_trailers"
+        />
       </div>
       <template slot="footer">
         <nbutton type="success" @click="AddSection()" :disabled="isDisabled1()"
@@ -99,7 +107,9 @@
           event_due: ''
         },
         section: {
-          name: ''
+          name: '',
+          max_trucks: 2,
+          max_trailers: 2
         }
       }
     },
@@ -198,11 +208,15 @@
           'y': config.new_section_y_axis, 
           'width': config.section_width, 
           'height': config.section_height,
-          'color': config.new_section_color
+          'color': config.new_section_color,
+          'max_trucks': +this.section.max_trucks,
+          'max_trailers': +this.section.max_trailers
         })
         this.$store.dispatch('setModalSection', false)
         this.section = {
-          name: ''
+          name: '',
+          max_trucks: 2,
+          max_trailers: 2
         }
       },
       closeButton: function(){
