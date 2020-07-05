@@ -1,13 +1,6 @@
 
 <template>
-  <div>    
-    <!-- <backLLeft 
-      v-if="this.BackLoadedL"
-      @acceptLeft="BackLeftAccepted"
-      @closeLeft="BackLeftRejected"
-      :key="bLL"
-    /> -->
-    <!-- <BackRight /> -->
+  <div>
     <div id="d3">
     </div>
   </div>
@@ -38,12 +31,6 @@
     props: ['sections', 'tiles', 'labels', 'search'],
     data() {
       return {
-        // bLL: 0,
-        // BackLoadedL: false,
-        // BackLSelection: null,
-        // BackLoadedR: false,
-        // BackRSelection: null,
-        // back_title: '',
         height: window.innerWidth,
         width: window.innerWidth,
         justOnce: false,
@@ -53,39 +40,32 @@
       d3.select("svg").remove();
       this.renderD3();
     },
-    watch: {
-      // BackLoadedL: function () {
-      //   console.log('load BackL')
-      //   this.bLL += 1
-      // },
-    },
     methods: {
-      // isDisabled: function() {
-      //   if (this.back_title){
-      //     return false
-      //   } else {
-      //     return true
-      //   }
-      // },
-      // BackLeftAccepted: function() {
-      //   console.log(this.back_title)
-      // },
-      // BackLeftRejected: function() {
-      //   console.log('rejected')
-      //   this.BackLoadedL = false
-      // },
-      // BackRightAccepted: function() {
-      //   console.log(this.back_title)
-      // },
-      // BackRightRejected: function() {
-      //   this.BackLoadeR = false
-      // },
       renderD3() {
         console.log("D3 Loading...")
         
         var thisComponent = this
 
         const sectionMenuItems = [
+          {
+            title: 'Arrange tiles',
+            action: (d, _this) => {
+              console.log('Section tiles arranging clicked');
+              
+              var rect = d3.select('#' + d.id);
+              this.$store.dispatch('arrangeTiles', rect.attr('id'))
+            }
+          },
+          {
+            title: 'Sort tiles',
+            action: (d, _this) => {
+              console.log('Section tiles sorting clicked');
+              
+              var rect = d3.select('#' + d.id);
+
+              this.$store.dispatch('sortTiles', rect.attr('id'))
+            }
+          },
           {
             title: 'Change color',
             action: (d, _this) => {
