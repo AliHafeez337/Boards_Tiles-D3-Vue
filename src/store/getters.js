@@ -4,6 +4,9 @@ const getters = {
   },
   getModalSection: function(state) {
     return state.modalSection;
+  },
+  getModalBoard: function(state) {
+    return state.modalBoard;
   }
 }
 

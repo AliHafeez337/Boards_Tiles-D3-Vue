@@ -933,7 +933,9 @@
 
         var a = [], b = []
 
+        console.log(this.labels)
         this.labels.forEach((label, index) => {
+
           var number = 1, c = a.indexOf(label.tile)
           if (c > -1){
             number = b[c] + 1
@@ -1025,10 +1027,12 @@
                         }
 
                         if (this.search){
-                          sectionGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
-                          tileGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
-                          tooltip.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
-                          contextGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                          if (this.zoomChanged === 1){
+                            sectionGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                            tileGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                            tooltip.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                            contextGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                          }
                         
                         } else if (oldZoom && oldZoom.x && oldZoom.y && oldZoom.k){
                           sectionGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");

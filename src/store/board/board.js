@@ -9,6 +9,7 @@ Vue.use(Vuex);
 
 const state = {
   board: '',
+  boards: ['board1'],
   sections: [],
   tiles: [],
   labels: [],
