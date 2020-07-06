@@ -51,7 +51,7 @@ export const menuFactory = (x, y, menuItems, data, svgId, _this) => {
 }
 
 export const createContextMenu = (d, x, y, menuItems, svgId, _this = null) => {
-  menuFactory(x, y, menuItems, d, svgId, _this);
+  menuFactory(x * config.default_zoom_level, y * config.default_zoom_level, menuItems, d, svgId, _this);
   d3.event.preventDefault();
 }
 

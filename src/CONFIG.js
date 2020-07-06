@@ -4,6 +4,12 @@
 // Colors can be written as STRING or HEX value
 
 export const config = {
+
+  // ZOOM
+  max_zoom_out: 0.3,
+  max_zoom_in: 32,
+  default_zoom_level: 0.5,
+
   // all values are in pixels except those whose details are written on their front
 
   // Place on the board where you want the new section to appear

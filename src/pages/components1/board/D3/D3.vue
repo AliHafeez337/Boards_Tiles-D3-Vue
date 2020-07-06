@@ -31,6 +31,7 @@
     props: ['sections', 'tiles', 'labels', 'search'],
     data() {
       return {
+        zoomChanged: 0,
         height: window.innerWidth,
         width: window.innerWidth,
         justOnce: false,
@@ -81,13 +82,15 @@
             action: (d, _this) => {
               console.log('Section X clicked');
 
-              var rect = d3.select('#' + d.id);
-              var text = d3.select('#' + d.id + '-t');
-              
-              rect.remove();
-              text.remove();
+              if (confirm("Do you really want to delete this section?")) {
+                var rect = d3.select('#' + d.id);
+                var text = d3.select('#' + d.id + '-t');
+                
+                rect.remove();
+                text.remove();
 
-              this.$store.dispatch('removeSection', d.id)
+                this.$store.dispatch('removeSection', d.id)
+              }
             }
           }
         ];
@@ -222,28 +225,30 @@
             action: (d, _this) => {
               console.log('Tile X clicked');
 
-              var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
-              var text = d3.select('#' + d.id + '-t');
-              var backLeft = d3.select('#' + d.id + '-bl');
-              var backRight = d3.select('#' + d.id + '-br');
-              var warning = d3.select('#' + d.id + '-w');
+              if (confirm("Do you really want to delete this tile?")) {
+                var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
+                var text = d3.select('#' + d.id + '-t');
+                var backLeft = d3.select('#' + d.id + '-bl');
+                var backRight = d3.select('#' + d.id + '-br');
+                var warning = d3.select('#' + d.id + '-w');
 
-              text.remove();
-              backLeft.remove();
-              backRight.remove();
-              warning.remove();
+                text.remove();
+                backLeft.remove();
+                backRight.remove();
+                warning.remove();
 
-              var selection;
-              rectsGroup._groups[0].forEach((rect, index) => {
-                if (index > 0){
-                  selection = d3.select('#' + d.id + '-' + index.toString())
-                } else {
-                  selection = d3.select('#' + d.id)
-                }
-                selection.remove()
-              })
+                var selection;
+                rectsGroup._groups[0].forEach((rect, index) => {
+                  if (index > 0){
+                    selection = d3.select('#' + d.id + '-' + index.toString())
+                  } else {
+                    selection = d3.select('#' + d.id)
+                  }
+                  selection.remove()
+                })
 
-              this.$store.dispatch('removeTile', d.id)
+                this.$store.dispatch('removeTile', d.id)
+              }
             }
           }
         ];
@@ -910,9 +915,15 @@
 
         const zoom = d3
                       .zoom()
-                      .scaleExtent([0.3, 32])
+                      .scaleExtent([config.max_zoom_out, config.max_zoom_in])
                       .on("zoom", () => {
                         const transform = d3.event.transform;
+                        this.zoomChanged++
+                        // console.log(this.zoomChanged, transform.k)
+                        if (this.zoomChanged === 1){
+                          transform.k = config.default_zoom_level
+                        }
+                        
                         const zx = transform.rescaleX(x).interpolate(d3.interpolateRound);
                         const zy = transform.rescaleY(y).interpolate(d3.interpolateRound);
 
@@ -937,7 +948,6 @@
                             zoom: oldZoom
                           })
                         } else {
-                          // console.log(d3.event.transform)
                           store.dispatch('changeZoom', { 
                             zoom: d3.event.transform
                           })
