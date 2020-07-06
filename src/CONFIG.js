@@ -98,6 +98,7 @@ export const config = {
   context_menu_text_opacity: 1,
   context_menu_text_font_size: '12',
   context_menu_text_color: '#00557d',
+  context_menu_text_thickness: 1,
 
   // Tile Warning
   tile_warning_width: 80,

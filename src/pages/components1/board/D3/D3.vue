@@ -97,6 +97,18 @@
 
         const tileMenuItems = [
           {
+            title: 'Change event name',
+            action: (d, _this) => {
+              console.log('Event name clicked')
+            }
+          },
+          {
+            title: 'Change event due date',
+            action: (d, _this) => {
+              console.log('Event due date clicked')
+            }
+          },
+          {
             title: 'Back Loaded Left',
             action: (d, _this) => {
               console.log('Tile back loaded left clicked');
@@ -194,7 +206,7 @@
                     // })
                     .on('contextmenu', function (d) {
                       var coords = d3.mouse(this);
-                      createContextMenu(d, coords[0], coords[1], labelMenu, '#svg', this);
+                      createContextMenu(d, coords[0], coords[1], labelMenu, '.contextGroup', this);
                     })
                     .call(
                       d3.drag()
@@ -540,7 +552,7 @@
           })
           .on('contextmenu', function (d) {
             var coords = d3.mouse(this);
-            createContextMenu(d, coords[0], coords[1], sectionMenuItems, '#svg');
+            createContextMenu(d, coords[0], coords[1], sectionMenuItems, '.contextGroup');
           })
           .call(d3.drag()
             .on('start', function started(dd) {
@@ -684,7 +696,7 @@
           })
           .on('contextmenu', function (d) {
             var coords = d3.mouse(this);
-            createContextMenu(d, coords[0], coords[1], tileMenuItems, '#svg');
+            createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup');
           })
           .call(
             d3.drag()
@@ -695,11 +707,6 @@
           .on("mouseover", mouseover)
           .on("mousemove", mousemove)
           .on("mouseleave", mouseleave);
-
-        var tooltip = svgContainer
-          .append("text")
-          .style("opacity", 0)
-          .attr("class", "tooltip");
 
         var tileWarning = tileGroup
                             .append('rect')
@@ -743,7 +750,7 @@
           .on('contextmenu', function (d) {
             if (d.backLeft){
               var coords = d3.mouse(this);
-              createContextMenu(d, coords[0], coords[1], tileMenuItems, '#svg');
+              createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup');
             }
           })
           .call(
@@ -778,7 +785,7 @@
           .on('contextmenu', function (d) {
             if (d.backLeft){
               var coords = d3.mouse(this);
-              createContextMenu(d, coords[0], coords[1], backLoadedLeft, '#svg');
+              createContextMenu(d, coords[0], coords[1], backLoadedLeft, '.contextGroup');
             }
           })
           .call(
@@ -813,7 +820,7 @@
           .on('contextmenu', function (d) {
             if (d.backRight){
               var coords = d3.mouse(this);
-              createContextMenu(d, coords[0], coords[1], backLoadedRight, '#svg');
+              createContextMenu(d, coords[0], coords[1], backLoadedRight, '.contextGroup');
             }
           })
           .call(
@@ -839,10 +846,8 @@
           .attr("font-size", config.tile_text_size + 'px')
           .attr("fill", config.tile_text_color)
           .on('contextmenu', function (d) {
-            if (d.backLeft){
-              var coords = d3.mouse(this);
-              createContextMenu(d, coords[0], coords[1], tileMenuItems, '#svg');
-            }
+            var coords = d3.mouse(this);
+            createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup');
           })
           .call(
             d3.drag()
@@ -892,7 +897,7 @@
             // })
             .on('contextmenu', function (d) {
               var coords = d3.mouse(this);
-              createContextMenu(d, coords[0], coords[1], labelMenu, '#svg', this);
+              createContextMenu(d, coords[0], coords[1], labelMenu, '.contextGroup', this);
             })
             .call(
               d3.drag()
@@ -901,7 +906,16 @@
                 })
             );
         })
-             
+
+        var tooltip = svgContainer
+                        .append("text")
+                        .style("opacity", 0)
+                        .attr("class", "tooltip");
+
+        var contextGroup = svgContainer
+                            .append('g')
+                            .attr('class', 'contextGroup')
+
         const k = this.height / this.width
 
         const x = d3.scaleLinear()
@@ -929,7 +943,9 @@
 
                         sectionGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
                         tileGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
-
+                        tooltip.attr("transform", transform).attr("stroke-width", 5 / transform.k);
+                        contextGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
+                        
                         var oldZoom = null;
                         if (!this.justOnce){
                           oldZoom = this.$store.getters.getZoom;
@@ -939,11 +955,15 @@
                         if (this.search){
                           sectionGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
                           tileGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
-
+                          tooltip.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                          contextGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                        
                         } else if (oldZoom && oldZoom.x && oldZoom.y && oldZoom.k){
                           sectionGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
                           tileGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
-
+                          tooltip.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
+                          contextGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
+                        
                           store.dispatch('changeZoom', { 
                             zoom: oldZoom
                           })
