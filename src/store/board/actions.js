@@ -149,12 +149,15 @@ export const changeTile = ({ commit, getters }, data) => {
       tile.y = data.y;
       tile.backLeft = data.backLeft;
       tile.backRight = data.backRight;
+      tile.event_name = data.event_name;
     }
     return tile
   })
   setTimeout(() => {
     commit('SET_TILES1', tiles)
   }, 1000)
+
+  console.log(getters.getTiles1)
   // save into the database
 };
 

@@ -97,15 +97,73 @@
 
         const tileMenuItems = [
           {
-            title: 'Change event name',
+            title: 'Event name',
             action: (d, _this) => {
               console.log('Event name clicked')
+
+              var eName = prompt("Please enter the Event title.");
+              if (eName){
+                d.event_name = eName
+
+                store.dispatch('changeTile', { 
+                  id: d.id,
+                  x: d.x,
+                  y: d.y,
+                  backLeft: d.backLeft,
+                  backRight: d.backRight,
+                  event_name: d.event_name,
+                  event_due: d.event_due
+                })
+              }
             }
           },
           {
-            title: 'Change event due date',
+            title: 'Event due date',
             action: (d, _this) => {
               console.log('Event due date clicked')
+
+              var eDate = prompt("Please enter the Event due date in format MM-DD-YYYY.");
+              if (eDate){
+                const e = eDate.replace ( /[^\d.]/g, '-' )
+                // console.log(e)
+                
+                var timestamp = Date.parse(e.toString());
+                if (isNaN(timestamp) == false) {
+                  var dd = new Date(timestamp);
+                  // console.log(dd.getTime() / 1000)
+                  
+                  d.event_due = dd.getTime() / 1000
+                  
+                  var tile = d3.select('#' + d.id + '-w');
+                  const time = Date.now(), due = +d.event_due * +1000
+                  
+                  // 259200000 are 3 days and 604800 are 1 week
+                  // get times from https://www.epochconverter.com/timestamp-list
+                  if (due - time < 604800000){
+                    tile.style("opacity", 1)
+                  } else {
+                    tile.style("opacity", 0)
+                  }
+                  
+                  if (due - time < 259200000){
+                    tile.style("fill", config.tile_3_days_warning_color)
+                  } else if (d.event_due && due - time < 604800000){
+                    tile.style("fill", config.tile_7_days_warning_color)
+                  } else {
+                    tile.style("fill", d.color)
+                  }
+
+                  store.dispatch('changeTile', { 
+                    id: d.id,
+                    x: d.x,
+                    y: d.y,
+                    backLeft: d.backLeft,
+                    backRight: d.backRight,
+                    event_name: d.event_name,
+                    event_due: dd.getTime() / 1000
+                  })
+                }
+              }
             }
           },
           {
@@ -126,7 +184,9 @@
                   y: d.y,
                   backLeft: true,
                   back_title: back_title,
-                  backRight: d.backRight
+                  backRight: d.backRight,
+                  event_name: d.event_name,
+                  event_due: d.event_due
                 })
               } else {
                 store.dispatch('changeTile', { 
@@ -134,7 +194,9 @@
                   x: d.x,
                   y: d.y,
                   backLeft: true,
-                  backRight: d.backRight
+                  backRight: d.backRight,
+                  event_name: d.event_name,
+                  event_due: d.event_due
                 })
               }
             }
@@ -157,7 +219,9 @@
                   y: d.y,
                   backLeft: d.backLeft,
                   backRight: true,
-                  backRTitle: back_title
+                  backRTitle: back_title,
+                  event_name: d.event_name,
+                  event_due: d.event_due
                 })
               } else {
                 store.dispatch('changeTile', { 
@@ -165,7 +229,9 @@
                   x: d.x,
                   y: d.y,
                   backLeft: d.backLeft,
-                  backRight: true
+                  backRight: true,
+                  event_name: d.event_name,
+                  event_due: d.event_due
                 })
               }
             }
@@ -281,6 +347,8 @@
                 backLeft: false,
                 backLTitle: '',
                 backRight: d.backRight,
+                event_name: d.event_name,
+                event_due: d.event_due
               })
             }
           },
@@ -301,7 +369,9 @@
                 y: d.y,
                 backLeft: d.backLeft,
                 backRight: false,
-                backRTitle: ''
+                backRTitle: '',
+                event_name: d.event_name,
+                event_due: d.event_due
               })
             }
           },
@@ -661,6 +731,8 @@
               y: rects[0].attr('y'),
               backLeft: d.backLeft,
               backRight: d.backRight,
+              event_name: d.event_name,
+              event_due: d.event_due
             })
             
             rectsGroup.classed("dragging", false);

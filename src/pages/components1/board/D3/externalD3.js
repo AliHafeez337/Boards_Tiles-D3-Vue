@@ -152,7 +152,7 @@ export const mousemove = function(d) {
     .text(() => {
       if (date){
         var d = new Date(date)
-        return name + ' ( ' + d.getDate() + ' / ' + d.getMonth() + ' / ' + d.getFullYear() + ' ) '
+        return name + ' ( ' + (parseInt(d.getMonth()) + 1).toString() + ' / ' + d.getDate() + ' / ' + d.getFullYear() + ' ) '
       } else {
         return name
       }
