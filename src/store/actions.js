@@ -4,6 +4,9 @@ const actions = {
   },
   setModalSection: ({ commit }, data) => {
     commit('SET_MODALSECTION', data)
+  },
+  setModalBoard: ({ commit }, data) => {
+    commit('SET_MODALBOARD', data)
   }
 }
 

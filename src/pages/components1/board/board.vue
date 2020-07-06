@@ -68,6 +68,45 @@
         >
       </template>
     </modal>
+    <!-- Modal Board -->
+    <modal :show="modalBoard" headerClasses="justify-content-center">
+      <template slot="header">
+        <h4 class="title title-up">Boards</h4>
+        <nbutton v-if="!addBoard" type="success" @click="newBoard()"
+          >New Board</nbutton
+        >
+      </template>
+      <div class="datepicker-container" v-if="addBoard">
+        <fginput
+          placeholder="Enter the new board name."
+          v-model="tempBoardName"
+        />
+      </div>
+      <div class="datepicker-container" v-else>
+        <ol id="example-1">
+          <li v-for="(board, index) in boards" :key="index">
+            <a
+              href="javascript:void(0)"
+              @click="setBoard(board)"
+              class="dropdown-item"
+            >
+              {{ board }}
+            </a>
+          </li>
+        </ol>
+      </div>
+      <template slot="footer">
+        <nbutton v-if="addBoard" type="success" @click="addNewBoard()" :disabled="!tempBoardName"
+          >Add Board</nbutton
+        >
+        <nbutton v-if="addBoard" type="danger" @click="cancelNewBoard()"
+          >Cancel</nbutton
+        >
+        <nbutton v-if="!addBoard" type="danger" @click="closeButton()"
+          >Close</nbutton
+        >
+      </template>
+    </modal>
     <input type="color" id="color" hidden/>
     <D3 
       :sections="sections" 
@@ -101,6 +140,8 @@
     data() {
       return {
         d3: 0,
+        tempBoardName: '',
+        addBoard: false,
         tile: {
           name: '',
           event_name: '',
@@ -114,6 +155,9 @@
       }
     },
     computed: {
+      boards() {
+        return this.$store.getters.getBoards
+      },
       ifBoard() {
        if (this.$store.getters.getBoard){
          return false
@@ -126,6 +170,9 @@
       },
       modalSection(){
         return this.$store.getters.getModalSection;
+      },
+      modalBoard() {
+        return this.$store.getters.getModalBoard;
       },
       sections() {
         return this.$store.getters.getSections;
@@ -159,6 +206,60 @@
       }
     },
     methods: {
+      scrollToElement() {
+        let element_id = document.getElementById("downloadSection");
+        if (element_id) {
+          element_id.scrollIntoView({ block: "end", behavior: "smooth" });
+        }
+      },
+      newBoard() {
+        this.addBoard = true
+      },
+      addNewBoard() {
+        this.$store.dispatch('AddBoard', this.tempBoardName)
+        this.tempBoardName = ''
+        this.addBoard = false
+      },
+      cancelNewBoard() {
+        this.tempBoardName = ''
+        this.addBoard = false
+      },
+      setBoard(board) {
+        this.scrollToElement();
+        if (board === 'board1'){
+          var sections =  [
+            { 'id': 'aqxn9u0yv3', 'name': '0ABC', 'max_trucks': 1, 'max_trailers': 1, 'width': config.section_width, 'height': config.section_height, "x": 20, 'y': 20, 'color': config.new_section_color },
+            { 'id': 'a0nyn15mj3', 'name': '1BCD', 'max_trucks': 1, 'max_trailers': 2, 'width': config.section_width, 'height': config.section_height, "x": 250, 'y': 20, 'color': config.new_section_color },
+            { 'id': 'ayquazchds', 'name': '2CDE', 'max_trucks': 2, 'max_trailers': 1, 'width': config.section_width, 'height': config.section_height, "x": 520, 'y': 20, 'color': config.new_section_color }
+          ], tiles = [
+            { 'id': 'atrnrt7tmm', 'name': 'B02PSL', "x": 260, 'y': 50, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': true, 'backRTitle': 'ccc', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
+            { 'id': 'atrnrt7tmp', 'name': 'B03PSL', "x": 260, 'y': 150, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
+            { 'id': 'azkbug6kyx', 'name': 'A1PSL', "x": 30, 'y': 50, "color" : "brown", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593537002 }, // due in next 3 days
+            { 'id': 'atrnrt7tmn', 'name': 'HB02', "x": 350, 'y': 50, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
+            { 'id': 'atrnrt7tmo', 'name': 'MB02', "x": 350, 'y': 100, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
+            { 'id': 'ak693b4ofl', 'name': 'C10PSL', "x": 530, 'y': 50, "color" : "#DA70D6", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': null }, // 1595869802 = due in next 30 days
+            { 'id': 'ak693b4ofm', 'name': 'MC10', "x": 625, 'y': 50, "color" : "#DA70D6", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': null } // 1595869802 = due in next 30 days
+          ], labels = [
+            { 'tile': 'atrnrt7tmm', "color" : "orange" },
+            { 'tile': 'azkbug6kyx', "color" : "red" },
+            { 'tile': 'atrnrt7tmm', "color" : "red" },
+            { 'tile': 'ak693b4ofl', "color" : "green" },
+            { 'tile': 'atrnrt7tmm', "color" : "red" }
+          ]
+          this.$store.dispatch('setBoard', board)
+          this.$store.dispatch('setSections', sections)
+          this.$store.dispatch('setTiles', tiles)
+          this.$store.dispatch('setLabels', labels)
+          this.closeButton()
+        } else {
+          this.$store.dispatch('setBoard', board)
+          this.$store.dispatch('resetBoard', [])
+          this.closeButton()
+        }
+      },
+      AddBoard() {
+        // this.$store.dispatch('AddBoard', board)
+      },
       ID() {
         return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 1) + Math.random().toString(36).substr(2, 9);
       },
@@ -223,6 +324,7 @@
         console.log('close clicked')
         this.$store.dispatch('setModalTile', false)
         this.$store.dispatch('setModalSection', false)
+        this.$store.dispatch('setModalBoard', false)
       }
     }
   }

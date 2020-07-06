@@ -11,7 +11,8 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
   state: {
     modalTile: false,
-    modalSection: false
+    modalSection: false,
+    modalBoard: false
   },
   mutations,
   actions,

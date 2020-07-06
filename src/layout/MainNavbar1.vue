@@ -23,13 +23,6 @@
       </el-popover>
     </template>
     <template slot="navbar-menu">
-        <!-- addon-right-icon="now-ui-icons users_single-02" -->
-      <fginput
-        v-if="ifBoard"
-        placeholder="Search the tile"
-        v-model="search"
-      >
-      </fginput>
       <drop-down
         tag="li"
         title="Examples"
@@ -46,23 +39,12 @@
           <i class="now-ui-icons users_single-02"></i> Profile
         </nav-link>
       </drop-down>
-      <drop-down
-        tag="li"
-        title="Boards"
-        icon="now-ui-icons design_app"
-        class="nav-item"
+      <fginput
+        v-if="ifBoard"
+        placeholder="Search the tile"
+        v-model="search"
       >
-        <!-- <nav-link to="/">
-          <i class="now-ui-icons business_chart-pie-36"></i> All components
-        </nav-link> -->
-        <a
-          href="javascript:void(0)"
-          @click="getBoard('board1')"
-          class="dropdown-item"
-        >
-          Board 1
-        </a>
-      </drop-down>
+      </fginput>
       <drop-down
         v-if="ifBoard"
         tag="li"
@@ -232,6 +214,7 @@ export default {
       }
     },
     boards() {
+      this.$store.dispatch('setModalBoard', true)
     }
   }
 };

@@ -34,6 +34,25 @@ export const setBoard = ({ commit }, name) => {
   commit('SET_BOARD', name)
 };
 
+export const AddBoard = ({ commit, getters }, board) => {
+  var boards = [...getters.getBoards]
+  boards.push(board)
+  commit('SET_BOARDS', boards)
+};
+
+export const setBoards = ({ commit }, data) => {
+  commit('SET_BOARDS', data)
+};
+
+export const resetBoard = ({ commit, getters }, data) => {
+  commit('SET_SECTIONS', [])
+  commit('SET_SECTIONS1', [])
+  commit('SET_TILES', [])
+  commit('SET_TILES1', [])
+  commit('SET_LABELS', [])
+  commit('SET_LABELS1', [])
+}
+
 export const setSections = ({ commit }, sections) => {
   // get from the database
   setTimeout(() => {
