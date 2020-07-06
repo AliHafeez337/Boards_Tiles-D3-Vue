@@ -2,11 +2,11 @@ import * as d3 from "d3";
 import styles from "./contextMenu.css";
 import { config } from '../../../../CONFIG';
 
-export const menuFactory = (x, y, menuItems, data, svgId, _this) => {
+export const menuFactory = (x, y, menuItems, data, place, _this) => {
     d3.select(`.contextMenu`).remove();
 
     // Draw the menu
-    d3.select(svgId)
+    d3.select(place)
         .append('g')
         .attr('class', 'contextMenu')
         .style("opacity", config.whole_context_oppacity)
@@ -38,9 +38,11 @@ export const menuFactory = (x, y, menuItems, data, svgId, _this) => {
         .attr('y', (d, i) => y + (i * 30) + +config.context_menu_text_y)
         .attr('dy', 20)
         .attr('dx', 45)
+        .attr("font-size", '10px')
         .attr("font-size", config.context_menu_text_font_size + 'px')
         .style("opacity", config.context_menu_text_opacity)
         .style("stroke", config.context_menu_text_color)
+        .style("stroke-width", config.context_menu_text_thickness)
         .on('click', (d) => { d.action(data, _this) });
 
     // Other interactions
@@ -50,8 +52,8 @@ export const menuFactory = (x, y, menuItems, data, svgId, _this) => {
         });
 }
 
-export const createContextMenu = (d, x, y, menuItems, svgId, _this = null) => {
-  menuFactory(x, y, menuItems, d, svgId, _this);
+export const createContextMenu = (d, x, y, menuItems, place, _this = null) => {
+  menuFactory(x, y, menuItems, d, place, _this);
   d3.event.preventDefault();
 }
 
@@ -150,7 +152,7 @@ export const mousemove = function(d) {
     .text(() => {
       if (date){
         var d = new Date(date)
-        return name + ' ( ' + d.getDate() + ' / ' + d.getMonth() + ' / ' + d.getFullYear() + ' ) '
+        return name + ' ( ' + (parseInt(d.getMonth()) + 1).toString() + ' / ' + d.getDate() + ' / ' + d.getFullYear() + ' ) '
       } else {
         return name
       }

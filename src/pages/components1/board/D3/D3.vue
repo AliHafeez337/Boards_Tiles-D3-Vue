@@ -31,6 +31,7 @@
     props: ['sections', 'tiles', 'labels', 'search'],
     data() {
       return {
+        zoomChanged: 0,
         height: window.innerWidth,
         width: window.innerWidth,
         justOnce: false,
@@ -81,18 +82,90 @@
             action: (d, _this) => {
               console.log('Section X clicked');
 
-              var rect = d3.select('#' + d.id);
-              var text = d3.select('#' + d.id + '-t');
-              
-              rect.remove();
-              text.remove();
+              if (confirm("Do you really want to delete this section?")) {
+                var rect = d3.select('#' + d.id);
+                var text = d3.select('#' + d.id + '-t');
+                
+                rect.remove();
+                text.remove();
 
-              this.$store.dispatch('removeSection', d.id)
+                this.$store.dispatch('removeSection', d.id)
+              }
             }
           }
         ];
 
         const tileMenuItems = [
+          {
+            title: 'Event name',
+            action: (d, _this) => {
+              console.log('Event name clicked')
+
+              var eName = prompt("Please enter the Event title.");
+              if (eName){
+                d.event_name = eName
+
+                store.dispatch('changeTile', { 
+                  id: d.id,
+                  x: d.x,
+                  y: d.y,
+                  backLeft: d.backLeft,
+                  backRight: d.backRight,
+                  event_name: d.event_name,
+                  event_due: d.event_due
+                })
+              }
+            }
+          },
+          {
+            title: 'Event due date',
+            action: (d, _this) => {
+              console.log('Event due date clicked')
+
+              var eDate = prompt("Please enter the Event due date in format MM-DD-YYYY.");
+              if (eDate){
+                const e = eDate.replace ( /[^\d.]/g, '-' )
+                // console.log(e)
+                
+                var timestamp = Date.parse(e.toString());
+                if (isNaN(timestamp) == false) {
+                  var dd = new Date(timestamp);
+                  // console.log(dd.getTime() / 1000)
+                  
+                  d.event_due = dd.getTime() / 1000
+                  
+                  var tile = d3.select('#' + d.id + '-w');
+                  const time = Date.now(), due = +d.event_due * +1000
+                  
+                  // 259200000 are 3 days and 604800 are 1 week
+                  // get times from https://www.epochconverter.com/timestamp-list
+                  if (due - time < 604800000){
+                    tile.style("opacity", 1)
+                  } else {
+                    tile.style("opacity", 0)
+                  }
+                  
+                  if (due - time < 259200000){
+                    tile.style("fill", config.tile_3_days_warning_color)
+                  } else if (d.event_due && due - time < 604800000){
+                    tile.style("fill", config.tile_7_days_warning_color)
+                  } else {
+                    tile.style("fill", d.color)
+                  }
+
+                  store.dispatch('changeTile', { 
+                    id: d.id,
+                    x: d.x,
+                    y: d.y,
+                    backLeft: d.backLeft,
+                    backRight: d.backRight,
+                    event_name: d.event_name,
+                    event_due: dd.getTime() / 1000
+                  })
+                }
+              }
+            }
+          },
           {
             title: 'Back Loaded Left',
             action: (d, _this) => {
@@ -111,7 +184,9 @@
                   y: d.y,
                   backLeft: true,
                   back_title: back_title,
-                  backRight: d.backRight
+                  backRight: d.backRight,
+                  event_name: d.event_name,
+                  event_due: d.event_due
                 })
               } else {
                 store.dispatch('changeTile', { 
@@ -119,7 +194,9 @@
                   x: d.x,
                   y: d.y,
                   backLeft: true,
-                  backRight: d.backRight
+                  backRight: d.backRight,
+                  event_name: d.event_name,
+                  event_due: d.event_due
                 })
               }
             }
@@ -142,7 +219,9 @@
                   y: d.y,
                   backLeft: d.backLeft,
                   backRight: true,
-                  backRTitle: back_title
+                  backRTitle: back_title,
+                  event_name: d.event_name,
+                  event_due: d.event_due
                 })
               } else {
                 store.dispatch('changeTile', { 
@@ -150,7 +229,9 @@
                   x: d.x,
                   y: d.y,
                   backLeft: d.backLeft,
-                  backRight: true
+                  backRight: true,
+                  event_name: d.event_name,
+                  event_due: d.event_due
                 })
               }
             }
@@ -191,7 +272,7 @@
                     // })
                     .on('contextmenu', function (d) {
                       var coords = d3.mouse(this);
-                      createContextMenu(d, coords[0], coords[1], labelMenu, '#svg', this);
+                      createContextMenu(d, coords[0], coords[1], labelMenu, '.contextGroup', this);
                     })
                     .call(
                       d3.drag()
@@ -222,28 +303,30 @@
             action: (d, _this) => {
               console.log('Tile X clicked');
 
-              var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
-              var text = d3.select('#' + d.id + '-t');
-              var backLeft = d3.select('#' + d.id + '-bl');
-              var backRight = d3.select('#' + d.id + '-br');
-              var warning = d3.select('#' + d.id + '-w');
+              if (confirm("Do you really want to delete this tile?")) {
+                var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
+                var text = d3.select('#' + d.id + '-t');
+                var backLeft = d3.select('#' + d.id + '-bl');
+                var backRight = d3.select('#' + d.id + '-br');
+                var warning = d3.select('#' + d.id + '-w');
 
-              text.remove();
-              backLeft.remove();
-              backRight.remove();
-              warning.remove();
+                text.remove();
+                backLeft.remove();
+                backRight.remove();
+                warning.remove();
 
-              var selection;
-              rectsGroup._groups[0].forEach((rect, index) => {
-                if (index > 0){
-                  selection = d3.select('#' + d.id + '-' + index.toString())
-                } else {
-                  selection = d3.select('#' + d.id)
-                }
-                selection.remove()
-              })
+                var selection;
+                rectsGroup._groups[0].forEach((rect, index) => {
+                  if (index > 0){
+                    selection = d3.select('#' + d.id + '-' + index.toString())
+                  } else {
+                    selection = d3.select('#' + d.id)
+                  }
+                  selection.remove()
+                })
 
-              this.$store.dispatch('removeTile', d.id)
+                this.$store.dispatch('removeTile', d.id)
+              }
             }
           }
         ];
@@ -264,6 +347,8 @@
                 backLeft: false,
                 backLTitle: '',
                 backRight: d.backRight,
+                event_name: d.event_name,
+                event_due: d.event_due
               })
             }
           },
@@ -284,7 +369,9 @@
                 y: d.y,
                 backLeft: d.backLeft,
                 backRight: false,
-                backRTitle: ''
+                backRTitle: '',
+                event_name: d.event_name,
+                event_due: d.event_due
               })
             }
           },
@@ -535,7 +622,7 @@
           })
           .on('contextmenu', function (d) {
             var coords = d3.mouse(this);
-            createContextMenu(d, coords[0], coords[1], sectionMenuItems, '#svg');
+            createContextMenu(d, coords[0], coords[1], sectionMenuItems, '.contextGroup');
           })
           .call(d3.drag()
             .on('start', function started(dd) {
@@ -644,6 +731,8 @@
               y: rects[0].attr('y'),
               backLeft: d.backLeft,
               backRight: d.backRight,
+              event_name: d.event_name,
+              event_due: d.event_due
             })
             
             rectsGroup.classed("dragging", false);
@@ -679,7 +768,7 @@
           })
           .on('contextmenu', function (d) {
             var coords = d3.mouse(this);
-            createContextMenu(d, coords[0], coords[1], tileMenuItems, '#svg');
+            createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup');
           })
           .call(
             d3.drag()
@@ -690,11 +779,6 @@
           .on("mouseover", mouseover)
           .on("mousemove", mousemove)
           .on("mouseleave", mouseleave);
-
-        var tooltip = svgContainer
-          .append("text")
-          .style("opacity", 0)
-          .attr("class", "tooltip");
 
         var tileWarning = tileGroup
                             .append('rect')
@@ -738,7 +822,7 @@
           .on('contextmenu', function (d) {
             if (d.backLeft){
               var coords = d3.mouse(this);
-              createContextMenu(d, coords[0], coords[1], tileMenuItems, '#svg');
+              createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup');
             }
           })
           .call(
@@ -773,7 +857,7 @@
           .on('contextmenu', function (d) {
             if (d.backLeft){
               var coords = d3.mouse(this);
-              createContextMenu(d, coords[0], coords[1], backLoadedLeft, '#svg');
+              createContextMenu(d, coords[0], coords[1], backLoadedLeft, '.contextGroup');
             }
           })
           .call(
@@ -808,7 +892,7 @@
           .on('contextmenu', function (d) {
             if (d.backRight){
               var coords = d3.mouse(this);
-              createContextMenu(d, coords[0], coords[1], backLoadedRight, '#svg');
+              createContextMenu(d, coords[0], coords[1], backLoadedRight, '.contextGroup');
             }
           })
           .call(
@@ -834,10 +918,8 @@
           .attr("font-size", config.tile_text_size + 'px')
           .attr("fill", config.tile_text_color)
           .on('contextmenu', function (d) {
-            if (d.backLeft){
-              var coords = d3.mouse(this);
-              createContextMenu(d, coords[0], coords[1], tileMenuItems, '#svg');
-            }
+            var coords = d3.mouse(this);
+            createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup');
           })
           .call(
             d3.drag()
@@ -887,7 +969,7 @@
             // })
             .on('contextmenu', function (d) {
               var coords = d3.mouse(this);
-              createContextMenu(d, coords[0], coords[1], labelMenu, '#svg', this);
+              createContextMenu(d, coords[0], coords[1], labelMenu, '.contextGroup', this);
             })
             .call(
               d3.drag()
@@ -896,7 +978,16 @@
                 })
             );
         })
-             
+
+        var tooltip = svgContainer
+                        .append("text")
+                        .style("opacity", 0)
+                        .attr("class", "tooltip");
+
+        var contextGroup = svgContainer
+                            .append('g')
+                            .attr('class', 'contextGroup')
+
         const k = this.height / this.width
 
         const x = d3.scaleLinear()
@@ -910,15 +1001,23 @@
 
         const zoom = d3
                       .zoom()
-                      .scaleExtent([0.3, 32])
+                      .scaleExtent([config.max_zoom_out, config.max_zoom_in])
                       .on("zoom", () => {
                         const transform = d3.event.transform;
+                        this.zoomChanged++
+                        // console.log(this.zoomChanged, transform.k)
+                        if (this.zoomChanged === 1){
+                          transform.k = config.default_zoom_level
+                        }
+                        
                         const zx = transform.rescaleX(x).interpolate(d3.interpolateRound);
                         const zy = transform.rescaleY(y).interpolate(d3.interpolateRound);
 
                         sectionGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
                         tileGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
-
+                        tooltip.attr("transform", transform).attr("stroke-width", 5 / transform.k);
+                        contextGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
+                        
                         var oldZoom = null;
                         if (!this.justOnce){
                           oldZoom = this.$store.getters.getZoom;
@@ -928,16 +1027,19 @@
                         if (this.search){
                           sectionGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
                           tileGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
-
+                          tooltip.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                          contextGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                        
                         } else if (oldZoom && oldZoom.x && oldZoom.y && oldZoom.k){
                           sectionGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
                           tileGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
-
+                          tooltip.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
+                          contextGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
+                        
                           store.dispatch('changeZoom', { 
                             zoom: oldZoom
                           })
                         } else {
-                          // console.log(d3.event.transform)
                           store.dispatch('changeZoom', { 
                             zoom: d3.event.transform
                           })

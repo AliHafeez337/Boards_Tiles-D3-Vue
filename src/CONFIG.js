@@ -4,6 +4,12 @@
 // Colors can be written as STRING or HEX value
 
 export const config = {
+
+  // ZOOM
+  max_zoom_out: 0.3,
+  max_zoom_in: 32,
+  default_zoom_level: 0.5,
+
   // all values are in pixels except those whose details are written on their front
 
   // Place on the board where you want the new section to appear
@@ -92,6 +98,7 @@ export const config = {
   context_menu_text_opacity: 1,
   context_menu_text_font_size: '12',
   context_menu_text_color: '#00557d',
+  context_menu_text_thickness: 1,
 
   // Tile Warning
   tile_warning_width: 80,
