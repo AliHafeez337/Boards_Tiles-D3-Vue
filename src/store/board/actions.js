@@ -7,7 +7,11 @@ export const setSearch = ({ commit, getters }, data) => {
 
   var search = null
   getters.getTiles1.forEach(tile => {
-    if (tile.name === data){
+    var name = tile.name
+    if (tile.name[0] === 'H' || tile.name[0] === 'M' || tile.name[0] === 'L'){
+      name = tile.name.substring(1)
+    }
+    if (name === data){
       search = {
         word: tile.name,
         k: 1,
@@ -169,6 +173,7 @@ export const changeTile = ({ commit, getters }, data) => {
       tile.backLeft = data.backLeft;
       tile.backRight = data.backRight;
       tile.event_name = data.event_name;
+      tile.event_due = data.event_due;
     }
     return tile
   })
@@ -682,7 +687,7 @@ export const sortTiles = ({ commit, getters }, id) => {
       }
     })
     // console.log(sorted)
-    sectionDetails1[detailedSection] = sorted
+    sectionDetails1[detailedSection] = sorted.reverse()
   }
   // console.log('After sorting trucks-trailer in section', sectionDetails1)
 
@@ -702,7 +707,7 @@ export const sortTiles = ({ commit, getters }, id) => {
       }
     })
     // console.log(sorted)
-    sectionDetails3[detailedSection] = sorted
+    sectionDetails3[detailedSection] = sorted.reverse()
   }
   // console.log('After sorting trucks in section', sectionDetails3)
 
@@ -751,7 +756,7 @@ export const sortTiles = ({ commit, getters }, id) => {
       }
     })
     // console.log(sorted)
-    sectionDetails2[detailedSection] = sorted
+    sectionDetails2[detailedSection] = sorted.reverse()
   }
   // console.log('After sorting trailers in section', sectionDetails2)
 

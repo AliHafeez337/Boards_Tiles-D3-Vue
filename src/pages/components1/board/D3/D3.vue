@@ -122,12 +122,18 @@
             action: (d, _this) => {
               console.log('Event due date clicked')
 
-              var eDate = prompt("Please enter the Event due date in format MM-DD-YYYY.");
+              var eDate = prompt("Please enter the Event due date in format DD-MM-YYYY, '-' are also not necessary, just 8 digits are necessary.");
               if (eDate){
-                const e = eDate.replace ( /[^\d.]/g, '-' )
+                const e = eDate.replace ( /[^\d.]/g, '' )
                 // console.log(e)
                 
-                var timestamp = Date.parse(e.toString());
+                if (e.length !== 8){
+                  return
+                }
+                var newDate = e[2] + e[3] + '-' + e[0] + e[1] + '-' + e[4] + e[5] + e[6] + e[7]
+                console.log(newDate)
+                
+                var timestamp = Date.parse(newDate);
                 if (isNaN(timestamp) == false) {
                   var dd = new Date(timestamp);
                   // console.log(dd.getTime() / 1000)
@@ -164,6 +170,23 @@
                   })
                 }
               }
+            }
+          },
+          {
+            title: 'Remove event',
+            action: (d, _this) => {
+              console.log("Removing event clicked.")
+
+              d.event_name = '', d.event_due = ''
+              store.dispatch('changeTile', { 
+                id: d.id,
+                x: d.x,
+                y: d.y,
+                backLeft: d.backLeft,
+                backRight: d.backRight,
+                event_name: '',
+                event_due: null
+              })
             }
           },
           {
@@ -485,55 +508,58 @@
           
           d3.event.on("drag", dragged).on("end", ended);
 
+          x = Number(rect.attr('x'));
+          y = Number(rect.attr('y'));
+          w = Number(rect.attr('width'));
+          h = Number(rect.attr('height'));
+
+          const oneSixthX = w / 3.5, oneSixthY = h / 4.5
+          const coords = d3.mouse(_this);
+          
+          console.log('Ending point', (+x + +w), (+y + +h), 'Division point', (+x + +w) - oneSixthX, (+y + +h) - oneSixthY, 'Starting point', x, y, 'Clicked point', coords[0], coords[1])
+
           function dragged(d) {
-            var coords = d3.mouse(_this);
-            var e = { x: coords[0], y: coords[1] }
+            var coords1 = d3.mouse(_this);
 
-            x = Number(rect.attr('x'));
-            y = Number(rect.attr('y'));
-            w = Number(rect.attr('width'));
-            h = Number(rect.attr('height'));
-
-            var c1 = { x: x, y: y };
-            var c2 = { x: x + w, y: y };
-            var c3 = { x: x + w, y: y + h };
-            var c4 = { x: x, y: y + h };
-
-            // // figure out which corner this is closest to
-            var d = [];
-            var m1 = distance(e, c1);
-            var m2 = distance(e, c2);
-            var m3 = distance(e, c3);
-            var m4 = distance(e, c4);
-            var min = Math.min(m1, m2, m3, m4)
-
-            // console.log(min, m1, m2, m3, m4)
-            if (min === m3) {
-              let newWidth = w + (e.x - c3.x), newHeight = h + (e.y - c3.y);
+            if (coords[0] > (+x + +w) - oneSixthX && coords[1] > (+y + +h) - oneSixthY){
+              // console.log('clicked inside')
+              let newWidth = w + (coords1[0] - (+x + +w)), newHeight = h + (coords1[1] - (+y + +h));
+              d.width = newWidth, d.height = newHeight
               rect
                 .attr('width', newWidth)
                 .attr('height', newHeight);
+              text
+                .attr("x", d => {
+                  return  +d.x + (+newWidth / 2) - (+d.name.length * 5 / 2)
+                })
             } else {
-              rect.raise().attr("x", d.x = e.x).attr("y", d.y = e.y);
+              d.x = coords1[0], d.y = coords1[1]
+              rect.raise().attr("x", d.x = coords1[0]).attr("y", d.y = coords1[1]);
               text
                 .raise()
-                .attr("x", (+x + +config.section_text_x))
-                .attr("y", (+y + +config.section_text_y));
+                .attr("x", d => {
+                  return  +coords1[0] + (+w / 2) - (+d.name.length * 5 / 2)
+                })
+                .attr("y", (+d.y + +config.section_text_y));
             }
           }
 
-          function ended() {
+          function ended(d) {
             console.log('section drag ends at:', rect.attr('x'), rect.attr('y'));
             // console.log(text.attr('x'), text.attr('y'));
 
             rect.classed("dragging", false);
 
+            x = Number(rect.attr('x'));
+            y = Number(rect.attr('y'));
+
             var diffX = x - orignialX, diffY = y - originalY
             var tiles = [], tile = {}
+            console.log(diffX, diffY)
             
             groups.forEach(group => {
               let rects = group.selectAll('rect'), texts = group.selectAll('text')
-              // console.log(group, rects, texts)
+              console.log(group, rects, texts)
               rects._groups[0].forEach(rect => {
                 let _rect = d3.select(rect);
                 let _rectX = _rect.attr('x'), _rectY = _rect.attr('y')
@@ -636,7 +662,9 @@
                             .attr('id', d => d.id + '-t');
 
         sectionText
-          .attr("x", d => +d.x + +config.section_text_x)
+          .attr("x", d => {
+            return  +d.x + (+config.section_width / 2) - (+d.name.length * 5 / 2)
+          })
           .attr("y", d => +d.y + +config.section_text_y)
           .text(d => d.name)
           .attr("font-family", config.section_text_font)

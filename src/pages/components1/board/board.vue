@@ -264,7 +264,7 @@
         return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 1) + Math.random().toString(36).substr(2, 9);
       },
       isDisabled: function() {
-        if (this.tile.name && this.tile.event_name){
+        if (this.tile.name){
           return false
         } else {
           return true
