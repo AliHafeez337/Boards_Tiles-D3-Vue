@@ -53,7 +53,6 @@ export const config = {
   // Section text
   section_text_color: 'black',
   // relative distance (x, y) from the section
-  section_text_x: 70, // x pixels appart from the point(x) of the tile
   section_text_y: 20, // y pixels appart from the point(y) of the tile
   section_text_font: 'sans-serif',
   section_text_size: '15',
