@@ -107,6 +107,30 @@
         >
       </template>
     </modal>
+    <!-- Modal Board -->
+    <modal :show="modalColor" headerClasses="justify-content-center">
+      <template slot="header">
+        <h4 class="title title-up">Select Color</h4>
+      </template>
+      <div class="datepicker-container" :style="{ background: color }">
+        <div :style="{ width: '40%', 'margin-left': 'auto', 'margin-right': 'auto' }">
+          <color-picker
+            theme="dark"
+            :color="color"
+            :sucker-hide="false"
+            @changeColor="changeColor"
+          />
+        </div>
+      </div>
+      <template slot="footer">
+        <nbutton type="success" @click="addColor()"
+          >Add Color</nbutton
+        >
+        <nbutton type="danger" @click="closeButton()"
+          >Close</nbutton
+        >
+      </template>
+    </modal>
     <input type="color" id="color" hidden/>
     <D3 
       :sections="sections" 
@@ -126,6 +150,7 @@
   import { DatePicker } from 'element-ui';
   import { config } from '../../../CONFIG';
   import { Navbar, DropDown } from '@/components';
+  import colorPicker from '@caohenghu/vue-colorpicker'
 
   export default {
     components: {
@@ -135,7 +160,8 @@
       fginput,
       [DatePicker.name]: DatePicker,
       Navbar,
-      DropDown
+      DropDown,
+      colorPicker
     },
     data() {
       return {
@@ -151,7 +177,8 @@
           name: '',
           max_trucks: 2,
           max_trailers: 2
-        }
+        },
+        color: '#59c7f9',
       }
     },
     computed: {
@@ -173,6 +200,9 @@
       },
       modalBoard() {
         return this.$store.getters.getModalBoard;
+      },
+      modalColor() {
+        return this.$store.getters.getModalColor;
       },
       sections() {
         return this.$store.getters.getSections;
@@ -206,6 +236,13 @@
       }
     },
     methods: {
+      changeColor(color) {
+        this.color = color.hex
+      },
+      addColor() {
+        this.$store.dispatch('setColor', this.color)
+        this.closeButton()
+      },
       scrollToElement() {
         let element_id = document.getElementById("downloadSection");
         if (element_id) {
@@ -325,6 +362,7 @@
         this.$store.dispatch('setModalTile', false)
         this.$store.dispatch('setModalSection', false)
         this.$store.dispatch('setModalBoard', false)
+        this.$store.dispatch('setModalColor', false)
       }
     }
   }

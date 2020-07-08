@@ -37,6 +37,18 @@
         justOnce: false,
       }
     },
+    // computed: {
+    //   getColorPallet() {
+    //     if (this.$store.getters.getColor){
+    //       return this.$store.getters.getColor
+    //     }
+    //   },
+    // },
+    // watch: {
+    //   getColorPallet: function (val) {
+    //     console.log(val)
+    //   }
+    // },
     mounted() {
       d3.select("svg").remove();
       this.renderD3();
@@ -73,7 +85,10 @@
               console.log('Section change color clicked');
               
               var rect = d3.select('#' + d.id);
-              getColor()
+
+              // either getColor() or colorPallet(), both work...
+              // getColor()
+              colorPallet()
                 .then(color => changeColor(rect, color))
             }
           },
@@ -271,7 +286,8 @@
               var x = Number(rect.attr('x'));
               var y = Number(rect.attr('y'));
 
-              getColor()
+              // getColor()
+              colorPallet()
                 .then(color => {
                   var number = parent.selectAll('rect')._groups[0].length
 
@@ -317,7 +333,8 @@
               console.log('Tile color button clicked');
 
               var rect = d3.select('#' + d.id)
-              getColor()
+              // getColor()
+              colorPallet()
                 .then(color => changeColor(rect, color))
             }
           },
@@ -410,6 +427,23 @@
             }
           },
         ]
+
+        const store = this.$store;
+
+        var colorPallet = () => {
+          return new Promise(resolve => {
+            store.dispatch('setModalColor', true)
+            var colorInterval = setInterval(function() {
+              if (store.getters.getColor){
+                clearInterval(colorInterval)
+                const c = store.getters.getColor
+                console.log(c)
+                store.dispatch('setColor', '')
+                resolve(c)
+              }
+            }, 250)
+          })
+        }
         
         var changeColor = (selection, color) => {
           const id = selection.attr('id'), type = selection.attr('class').split(" ")[0];
@@ -448,8 +482,6 @@
             rect.attr('id', d => d.id + '-' + (i - 1).toString())
           }
         }
-
-        const store = this.$store;
         
         //Make an SVG Container
         var chartDiv = d3.select("#d3")

@@ -7,6 +7,12 @@ const getters = {
   },
   getModalBoard: function(state) {
     return state.modalBoard;
+  },
+  getModalColor: function(state) {
+    return state.modalColor;
+  },
+  getColor: function(state) {
+    return state.color;
   }
 }
 
