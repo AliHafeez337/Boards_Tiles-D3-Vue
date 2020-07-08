@@ -12,7 +12,9 @@ export const store = new Vuex.Store({
   state: {
     modalTile: false,
     modalSection: false,
-    modalBoard: false
+    modalBoard: false,
+    modalColor: false,
+    color: ''
   },
   mutations,
   actions,
