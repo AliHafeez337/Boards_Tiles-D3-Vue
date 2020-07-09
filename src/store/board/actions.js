@@ -30,6 +30,7 @@ export const setSearch = ({ commit, getters }, data) => {
 // why ?, see in pushSection and pushTile, we are already coppying, sort of...
 export const copyBoard = ({ commit, getters }) => {
   commit('SET_SECTIONS', getters.getSections1)
+  commit('SET_SECTIONNAME', getters.getSectionName1)
   commit('SET_TILES', getters.getTiles1)
   commit('SET_LABELS', getters.getLabels1)
 };
@@ -50,7 +51,9 @@ export const setBoards = ({ commit }, data) => {
 
 export const resetBoard = ({ commit, getters }, data) => {
   commit('SET_SECTIONS', [])
+  commit('SET_SECTIONNAME', [])
   commit('SET_SECTIONS1', [])
+  commit('SET_SECTIONNAME1', [])
   commit('SET_TILES', [])
   commit('SET_TILES1', [])
   commit('SET_LABELS', [])
@@ -62,6 +65,14 @@ export const setSections = ({ commit }, sections) => {
   setTimeout(() => {
     commit('SET_SECTIONS', sections)
     commit('SET_SECTIONS1', sections)
+  }, 1000)
+};
+
+export const setSectionName = ({ commit }, sectionName) => {
+  // get from the database
+  setTimeout(() => {
+    commit('SET_SECTIONNAME', sectionName)
+    commit('SET_SECTIONNAME1', sectionName)
   }, 1000)
 };
 
@@ -84,8 +95,21 @@ export const setLabels = ({ commit }, labels) => {
 export const pushSection = ({ commit, getters }, section) => {
   // console.log(getters.getSections, getters.getSections1)
   var sections = [...getters.getSections1]
+  var sectionName = [...getters.getSectionName1]
+  var a = { 
+    'id': `${section.id}-n`, 
+    'name': section.name, 
+    'width': section.width, 
+    'height': section.height, 
+    "x": section.x, 
+    'y': section.y, 
+    'color': section.color 
+  }
   setTimeout(() => {
     sections.push(section)
+    sectionName.push(a)
+    commit('SET_SECTIONNAME', sectionName)
+    commit('SET_SECTIONNAME1', sectionName)
     commit('SET_SECTIONS', sections)
     commit('SET_SECTIONS1', sections)
     commit('SET_LABELS', getters.getLabels1)
@@ -161,6 +185,24 @@ export const changeSection = ({ commit, getters }, data) => {
   setTimeout(() => {
     commit('SET_SECTIONS1', sections)
     commit('SET_TILES1', tiles)
+  }, 1000)
+  // save into the database
+};
+
+export const changeSectionName = ({ commit, getters }, data) => {
+  var sections = getters.getSectionName1.map(section => {
+    if (section.id === data.id) {
+      section.x = data.x;
+      section.y = data.y;
+      section.width = data.width;
+      section.height = data.height;
+      section.color = data.color;
+    }
+    return section
+  })
+  console.log(getters.getSectionName1, sections)
+  setTimeout(() => {
+    commit('SET_SECTIONNAME1', sections)
   }, 1000)
   // save into the database
 };

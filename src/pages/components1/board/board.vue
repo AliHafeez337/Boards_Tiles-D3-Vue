@@ -170,6 +170,7 @@
 
     <D3 
       :sections="sections" 
+      :sectionName="sectionName" 
       :tiles="tiles"
       :labels="labels"
       :search="search"
@@ -254,6 +255,9 @@
       sections() {
         return this.$store.getters.getSections;
       },
+      sectionName() {
+        return this.$store.getters.getSectionName;
+      },
       tiles() {
         return this.$store.getters.getTiles;
       },
@@ -315,6 +319,10 @@
             { 'id': 'aqxn9u0yv3', 'name': '0ABC', 'max_trucks': 1, 'max_trailers': 1, 'width': config.section_width, 'height': config.section_height, "x": 20, 'y': 20, 'color': config.new_section_color },
             { 'id': 'a0nyn15mj3', 'name': '1BCD', 'max_trucks': 1, 'max_trailers': 2, 'width': config.section_width, 'height': config.section_height, "x": 250, 'y': 20, 'color': config.new_section_color },
             { 'id': 'ayquazchds', 'name': '2CDE', 'max_trucks': 2, 'max_trailers': 1, 'width': config.section_width, 'height': config.section_height, "x": 520, 'y': 20, 'color': config.new_section_color }
+          ], sectionName = [
+            { 'id': 'aqxn9u0yv3-n', 'name': '0ABC', 'width': config.section_width, 'height': config.section_height, "x": 20, 'y': 20, 'color': config.new_section_color },
+            { 'id': 'a0nyn15mj3-n', 'name': '1BCD', 'width': config.section_width, 'height': config.section_height, "x": 250, 'y': 20, 'color': config.new_section_color },
+            { 'id': 'ayquazchds-n', 'name': '2CDE', 'width': config.section_width, 'height': config.section_height, "x": 520, 'y': 20, 'color': config.new_section_color }
           ], tiles = [
             { 'id': 'atrnrt7tmm', 'name': 'B02PSL', "x": 260, 'y': 50, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': true, 'backRTitle': 'ccc', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
             { 'id': 'atrnrt7tmp', 'name': 'B03PSL', "x": 260, 'y': 150, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
@@ -332,6 +340,7 @@
           ]
           this.$store.dispatch('setBoard', board)
           this.$store.dispatch('setSections', sections)
+          this.$store.dispatch('setSectionName', sectionName)
           this.$store.dispatch('setTiles', tiles)
           this.$store.dispatch('setLabels', labels)
           this.closeButton()
