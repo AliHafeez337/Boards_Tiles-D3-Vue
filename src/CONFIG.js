@@ -51,7 +51,7 @@ export const config = {
   padding_on_labels: 2,
 
   // Section text
-  section_text_color: 'black',
+  section_text_color: 'white',
   // relative distance (x, y) from the section
   section_text_y: 20, // y pixels appart from the point(y) of the tile
   section_text_font: 'sans-serif',
