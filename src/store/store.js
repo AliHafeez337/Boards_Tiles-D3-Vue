@@ -14,7 +14,9 @@ export const store = new Vuex.Store({
     modalSection: false,
     modalBoard: false,
     modalColor: false,
-    color: ''
+    color: '',
+    modalDetails: false,
+    tile: {}
   },
   mutations,
   actions,

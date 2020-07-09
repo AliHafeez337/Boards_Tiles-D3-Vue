@@ -13,6 +13,12 @@ const getters = {
   },
   getColor: function(state) {
     return state.color;
+  },
+  getModalDetails: function(state) {
+    return state.modalDetails;
+  },
+  getTile: function(state) {
+    return state.tile;
   }
 }
 

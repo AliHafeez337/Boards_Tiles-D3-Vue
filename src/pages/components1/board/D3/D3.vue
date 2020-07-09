@@ -85,11 +85,15 @@
               console.log('Section change color clicked');
               
               var rect = d3.select('#' + d.id);
+              var frame = d3.select('#' + d.id + '-f');
 
               // either getColor() or colorPallet(), both work...
               // getColor()
               colorPallet()
-                .then(color => changeColor(rect, color))
+                .then(color => {
+                  changeColor(rect, color)
+                  changeColor(frame, color)
+                })
             }
           },
           {
@@ -100,9 +104,11 @@
               if (confirm("Do you really want to delete this section?")) {
                 var rect = d3.select('#' + d.id);
                 var text = d3.select('#' + d.id + '-t');
+                var frame = d3.select('#' + d.id + '-f');
                 
                 rect.remove();
                 text.remove();
+                frame.remove();
 
                 this.$store.dispatch('removeSection', d.id)
               }
@@ -339,6 +345,13 @@
             }
           },
           {
+            title: 'Tile details',
+            action: (d, _this) => {
+              this.$store.dispatch('setModalDetails', true)
+              this.$store.dispatch('setTile', d)
+            }
+          },
+          {
             title: 'Remove tile',
             action: (d, _this) => {
               console.log('Tile X clicked');
@@ -497,6 +510,7 @@
         const sectionDrag = (dd, _this) => {
 
           var rect = d3.select('#' + dd.id).classed("dragging", true);
+          var frame = d3.select('#' + dd.id + '-f').classed("dragging", true);
           var text = d3.select('#' + dd.id + '-t').classed("dragging", true);
           var t = d3.select('#' + dd.id + '-p')._groups[0][0]
           var firstChild = t.parentNode.firstChild;
@@ -560,6 +574,10 @@
               rect
                 .attr('width', newWidth)
                 .attr('height', newHeight);
+              frame
+                .attr("x", d => {
+                  return  +d.x + (+newWidth / 2) - (+d.name.length * 5 / 2) - 10
+                })
               text
                 .attr("x", d => {
                   return  +d.x + (+newWidth / 2) - (+d.name.length * 5 / 2)
@@ -567,6 +585,12 @@
             } else {
               d.x = coords1[0], d.y = coords1[1]
               rect.raise().attr("x", d.x = coords1[0]).attr("y", d.y = coords1[1]);
+              frame
+                .raise()
+                .attr("x", d => {
+                  return  +d.x + (+w / 2) - (+d.name.length * 5 / 2) - 10
+                })
+                .attr("y", (+d.y + +config.section_text_y) - 15);
               text
                 .raise()
                 .attr("x", d => {
@@ -688,6 +712,32 @@
             })
           );
 
+        var frame = sectionGroup
+                    .append('rect')
+                    .attr('class', d => 'sectionTextFrame ' + d.x.toString() + '-' + d.y.toString())
+                    .attr('id', d => d.id + '-f');
+
+        frame
+          .attr("width", d => (+d.name.length * 10) + (10 * 2))
+          .attr("height", +config.section_text_size + 5)
+          .attr("x", d => {
+            return  +d.x + (+d.width / 2) - (+d.name.length * 5 / 2) - 10
+          })
+          .attr("y", d => +d.y + +config.section_text_y - 15)
+          .attr("rx", config.tile_edges_round)
+          .attr("ry", config.tile_edges_round)
+          .style("opacity", config.tile_opacity)
+          .style("fill", d => d.color)
+          .attr("stroke-width", 2)
+          .style("filter", "url(#drop-shadow)")
+          .call(
+            d3.drag()
+            .on('start', function started(dd) {
+              sectionDrag(dd, this)
+            })
+          );
+
+        
         var sectionText = sectionGroup
                             .append('text')
                             .attr('class', d => 'sectionText ' + d.x.toString() + '-' + d.y.toString())
@@ -695,7 +745,7 @@
 
         sectionText
           .attr("x", d => {
-            return  +d.x + (+config.section_width / 2) - (+d.name.length * 5 / 2)
+            return  +d.x + (+d.width / 2) - (+d.name.length * 5 / 2)
           })
           .attr("y", d => +d.y + +config.section_text_y)
           .text(d => d.name)
@@ -828,7 +878,7 @@
           })
           .on('contextmenu', function (d) {
             var coords = d3.mouse(this);
-            createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup');
+            createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup', this);
           })
           .call(
             d3.drag()
@@ -882,7 +932,7 @@
           .on('contextmenu', function (d) {
             if (d.backLeft){
               var coords = d3.mouse(this);
-              createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup');
+              createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup', this);
             }
           })
           .call(
@@ -979,7 +1029,7 @@
           .attr("fill", config.tile_text_color)
           .on('contextmenu', function (d) {
             var coords = d3.mouse(this);
-            createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup');
+            createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup', this);
           })
           .call(
             d3.drag()

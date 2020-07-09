@@ -11,6 +11,7 @@
       </div>
     </navbar>
     <!-- End Navbar Warning -->
+
     <!-- Modal Tile -->
     <modal :show="modalTile" headerClasses="justify-content-center">
       <h4 slot="header" class="title title-up">Tile basic info</h4>
@@ -42,6 +43,7 @@
         >
       </template>
     </modal>
+
     <!-- Modal Section -->
     <modal :show="modalSection" headerClasses="justify-content-center">
       <h4 slot="header" class="title title-up">Section basic info</h4>
@@ -68,6 +70,7 @@
         >
       </template>
     </modal>
+
     <!-- Modal Board -->
     <modal :show="modalBoard" headerClasses="justify-content-center">
       <template slot="header">
@@ -107,7 +110,8 @@
         >
       </template>
     </modal>
-    <!-- Modal Board -->
+
+    <!-- Modal Color -->
     <modal :show="modalColor" headerClasses="justify-content-center">
       <template slot="header">
         <h4 class="title title-up">Select Color</h4>
@@ -131,7 +135,39 @@
         >
       </template>
     </modal>
+
     <input type="color" id="color" hidden/>
+    
+    <!-- Modal Detils -->
+    <modal :show="modalDetails" headerClasses="justify-content-center">
+      <template slot="header">
+        <h4 class="title title-up">Tile Details</h4>
+      </template>
+      <div class="datepicker-container">
+        <strong>Tile name:</strong>&nbsp;
+        <span>{{tileDetails.name}}</span>
+        <br />
+        <strong>Event name:</strong>&nbsp;
+        <span>{{tileDetails.event_name}}</span>
+        <br />
+        <strong>Event due date:</strong>&nbsp;
+        <span>{{this.due}}</span>
+        <br />
+        <strong>Back-loaded left title:</strong>&nbsp;
+        <span>{{tileDetails.backLTitle}}</span>
+        <br />
+        <strong>Back-loaded right title:</strong>&nbsp;
+        <span>{{tileDetails.backRTitle}}</span>
+        <br />
+        <br />
+      </div>
+      <template slot="footer">
+        <nbutton type="danger" @click="closeButton()"
+          >Close</nbutton
+        >
+      </template>
+    </modal>
+
     <D3 
       :sections="sections" 
       :tiles="tiles"
@@ -179,6 +215,7 @@
           max_trailers: 2
         },
         color: '#59c7f9',
+        due: ''
       }
     },
     computed: {
@@ -203,6 +240,16 @@
       },
       modalColor() {
         return this.$store.getters.getModalColor;
+      },
+      modalDetails() {
+        return this.$store.getters.getModalDetails;
+      },
+      tileDetails() {
+        var a = this.$store.getters.getTile
+        if (a.event_due){
+          this.due = new Date(a.event_due * 1000);
+        }
+        return a;
       },
       sections() {
         return this.$store.getters.getSections;
@@ -363,6 +410,8 @@
         this.$store.dispatch('setModalSection', false)
         this.$store.dispatch('setModalBoard', false)
         this.$store.dispatch('setModalColor', false)
+        this.$store.dispatch('setModalDetails', false)
+        this.$store.dispatch('setTile', {})
       }
     }
   }

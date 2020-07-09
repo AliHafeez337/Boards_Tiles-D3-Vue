@@ -615,7 +615,7 @@ export const sortTiles = ({ commit, getters }, id) => {
         // console.log(sectionDetails[detailedSection][j].name, sectionDetails[detailedSection][j].y, +sectionDetails[detailedSection][j].y + +config.tile_height)
         let thisHeight = (+sectionDetails[detailedSection][j].y + +config.tile_height)
         if (sectionDetails[detailedSection][j].y < midHeight && thisHeight > midHeight){
-          // console.log(sectionDetails[detailedSection][j].name, 'is in line with', sectionDetails[detailedSection][i].name, 'because', sectionDetails[detailedSection][j].name, "'s starting y", sectionDetails[detailedSection][j].y, 'is less than', midHeight, 'and its ending y (y + height) ', thisHeight , 'is greater than', midHeight)
+          console.log(sectionDetails[detailedSection][j].name, 'is in line with', sectionDetails[detailedSection][i].name, 'because', sectionDetails[detailedSection][j].name, "'s starting y", sectionDetails[detailedSection][j].y, 'is less than', midHeight, 'and its ending y (y + height) ', thisHeight , 'is greater than', midHeight)
           if (!(truck.includes(sectionDetails[detailedSection][i].id) || trailer.includes(sectionDetails[detailedSection][i].id))){
             
             if (sectionDetails[detailedSection][i].name[0] === 'H' || sectionDetails[detailedSection][i].name[0] === 'M' || sectionDetails[detailedSection][i].name[0] === 'L'){
@@ -689,7 +689,9 @@ export const sortTiles = ({ commit, getters }, id) => {
     // console.log(sorted)
     sectionDetails1[detailedSection] = sorted.reverse()
   }
-  // console.log('After sorting trucks-trailer in section', sectionDetails1)
+  console.log('After sorting trucks-trailer in section', sectionDetails1)
+
+  var sectionDetails5 = {}, sectionDetails6 = {}
 
   // Sorting trucks
   for(let detailedSection in sectionDetails2){
@@ -707,9 +709,9 @@ export const sortTiles = ({ commit, getters }, id) => {
       }
     })
     // console.log(sorted)
-    sectionDetails3[detailedSection] = sorted.reverse()
+    sectionDetails5[detailedSection] = sorted.reverse()
   }
-  // console.log('After sorting trucks in section', sectionDetails3)
+  console.log('After sorting trucks in section', sectionDetails5)
 
   // Sorting trailers
   for(let detailedSection in sectionDetails4){
@@ -756,11 +758,11 @@ export const sortTiles = ({ commit, getters }, id) => {
       }
     })
     // console.log(sorted)
-    sectionDetails2[detailedSection] = sorted.reverse()
+    sectionDetails6[detailedSection] = sorted.reverse()
   }
-  // console.log('After sorting trailers in section', sectionDetails2)
+  console.log('After sorting trailers in section', sectionDetails6)
 
-  console.log('After sorting in this section', 'trucks are', sectionDetails3, 'trailers are', sectionDetails2, 'tucks-trailers are', sectionDetails1)
+  console.log('After sorting in this section', 'trucks are', sectionDetails5, 'trailers are', sectionDetails6, 'tucks-trailers are', sectionDetails1)
 
   // arrange them
 
@@ -807,26 +809,26 @@ export const sortTiles = ({ commit, getters }, id) => {
 
   // trucks only
   var times;
-  for(let detailedSection in sectionDetails3){
+  for(let detailedSection in sectionDetails5){
     times = 0;
     if (rows[detailedSection] === undefined){
       rows[detailedSection] = 0
     }
     row = rows[detailedSection]
     // console.log('rows', row, 'times', times)
-    // console.log(sectionDetails3[detailedSection])
-    for (let j = 0; j < sectionDetails3[detailedSection].length; j++){
+    // console.log(sectionDetails5[detailedSection])
+    for (let j = 0; j < sectionDetails5[detailedSection].length; j++){
       
-      // console.log('subject', sectionDetails3[detailedSection][j])
+      // console.log('subject', sectionDetails5[detailedSection][j])
       if (row > 0){
-        sectionDetails3[detailedSection][j].y = +sections[detailedSection].y + config.y_appart_from_section + (+row * (+config.tile_height + +config.y_gap_between_tiles))
-        sectionDetails3[detailedSection][j].x = +sections[detailedSection].x + config.x_appart_from_section + (+times * (+config.tile_width + +config.x_gap_between_tiles))
+        sectionDetails5[detailedSection][j].y = +sections[detailedSection].y + config.y_appart_from_section + (+row * (+config.tile_height + +config.y_gap_between_tiles))
+        sectionDetails5[detailedSection][j].x = +sections[detailedSection].x + config.x_appart_from_section + (+times * (+config.tile_width + +config.x_gap_between_tiles))
       } else {
-        sectionDetails3[detailedSection][j].y = +sections[detailedSection].y + +config.y_appart_from_section
-        sectionDetails3[detailedSection][j].x = +sections[detailedSection].x + config.x_appart_from_section + (+times * (+config.tile_width + +config.x_gap_between_tiles))
+        sectionDetails5[detailedSection][j].y = +sections[detailedSection].y + +config.y_appart_from_section
+        sectionDetails5[detailedSection][j].x = +sections[detailedSection].x + config.x_appart_from_section + (+times * (+config.tile_width + +config.x_gap_between_tiles))
       }
-      tiles1.push(sectionDetails3[detailedSection][j])
-      // console.log(sectionDetails3[detailedSection][j])
+      tiles1.push(sectionDetails5[detailedSection][j])
+      // console.log(sectionDetails5[detailedSection][j])
       
       times++
       if (times === sections[detailedSection].max_trucks){
@@ -843,26 +845,26 @@ export const sortTiles = ({ commit, getters }, id) => {
 
   // trailers only
   var times;
-  for(let detailedSection in sectionDetails2){
+  for(let detailedSection in sectionDetails6){
     times = 0;
     if (rows[detailedSection] === undefined){
       rows[detailedSection] = 0
     }
     row = rows[detailedSection]
     // console.log('rows', row)
-    // console.log(sectionDetails2[detailedSection])
-    for (let j = 0; j < sectionDetails2[detailedSection].length; j++){
+    // console.log(sectionDetails6[detailedSection])
+    for (let j = 0; j < sectionDetails6[detailedSection].length; j++){
 
-      // console.log('subject', sectionDetails2[detailedSection][j])
+      // console.log('subject', sectionDetails6[detailedSection][j])
       if (row > 0){
-        sectionDetails2[detailedSection][j].y = +sections[detailedSection].y + config.y_appart_from_section + (+row * (+config.tile_height + +config.y_gap_between_tiles))
-        sectionDetails2[detailedSection][j].x = +sections[detailedSection].x + config.x_appart_from_section + (+times * (+config.tile_width + +config.x_gap_between_tiles))
+        sectionDetails6[detailedSection][j].y = +sections[detailedSection].y + config.y_appart_from_section + (+row * (+config.tile_height + +config.y_gap_between_tiles))
+        sectionDetails6[detailedSection][j].x = +sections[detailedSection].x + config.x_appart_from_section + (+times * (+config.tile_width + +config.x_gap_between_tiles))
       } else {
-        sectionDetails2[detailedSection][j].y = +sections[detailedSection].y + +config.y_appart_from_section
-        sectionDetails2[detailedSection][j].x = +sections[detailedSection].x + config.x_appart_from_section + (+times * (+config.tile_width + +config.x_gap_between_tiles))
+        sectionDetails6[detailedSection][j].y = +sections[detailedSection].y + +config.y_appart_from_section
+        sectionDetails6[detailedSection][j].x = +sections[detailedSection].x + config.x_appart_from_section + (+times * (+config.tile_width + +config.x_gap_between_tiles))
       }
-      tiles1.push(sectionDetails2[detailedSection][j])
-      // console.log(sectionDetails2[detailedSection][j])
+      tiles1.push(sectionDetails6[detailedSection][j])
+      // console.log(sectionDetails6[detailedSection][j])
       
       times++
       if (times === sections[detailedSection].max_trailers){
