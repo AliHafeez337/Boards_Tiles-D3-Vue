@@ -266,8 +266,13 @@ export const removeSection = ({ commit, getters }, id) => {
     if (!(section.id === id))
       return section
   })
+  var sectionName = getters.getSectionName1.filter(sectionName => {
+    if (!(sectionName.id === id + '-n'))
+      return sectionName
+  })
   setTimeout(() => {
     commit('SET_SECTIONS1', sections)
+    commit('SET_SECTIONNAME1', sectionName)
   }, 1000)
   // save into the database
 };

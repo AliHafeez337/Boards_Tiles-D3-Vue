@@ -136,7 +136,7 @@
       </template>
     </modal>
 
-    <input type="color" id="color" hidden/>
+    <!-- <input type="color" id="color" hidden/> -->
     
     <!-- Modal Detils -->
     <modal :show="modalDetails" headerClasses="justify-content-center">

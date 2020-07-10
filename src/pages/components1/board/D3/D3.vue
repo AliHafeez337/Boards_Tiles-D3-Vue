@@ -104,8 +104,8 @@
 
               if (confirm("Do you really want to delete this section?")) {
                 var rect = d3.select('#' + d.id);
-                var text = d3.select('#' + d.id + '-t');
-                var frame = d3.select('#' + d.id + '-f');
+                var text = d3.select('#' + d.id + '-n-t');
+                var frame = d3.select('#' + d.id + '-n');
                 
                 rect.remove();
                 text.remove();
@@ -346,7 +346,7 @@
             }
           },
           {
-            title: 'Tile details',
+            title: 'Asset information',
             action: (d, _this) => {
               this.$store.dispatch('setModalDetails', true)
               this.$store.dispatch('setTile', d)
@@ -836,7 +836,7 @@
                       .attr('id', d => d.id);
 
         frame
-          .attr("width", d => (+d.name.length * config.a_letter_width) + (10 * 2))
+          .attr("width", d => (+d.name.length * config.a_letter_width) + (5 * 2))
           .attr("height", +config.section_text_size + 5)
           .attr("x", d => d.x)
           .attr("y", d => d.y)
