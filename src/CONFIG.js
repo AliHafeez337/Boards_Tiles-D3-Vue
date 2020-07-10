@@ -50,8 +50,12 @@ export const config = {
   gap_between_labels: 5,
   padding_on_labels: 2,
 
+  // Section text Tile
+  // For Capital letters, 15 is good, for Small letters 10 is good
+  a_letter_width: 15,
+
   // Section text
-  section_text_color: 'black',
+  section_text_color: 'white',
   // relative distance (x, y) from the section
   section_text_y: 20, // y pixels appart from the point(y) of the tile
   section_text_font: 'sans-serif',

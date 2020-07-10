@@ -11,6 +11,7 @@
       </div>
     </navbar>
     <!-- End Navbar Warning -->
+
     <!-- Modal Tile -->
     <modal :show="modalTile" headerClasses="justify-content-center">
       <h4 slot="header" class="title title-up">Tile basic info</h4>
@@ -42,6 +43,7 @@
         >
       </template>
     </modal>
+
     <!-- Modal Section -->
     <modal :show="modalSection" headerClasses="justify-content-center">
       <h4 slot="header" class="title title-up">Section basic info</h4>
@@ -68,6 +70,7 @@
         >
       </template>
     </modal>
+
     <!-- Modal Board -->
     <modal :show="modalBoard" headerClasses="justify-content-center">
       <template slot="header">
@@ -107,7 +110,8 @@
         >
       </template>
     </modal>
-    <!-- Modal Board -->
+
+    <!-- Modal Color -->
     <modal :show="modalColor" headerClasses="justify-content-center">
       <template slot="header">
         <h4 class="title title-up">Select Color</h4>
@@ -131,9 +135,42 @@
         >
       </template>
     </modal>
-    <input type="color" id="color" hidden/>
+
+    <!-- <input type="color" id="color" hidden/> -->
+    
+    <!-- Modal Detils -->
+    <modal :show="modalDetails" headerClasses="justify-content-center">
+      <template slot="header">
+        <h4 class="title title-up">Tile Details</h4>
+      </template>
+      <div class="datepicker-container">
+        <strong>Tile name:</strong>&nbsp;
+        <span>{{tileDetails.name}}</span>
+        <br />
+        <strong>Event name:</strong>&nbsp;
+        <span>{{tileDetails.event_name}}</span>
+        <br />
+        <strong>Event due date:</strong>&nbsp;
+        <span>{{this.due}}</span>
+        <br />
+        <strong>Back-loaded left title:</strong>&nbsp;
+        <span>{{tileDetails.backLTitle}}</span>
+        <br />
+        <strong>Back-loaded right title:</strong>&nbsp;
+        <span>{{tileDetails.backRTitle}}</span>
+        <br />
+        <br />
+      </div>
+      <template slot="footer">
+        <nbutton type="danger" @click="closeButton()"
+          >Close</nbutton
+        >
+      </template>
+    </modal>
+
     <D3 
       :sections="sections" 
+      :sectionName="sectionName" 
       :tiles="tiles"
       :labels="labels"
       :search="search"
@@ -179,6 +216,7 @@
           max_trailers: 2
         },
         color: '#59c7f9',
+        due: ''
       }
     },
     computed: {
@@ -204,8 +242,21 @@
       modalColor() {
         return this.$store.getters.getModalColor;
       },
+      modalDetails() {
+        return this.$store.getters.getModalDetails;
+      },
+      tileDetails() {
+        var a = this.$store.getters.getTile
+        if (a.event_due){
+          this.due = new Date(a.event_due * 1000);
+        }
+        return a;
+      },
       sections() {
         return this.$store.getters.getSections;
+      },
+      sectionName() {
+        return this.$store.getters.getSectionName;
       },
       tiles() {
         return this.$store.getters.getTiles;
@@ -268,6 +319,10 @@
             { 'id': 'aqxn9u0yv3', 'name': '0ABC', 'max_trucks': 1, 'max_trailers': 1, 'width': config.section_width, 'height': config.section_height, "x": 20, 'y': 20, 'color': config.new_section_color },
             { 'id': 'a0nyn15mj3', 'name': '1BCD', 'max_trucks': 1, 'max_trailers': 2, 'width': config.section_width, 'height': config.section_height, "x": 250, 'y': 20, 'color': config.new_section_color },
             { 'id': 'ayquazchds', 'name': '2CDE', 'max_trucks': 2, 'max_trailers': 1, 'width': config.section_width, 'height': config.section_height, "x": 520, 'y': 20, 'color': config.new_section_color }
+          ], sectionName = [
+            { 'id': 'aqxn9u0yv3-n', 'name': '0ABC', 'width': config.section_width, 'height': config.section_height, "x": 20, 'y': 20, 'color': config.new_section_color },
+            { 'id': 'a0nyn15mj3-n', 'name': '1BCD', 'width': config.section_width, 'height': config.section_height, "x": 250, 'y': 20, 'color': config.new_section_color },
+            { 'id': 'ayquazchds-n', 'name': '2CDE', 'width': config.section_width, 'height': config.section_height, "x": 520, 'y': 20, 'color': config.new_section_color }
           ], tiles = [
             { 'id': 'atrnrt7tmm', 'name': 'B02PSL', "x": 260, 'y': 50, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': true, 'backRTitle': 'ccc', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
             { 'id': 'atrnrt7tmp', 'name': 'B03PSL', "x": 260, 'y': 150, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
@@ -285,6 +340,7 @@
           ]
           this.$store.dispatch('setBoard', board)
           this.$store.dispatch('setSections', sections)
+          this.$store.dispatch('setSectionName', sectionName)
           this.$store.dispatch('setTiles', tiles)
           this.$store.dispatch('setLabels', labels)
           this.closeButton()
@@ -363,6 +419,8 @@
         this.$store.dispatch('setModalSection', false)
         this.$store.dispatch('setModalBoard', false)
         this.$store.dispatch('setModalColor', false)
+        this.$store.dispatch('setModalDetails', false)
+        this.$store.dispatch('setTile', {})
       }
     }
   }

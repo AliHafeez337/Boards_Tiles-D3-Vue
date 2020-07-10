@@ -4,6 +4,8 @@ const mutations = {
   SET_MODALBOARD: (state, data) => { state.modalBoard = data },
   SET_MODALCOLOR: (state, data) => { state.modalColor = data },
   SET_COLOR: (state, data) => { state.color = data },
+  SET_MODALDETAILS: (state, data) => { state.modalDetails = data },
+  SET_TILE: (state, data) => { state.tile = data }
 }
 
 export default mutations;

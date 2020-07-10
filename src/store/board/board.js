@@ -11,9 +11,11 @@ const state = {
   board: '',
   boards: ['board1'],
   sections: [],
+  sectionName: [],
   tiles: [],
   labels: [],
   sections1: [],
+  sectionName1: [],
   tiles1: [],
   labels1: [],
   zoom: {

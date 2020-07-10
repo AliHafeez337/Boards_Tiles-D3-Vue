@@ -13,6 +13,12 @@ const actions = {
   },
   setColor: ({ commit }, data) => {
     commit('SET_COLOR', data)
+  },
+  setModalDetails: ({ commit }, data) => {
+    commit('SET_MODALDETAILS', data)
+  },
+  setTile: ({ commit }, data) => {
+    commit('SET_TILE', data)
   }
 }
 
