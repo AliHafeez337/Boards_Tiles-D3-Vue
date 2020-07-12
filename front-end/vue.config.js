@@ -1,7 +1,10 @@
 const path = require('path');
 
-require('dotenv').config({ path: path.dirname('../.env') })
+// require('dotenv').config({ path: path.dirname('../.env') })
+require('dotenv').config()
 const { VUE_APP_URL } = process.env;
+
+const backendURL = 'https://board-d3-vue.herokuapp.com/'
 
 module.exports = {
   css: {
@@ -12,7 +15,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: VUE_APP_URL
+        target: backendURL
       }
     }
   }
