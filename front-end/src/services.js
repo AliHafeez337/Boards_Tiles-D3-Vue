@@ -1,11 +1,6 @@
 import axios from 'axios';
-import dotenv from 'dotenv'
 
-const path = require('path');
-
-dotenv.config({ path: path.dirname('../../.env') })
-
-const baseURL = 'https://board-d3-vue.herokuapp.com/api';
+const baseURL = 'http://localhost:3000/api';
 
 class Services {
 
@@ -13,9 +8,7 @@ class Services {
   static getCredits() {
     return new Promise(async (resolve, reject) => {
       try{
-        console.log(VUE_APP_BACKEND_URL)
-
-        const res = await axios.get(`${VUE_APP_BACKEND_URL}/credits`);
+        const res = await axios.get(`${baseURL}/credits`);
         // console.log(res)
         if (res.data){
           if (res.data.msg){
