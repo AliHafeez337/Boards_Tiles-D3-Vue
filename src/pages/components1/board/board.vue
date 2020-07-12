@@ -16,6 +16,7 @@
     <modal :show="modalTile" headerClasses="justify-content-center">
       <h4 slot="header" class="title title-up">Tile basic info</h4>
       <div class="datepicker-container">
+        <small>A trailer must has last 3 digits as integers otherwise it would be treated as a truck.</small>
         <fginput
           placeholder="Tile Name"
           v-model="tile.name"
@@ -327,10 +328,17 @@
             { 'id': 'atrnrt7tmm', 'name': 'B02PSL', "x": 260, 'y': 50, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': true, 'backRTitle': 'ccc', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
             { 'id': 'atrnrt7tmp', 'name': 'B03PSL', "x": 260, 'y': 150, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
             { 'id': 'azkbug6kyx', 'name': 'A1PSL', "x": 30, 'y': 50, "color" : "brown", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593537002 }, // due in next 3 days
-            { 'id': 'atrnrt7tmn', 'name': 'HB02', "x": 350, 'y': 50, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
-            { 'id': 'atrnrt7tmo', 'name': 'MB02', "x": 350, 'y': 100, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
+            { 'id': 'atrnrt7tmn', 'name': 'HB023', "x": 350, 'y': 50, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
+            { 'id': 'btrnrt7tmn', 'name': 'H000', "x": 350, 'y': 80, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
+            { 'id': 'ctrnrt7tmn', 'name': 'H002', "x": 350, 'y': 110, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
+            { 'id': 'dtrnrt7tmn', 'name': 'H003', "x": 350, 'y': 140, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
+            { 'id': 'etrnrt7tmn', 'name': 'H802', "x": 350, 'y': 170, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
+            { 'id': 'ftrnrt7tmn', 'name': 'H803', "x": 350, 'y': 200, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
+            { 'id': 'gtrnrt7tmn', 'name': 'L256', "x": 350, 'y': 230, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
+            { 'id': 'htrnrt7tmn', 'name': 'XL710', "x": 350, 'y': 260, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
+            { 'id': 'atrnrt7tmo', 'name': 'MB022', "x": 260, 'y': 100, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
             { 'id': 'ak693b4ofl', 'name': 'C10PSL', "x": 530, 'y': 50, "color" : "#DA70D6", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': null }, // 1595869802 = due in next 30 days
-            { 'id': 'ak693b4ofm', 'name': 'MC10', "x": 625, 'y': 50, "color" : "#DA70D6", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': null } // 1595869802 = due in next 30 days
+            { 'id': 'ak693b4ofm', 'name': 'MC101', "x": 625, 'y': 50, "color" : "#DA70D6", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': null } // 1595869802 = due in next 30 days
           ], labels = [
             { 'tile': 'atrnrt7tmm', "color" : "orange" },
             { 'tile': 'azkbug6kyx', "color" : "red" },

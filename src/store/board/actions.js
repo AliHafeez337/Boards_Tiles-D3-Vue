@@ -1,5 +1,6 @@
 import { config } from './../../CONFIG';
 
+// Searches only the trailer
 export const setSearch = ({ commit, getters }, data) => {
   commit('SET_SECTIONS', getters.getSections1)
   commit('SET_TILES', getters.getTiles1)
@@ -8,7 +9,8 @@ export const setSearch = ({ commit, getters }, data) => {
   var search = null
   getters.getTiles1.forEach(tile => {
     var name = tile.name
-    if (tile.name[0] === 'H' || tile.name[0] === 'M' || tile.name[0] === 'L'){
+    // if (tile.name[0] === 'H' || tile.name[0] === 'M' || tile.name[0] === 'L'){
+    if (!isNaN(tile.name.substr(tile.name.length - 3))){
       name = tile.name.substring(1)
     }
     if (name === data){
@@ -96,6 +98,7 @@ export const pushSection = ({ commit, getters }, section) => {
   // console.log(getters.getSections, getters.getSections1)
   var sections = [...getters.getSections1]
   var sectionName = [...getters.getSectionName1]
+  var tiles = [...getters.getTiles1]
   var a = { 
     'id': `${section.id}-n`, 
     'name': section.name, 
@@ -108,6 +111,7 @@ export const pushSection = ({ commit, getters }, section) => {
   setTimeout(() => {
     sections.push(section)
     sectionName.push(a)
+    commit('SET_TILES', tiles)
     commit('SET_SECTIONNAME', sectionName)
     commit('SET_SECTIONNAME1', sectionName)
     commit('SET_SECTIONS', sections)
@@ -120,10 +124,14 @@ export const pushSection = ({ commit, getters }, section) => {
 export const pushTile = ({ commit, getters }, tile) => {
   console.log(tile, getters.getTiles, getters.getTiles1)
   var tiles = [...getters.getTiles1]
+  var sections = [...getters.getSections1]
+  var sectionName = [...getters.getSectionName1]
   setTimeout(() => {
     tiles.push(tile)
     commit('SET_TILES', tiles)
     commit('SET_TILES1', tiles)
+    commit('SET_SECTIONS', sections)
+    commit('SET_SECTIONNAME', sectionName)
     commit('SET_LABELS', getters.getLabels1)
   }, 1000)
   // save into the database
@@ -354,7 +362,8 @@ export const arrangeTiles = ({ commit, getters }, id) => {
     for (let i = 0; i < sectionDetails[detailedSection].length; i++){
       // Only the truck will look for the trailer..
       
-      if (sectionDetails[detailedSection][i].name[0] === 'H' || sectionDetails[detailedSection][i].name [0] === 'M' || sectionDetails[detailedSection][i].name[0] ==='L'){
+      // if (sectionDetails[detailedSection][i].name[0] === 'H' || sectionDetails[detailedSection][i].name [0] === 'M' || sectionDetails[detailedSection][i].name[0] ==='L'){
+      if (!isNaN(sectionDetails[detailedSection][i].name.substr(sectionDetails[detailedSection][i].name.length - 3))){
         continue
       }
 
@@ -364,7 +373,9 @@ export const arrangeTiles = ({ commit, getters }, id) => {
 
       for (let j = 0; j < sectionDetails[detailedSection].length; j++){
         // Only get see for the trailer
-        if (!(sectionDetails[detailedSection][j].name[0] === 'H' || sectionDetails[detailedSection][j].name [0] === 'M' || sectionDetails[detailedSection][j].name[0] ==='L')){
+        
+        // if (!(sectionDetails[detailedSection][j].name[0] === 'H' || sectionDetails[detailedSection][j].name [0] === 'M' || sectionDetails[detailedSection][j].name[0] ==='L')){
+        if (isNaN(sectionDetails[detailedSection][j].name.substr(sectionDetails[detailedSection][j].name.length - 3))){
           continue
         }
         if (sectionDetails[detailedSection][j].id === sectionDetails[detailedSection][i].id){
@@ -376,7 +387,8 @@ export const arrangeTiles = ({ commit, getters }, id) => {
           // console.log(sectionDetails[detailedSection][j].name, 'is in line with', sectionDetails[detailedSection][i].name, 'because', sectionDetails[detailedSection][j].name, "'s starting y", sectionDetails[detailedSection][j].y, 'is less than', midHeight, 'and its ending y (y + height) ', thisHeight , 'is greater than', midHeight)
           if (!(truck.includes(sectionDetails[detailedSection][i].id) || trailer.includes(sectionDetails[detailedSection][i].id))){
             
-            if (sectionDetails[detailedSection][i].name[0] === 'H' || sectionDetails[detailedSection][i].name[0] === 'M' || sectionDetails[detailedSection][i].name[0] === 'L'){
+            // if (sectionDetails[detailedSection][i].name[0] === 'H' || sectionDetails[detailedSection][i].name[0] === 'M' || sectionDetails[detailedSection][i].name[0] === 'L'){
+            if (!isNaN(sectionDetails[detailedSection][i].name.substr(sectionDetails[detailedSection][i].name.length - 3))){
               trailer.push(sectionDetails[detailedSection][i].id)
               truck.push(sectionDetails[detailedSection][j].id)
               trailerDetailed.push(sectionDetails[detailedSection][i])
@@ -407,7 +419,9 @@ export const arrangeTiles = ({ commit, getters }, id) => {
           }
         }
       } else {
-        if (tile.name[0] === 'H' || tile.name[0] === 'M' || tile.name[0] === 'L'){
+        
+        // if (tile.name[0] === 'H' || tile.name[0] === 'M' || tile.name[0] === 'L'){
+        if (!isNaN(tile.name.substr(tile.name.length - 3))){
           if (sectionDetails4[detailedSection] === undefined){
             sectionDetails4[detailedSection] = [tile]
           } else {
@@ -573,6 +587,10 @@ export const arrangeTiles = ({ commit, getters }, id) => {
 
   commit('SET_TILES', tiles1)
   commit('SET_TILES1', tiles1)
+  
+  commit('SET_SECTIONS', getters.getSections1)
+  commit('SET_SECTIONNAME', getters.getSectionName1)
+  commit('SET_LABELS', getters.getLabels1)
   // setTimeout(() => console.log(this.$store.getters.getTiles), 1000)
 };
 
@@ -643,7 +661,10 @@ export const sortTiles = ({ commit, getters }, id) => {
     for (let i = 0; i < sectionDetails[detailedSection].length; i++){
       // Only the truck will look for the trailer..
       
-      if (sectionDetails[detailedSection][i].name[0] === 'H' || sectionDetails[detailedSection][i].name [0] === 'M' || sectionDetails[detailedSection][i].name[0] ==='L'){
+      // console.log(sectionDetails[detailedSection][i].name.substr(sectionDetails[detailedSection][i].name.length - 3), isNaN(sectionDetails[detailedSection][i].name.substr(sectionDetails[detailedSection][i].name.length - 3)))
+
+      // if (sectionDetails[detailedSection][i].name[0] === 'H' || sectionDetails[detailedSection][i].name [0] === 'M' || sectionDetails[detailedSection][i].name[0] ==='L'){
+      if (!isNaN(sectionDetails[detailedSection][i].name.substr(sectionDetails[detailedSection][i].name.length - 3))){
         continue
       }
 
@@ -653,7 +674,9 @@ export const sortTiles = ({ commit, getters }, id) => {
 
       for (let j = 0; j < sectionDetails[detailedSection].length; j++){
         // Only get see for the trailer
-        if (!(sectionDetails[detailedSection][j].name[0] === 'H' || sectionDetails[detailedSection][j].name [0] === 'M' || sectionDetails[detailedSection][j].name[0] ==='L')){
+        
+        // if (!(sectionDetails[detailedSection][j].name[0] === 'H' || sectionDetails[detailedSection][j].name [0] === 'M' || sectionDetails[detailedSection][j].name[0] ==='L')){
+        if (isNaN(sectionDetails[detailedSection][j].name.substr(sectionDetails[detailedSection][j].name.length - 3))){
           continue
         }
         if (sectionDetails[detailedSection][j].id === sectionDetails[detailedSection][i].id){
@@ -665,7 +688,8 @@ export const sortTiles = ({ commit, getters }, id) => {
           console.log(sectionDetails[detailedSection][j].name, 'is in line with', sectionDetails[detailedSection][i].name, 'because', sectionDetails[detailedSection][j].name, "'s starting y", sectionDetails[detailedSection][j].y, 'is less than', midHeight, 'and its ending y (y + height) ', thisHeight , 'is greater than', midHeight)
           if (!(truck.includes(sectionDetails[detailedSection][i].id) || trailer.includes(sectionDetails[detailedSection][i].id))){
             
-            if (sectionDetails[detailedSection][i].name[0] === 'H' || sectionDetails[detailedSection][i].name[0] === 'M' || sectionDetails[detailedSection][i].name[0] === 'L'){
+            // if (sectionDetails[detailedSection][i].name[0] === 'H' || sectionDetails[detailedSection][i].name[0] === 'M' || sectionDetails[detailedSection][i].name[0] === 'L'){
+            if (!isNaN(sectionDetails[detailedSection][i].name.substr(sectionDetails[detailedSection][i].name.length - 3))){
               trailer.push(sectionDetails[detailedSection][i].id)
               truck.push(sectionDetails[detailedSection][j].id)
               trailerDetailed.push(sectionDetails[detailedSection][i])
@@ -696,7 +720,9 @@ export const sortTiles = ({ commit, getters }, id) => {
           }
         }
       } else {
-        if (tile.name[0] === 'H' || tile.name[0] === 'M' || tile.name[0] === 'L'){
+        
+        // if (tile.name[0] === 'H' || tile.name[0] === 'M' || tile.name[0] === 'L'){
+        if (!isNaN(tile.name.substr(tile.name.length - 3))){
           if (sectionDetails4[detailedSection] === undefined){
             sectionDetails4[detailedSection] = [tile]
           } else {
@@ -771,37 +797,38 @@ export const sortTiles = ({ commit, getters }, id) => {
         // console.log('b')
         return 1
       } else {
-        if (a.name[0] === 'H' && b.name[0] === 'L'){
-          // console.log('b')
-          return 1
-        } else if (a.name[0] === 'H' && b.name[0] === 'M'){
-          // console.log('b')
-          return 1
-        } else if (a.name[0] === 'H' && b.name[0] === 'H'){
-          // console.log('b')
-          return 1
-        } else if (a.name[0] === 'M' && b.name[0] === 'L'){
-          // console.log('b')
-          return 1
-        } else if (a.name[0] === 'M' && b.name[0] === 'M'){
-          // console.log('b')
-          return 1
-        } else if (a.name[0] === 'M' && b.name[0] === 'H'){
-          // console.log('a')
-          return -1
-        } else if (a.name[0] === 'L' && b.name[0] === 'L'){
-          // console.log('b')
-          return 1
-        } else if (a.name[0] === 'L' && b.name[0] === 'M'){
-          // console.log('a')
-          return -1
-        } else if (a.name[0] === 'L' && b.name[0] === 'H'){
-          // console.log('a')
-          return -1
-        } else {
-          // console.log('a')
-          return -1
-        }
+        return -1
+        // if (a.name[0] === 'H' && b.name[0] === 'L'){
+        //   // console.log('b')
+        //   return 1
+        // } else if (a.name[0] === 'H' && b.name[0] === 'M'){
+        //   // console.log('b')
+        //   return 1
+        // } else if (a.name[0] === 'H' && b.name[0] === 'H'){
+        //   // console.log('b')
+        //   return 1
+        // } else if (a.name[0] === 'M' && b.name[0] === 'L'){
+        //   // console.log('b')
+        //   return 1
+        // } else if (a.name[0] === 'M' && b.name[0] === 'M'){
+        //   // console.log('b')
+        //   return 1
+        // } else if (a.name[0] === 'M' && b.name[0] === 'H'){
+        //   // console.log('a')
+        //   return -1
+        // } else if (a.name[0] === 'L' && b.name[0] === 'L'){
+        //   // console.log('b')
+        //   return 1
+        // } else if (a.name[0] === 'L' && b.name[0] === 'M'){
+        //   // console.log('a')
+        //   return -1
+        // } else if (a.name[0] === 'L' && b.name[0] === 'H'){
+        //   // console.log('a')
+        //   return -1
+        // } else {
+        //   // console.log('a')
+        //   return -1
+        // }
       }
     })
     // console.log(sorted)
@@ -942,4 +969,8 @@ export const sortTiles = ({ commit, getters }, id) => {
 
   commit('SET_TILES', tiles1)
   commit('SET_TILES1', tiles1)
+  
+  commit('SET_SECTIONS', getters.getSections1)
+  commit('SET_SECTIONNAME', getters.getSectionName1)
+  commit('SET_LABELS', getters.getLabels1)
 }
