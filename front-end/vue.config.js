@@ -1,5 +1,8 @@
 const path = require('path');
 
+require('dotenv').config({ path: path.dirname('../.env') })
+const { VUE_APP_URL } = process.env;
+
 module.exports = {
   css: {
     // Enable CSS source maps.
@@ -9,7 +12,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'https://board-d3-vue.herokuapp.com:3000'
+        target: VUE_APP_URL
       }
     }
   }
