@@ -6,7 +6,7 @@ dotenv.config()
 // require('dotenv').config()
 const { VUE_APP_BACKEND_URL } = process.env;
 
-const baseURL = 'https://board-d3-vue.herokuapp.com/api';
+const baseURL = 'https://board-d3-vue.herokuapp.com:3000/api';
 
 class Services {
 
