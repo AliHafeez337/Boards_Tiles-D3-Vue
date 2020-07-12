@@ -4,7 +4,8 @@
   "description": "A project developed by AliHafeez337(alihafeez337@gmail.com)",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon back-end/index.js",
+    "start": "node back-end/index.js",
+    "dev": "nodemon back-end/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
