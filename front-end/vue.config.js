@@ -9,7 +9,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000'
+        target: 'https://board-d3-vue.herokuapp.com'
       }
     }
   }
