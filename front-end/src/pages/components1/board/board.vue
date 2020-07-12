@@ -152,7 +152,7 @@
         <span>{{tileDetails.event_name}}</span>
         <br />
         <strong>Event due date:</strong>&nbsp;
-        <span>{{this.due}}</span>
+        <span>{{tileDetails.due1}}</span>
         <br />
         <strong>Back-loaded left title:</strong>&nbsp;
         <span>{{tileDetails.backLTitle}}</span>
@@ -216,8 +216,7 @@
           max_trucks: 2,
           max_trailers: 2
         },
-        color: '#59c7f9',
-        due: ''
+        color: '#59c7f9'
       }
     },
     computed: {
@@ -249,7 +248,7 @@
       tileDetails() {
         var a = this.$store.getters.getTile
         if (a.event_due){
-          this.due = new Date(a.event_due * 1000);
+          a.due1 = new Date(a.event_due * 1000);
         }
         return a;
       },

@@ -10,10 +10,11 @@ export const setSearch = ({ commit, getters }, data) => {
   getters.getTiles1.forEach(tile => {
     var name = tile.name
     // if (tile.name[0] === 'H' || tile.name[0] === 'M' || tile.name[0] === 'L'){
-    if (!isNaN(tile.name.substr(tile.name.length - 3))){
-      name = tile.name.substring(1)
-    }
+    // if (!isNaN(tile.name.substr(tile.name.length - 3))){
+    //   name = tile.name.substring(1)
+    // }
     if (name === data){
+      console.log(-Math.abs(+tile.x) + (window.innerWidth / 2) - (config.section_width / 2), -Math.abs(+tile.y) + (window.innerHeight / 2) - (config.section_height / 2))
       search = {
         word: tile.name,
         k: 1,
@@ -23,7 +24,20 @@ export const setSearch = ({ commit, getters }, data) => {
     }
   })
   if (!search){
-    search = null
+    var oldZoom = getters.getZoom;
+    if (oldZoom){
+      search = {
+        k: oldZoom.k,
+        x: oldZoom.x,
+        y: oldZoom.y
+      }
+    } else {
+      search = {
+        k: 0.5,
+        x: 0,
+        y: 0
+      }
+    }
   }
   commit('SET_SEARCH', search)
 };
@@ -111,6 +125,7 @@ export const pushSection = ({ commit, getters }, section) => {
   setTimeout(() => {
     sections.push(section)
     sectionName.push(a)
+    commit('SET_SEARCH', null)
     commit('SET_TILES', tiles)
     commit('SET_SECTIONNAME', sectionName)
     commit('SET_SECTIONNAME1', sectionName)
@@ -128,11 +143,13 @@ export const pushTile = ({ commit, getters }, tile) => {
   var sectionName = [...getters.getSectionName1]
   setTimeout(() => {
     tiles.push(tile)
+    commit('SET_SEARCH', null)
     commit('SET_TILES', tiles)
     commit('SET_TILES1', tiles)
     commit('SET_SECTIONS', sections)
     commit('SET_SECTIONNAME', sectionName)
     commit('SET_LABELS', getters.getLabels1)
+    
   }, 1000)
   // save into the database
 };

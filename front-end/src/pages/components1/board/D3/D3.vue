@@ -1233,9 +1233,46 @@
                       .on("zoom", () => {
                         const transform = d3.event.transform;
                         this.zoomChanged++
-                        // console.log(this.zoomChanged, transform.k)
+                        // console.log(this.zoomChanged, transform.k, transform.x, transform.y)
                         if (this.zoomChanged === 1){
                           transform.k = config.default_zoom_level
+                        }
+                        
+                        var oldZoom = null;
+                        if (!this.justOnce){
+                          oldZoom = this.$store.getters.getZoom;
+                          this.justOnce = true
+                        }
+
+                        if (this.search){
+                          if (this.zoomChanged === 1){
+                            transform.k = this.search.k
+                            transform.x = this.search.x
+                            transform.y = this.search.y
+                            // sectionGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                            // sectionNameGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                            // tileGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                            // tooltip.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                            // contextGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                          }
+                        
+                        } else if (oldZoom && oldZoom.x && oldZoom.y && oldZoom.k){
+                            transform.k = oldZoom.k
+                            transform.x = oldZoom.x
+                            transform.y = oldZoom.y
+                          // sectionGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
+                          // sectionNameGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
+                          // tileGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
+                          // tooltip.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
+                          // contextGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
+                        
+                          store.dispatch('changeZoom', { 
+                            zoom: oldZoom
+                          })
+                        } else {
+                          store.dispatch('changeZoom', { 
+                            zoom: d3.event.transform
+                          })
                         }
                         
                         const zx = transform.rescaleX(x).interpolate(d3.interpolateRound);
@@ -1247,36 +1284,6 @@
                         tooltip.attr("transform", transform).attr("stroke-width", 5 / transform.k);
                         contextGroup.attr("transform", transform).attr("stroke-width", 5 / transform.k);
                         
-                        var oldZoom = null;
-                        if (!this.justOnce){
-                          oldZoom = this.$store.getters.getZoom;
-                          this.justOnce = true
-                        }
-
-                        if (this.search){
-                          if (this.zoomChanged === 1){
-                            sectionGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
-                            sectionNameGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
-                            tileGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
-                            tooltip.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
-                            contextGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
-                          }
-                        
-                        } else if (oldZoom && oldZoom.x && oldZoom.y && oldZoom.k){
-                          sectionGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
-                          sectionNameGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
-                          tileGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
-                          tooltip.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
-                          contextGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
-                        
-                          store.dispatch('changeZoom', { 
-                            zoom: oldZoom
-                          })
-                        } else {
-                          store.dispatch('changeZoom', { 
-                            zoom: d3.event.transform
-                          })
-                        }
                       });
 
         svgContainer.call(zoom).call(zoom.transform, d3.zoomIdentity);
