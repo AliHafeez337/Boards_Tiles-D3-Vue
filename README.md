@@ -1,14 +1,25 @@
 ﻿# Boards - Tiles - D3
 
-
-<!-- ## Project presentation
-
-- [**Part 1**]() -->
+- [**Live demo**](https://board-ac1a6.web.app/)
 
 
 ## Project setup
 
-##### open terminal in the root directory (where 'src' directory and 'package.json' file is present)
+#### Node.js
+
+##### open terminal in the root directory (where 'package.json' file is present)
+```
+npm install
+```
+
+##### now in the same directory, to run the project...
+```
+npm start
+```
+
+#### Vue.js
+
+##### move to the front-end directory and run
 ```
 npm install
 ```
@@ -20,4 +31,4 @@ npm run serve
 
 ### Project credits
 
-This project is developed by CodeCrafterz with 💙.
+This project is developed by Ali Hafeez.
