@@ -23,22 +23,6 @@
       </el-popover>
     </template>
     <template slot="navbar-menu">
-      <drop-down
-        tag="li"
-        title="Examples"
-        icon="now-ui-icons design_image"
-        class="nav-item"
-      >
-        <nav-link to="/landing">
-          <i class="now-ui-icons education_paper"></i> Landing
-        </nav-link>
-        <nav-link to="/login">
-          <i class="now-ui-icons users_circle-08"></i> Login
-        </nav-link>
-        <nav-link to="/profile">
-          <i class="now-ui-icons users_single-02"></i> Profile
-        </nav-link>
-      </drop-down>
       <fginput
         v-if="ifBoard"
         placeholder="Search the tile"
@@ -83,9 +67,9 @@
         <a
           class="nav-link"
           rel="tooltip"
-          title="Follow us on Twitter"
+          title="Me on Twitter"
           data-placement="bottom"
-          href="https://twitter.com/CreativeTim"
+          href="https://twitter.com/Ali_Hafeez_337"
           target="_blank"
         >
           <i class="fab fa-twitter"></i>
@@ -96,9 +80,9 @@
         <a
           class="nav-link"
           rel="tooltip"
-          title="Like us on Facebook"
+          title="Me on Facebook"
           data-placement="bottom"
-          href="https://www.facebook.com/CreativeTim"
+          href="https://www.facebook.com/AliHafeez337"
           target="_blank"
         >
           <i class="fab fa-facebook-square"></i>
@@ -109,9 +93,9 @@
         <a
           class="nav-link"
           rel="tooltip"
-          title="Follow us on Instagram"
+          title="Me on Instagram"
           data-placement="bottom"
-          href="https://www.instagram.com/CreativeTimOfficial"
+          href="https://www.instagram.com/Ali_Hafeez_337"
           target="_blank"
         >
           <i class="fab fa-instagram"></i>
