@@ -1,24 +1,90 @@
+/* REQUIRES */
+
 const express = require('express');
-const bodyParser = require('body-parser');
+const session = require('express-session');
+const bodyParser = require("body-parser");
+const path = require("path");
+const logger = require("morgan");
+const cookieParser = require("cookie-parser");
+const mongoose = require('mongoose');
+const passport = require('passport');
+const http = require("http");
 const cors = require ('cors');
+require('dotenv').config();
 
-const app = express();
+process.env.MSG ? console.log('\n', process.env.MSG) : console.log('\n', "Environment variables are not working.")
 
+// pasport config
+require('./auth/passport')(passport);
+
+// routes
+const userRoute = require('./routes/users');
+
+
+/* SERVER SETUP */
+
+var app = express();
+var server = http.createServer(app);
+
+server.listen(process.env.PORT, () => {
+  console.log('\n', `Server started on port ${process.env.PORT}.`);
+});
+
+
+/* LOCAL IMPORTS */
+
+
+/* DATABASE */
+
+// Connect to MongoDB
+mongoose
+  .connect(
+    process.env.MONGO_URI,
+    {
+        useNewUrlParser: true, 
+        useUnifiedTopology: true, 
+        useCreateIndex: true,  
+        useFindAndModify: false,
+        useUnifiedTopology: true
+    }
+  )
+  .then(() => console.log('\n', 'Connected to mongodb.'))
+  .catch(err => console.log('\n', err));
+
+
+/* APP SETUP */
+
+// Middlewares
+app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
+app.use(logger("dev"));
+// app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 
-app.get('/api/credits', (req, res) => res.status(200).send({ msg: 'This project is developed by AliHafeez337.' }))
+// Express session
+app.use(
+  session({
+    secret: process.env.SECRET,
+    resave: true,
+    saveUninitialized: true
+  })
+);
 
+// Passport middleware
+app.use(passport.initialize());
+// app.use(passport.session());
 
 // Static folder
 app.use(express.static(__dirname + '/public/'));
-// handle SPA
 
+
+/* ROUTES */
+
+app.use('/api/user', userRoute);
+app.get('/api/credits', (req, res) => res.status(200).send({ msg: 'This project is developed by AliHafeez337.' }))
+
+// handle SPA
 app.get(/.*/, (req, res) => {
   res.sendFile(__dirname + '/public/index.html')
 })
-
-
-app.listen(3000, () => {
-  console.log(`Server started on 3000`);
-});
