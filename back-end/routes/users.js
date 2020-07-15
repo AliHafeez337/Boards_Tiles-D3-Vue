@@ -33,16 +33,20 @@ router.post('/register', (req, res) => {
   const { usertype, name, email, password, password2 } = req.body;
   let errors = [];
 
+  if (!(usertype === 'admin' || usertype === 'user' || usertype === 'fleet')){
+    errors.push({ errmsg: 'Invalid usertype.' });
+  }
+
   if (!name || !email || !password || !password2) {
-    errors.push({ msg: 'Please enter all fields' });
+    errors.push({ errmsg: 'Please enter all fields' });
   }
 
   if (password != password2) {
-    errors.push({ msg: 'Passwords do not match' });
+    errors.push({ errmsg: 'Passwords do not match' });
   }
 
   if (password.length < 6) {
-    errors.push({ msg: 'Password must be at least 6 characters' });
+    errors.push({ errmsg: 'Password must be at least 6 characters' });
   }
 
   if (errors.length > 0) {
@@ -77,7 +81,7 @@ router.post('/register', (req, res) => {
               })
               .catch(err => {
                 console.log(err)
-                res.status(200).send({
+                res.status(400).send({
                   'errmsg': err
                 });
               });

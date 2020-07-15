@@ -14,8 +14,8 @@ const UserSchema = new mongoose.Schema({
   usertype: {
     type: String,
     required: true,
-    enum: ['admin', 'employer'],
-    default: 'employer'
+    enum: ['admin', 'user', 'fleet'],
+    default: 'fleet'
   },
   email: {
     type: String,
@@ -58,6 +58,7 @@ UserSchema.methods.toJSON = function () {
   var userObject = user.toObject();
   var picked = _.pick(userObject,
     [
+      '_id',
       'usertype',
       'email',
       'name',

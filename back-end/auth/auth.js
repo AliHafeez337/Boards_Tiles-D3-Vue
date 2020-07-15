@@ -41,5 +41,23 @@ module.exports = {
         'errmsg': "Unauthorized, You must be an admin to access this resource."
       });
     }
+  },
+  userAuthenticated: (req, res, next) => {
+    if (req.user.usertype === 'user') {
+      return next()
+    } else {
+      res.status(401).send({
+        'errmsg': "Unauthorized, You must be a user to access this resource."
+      });
+    }
+  },
+  fleetAuthenticated: (req, res, next) => {
+    if (req.user.usertype === 'fleet') {
+      return next()
+    } else {
+      res.status(401).send({
+        'errmsg': "Unauthorized, You must be a fleet to access this resource."
+      });
+    }
   }
 };
