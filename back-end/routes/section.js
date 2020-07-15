@@ -9,6 +9,7 @@ var ObjectId = mongoose.Schema.ObjectId;
 // Loading models
 const Board = require('../models/Board');
 const Section = require('../models/Section');
+const SectionName = require('../models/SectionName');
 
 // Local imports
 const { ensureAuthenticated, adminAuthenticated } = require('../auth/auth');
@@ -47,14 +48,53 @@ router.post(
       if (board){
         body.board = board;
 
+        var body1 = {
+          'board': board,
+          'id': body.id + '-n',
+          'name': body.name,
+          'width': 80,
+          'height': 25,
+          'color': body.color
+        }
+
         var section = new Section(body)
         section
           .save()
-          .then(section => {
-            res.status(200).send({
-              'msg': "Section added successfully!",
-              section
-            });
+          .then(async section => {
+
+            // section = await section.populate('board', [ '_id', 'name', 'createAt' ]);
+
+            var sectionName = new SectionName(body1)
+            sectionName
+              .save()
+              .then(async sectionName => {
+
+                // sectionName = await sectionName.populate('board', [ '_id', 'name', 'createAt' ]);
+
+                res.status(200).send({
+                  'msg': "Section and SectionName added successfully!",
+                  section,
+                  sectionName
+                });
+              })
+              .catch(async err => {
+                // If sectionName is not saved then delete section (both should be saved)
+                
+                const del = await Section.deleteOne({'_id': section._id})
+                if (del.deletedCount){
+                  res.status(200).send({
+                    'msg': "Couldn't add sectionName!",
+                    section,
+                    sectionName_err: err
+                  });
+                } else {
+                  res.status(200).send({
+                    'msg': "Section added successfully but couldn't add sectionName!",
+                    section,
+                    sectionName_err: err
+                  });
+                }
+              })
           })
           .catch(err => {
             console.log(err)
@@ -78,10 +118,24 @@ router.delete(
   ensureAuthenticated, 
   adminAuthenticated,
   async (req, res) => {
-    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)){
-      const del = await Section.deleteOne({'_id': req.params.id})
+    if (req.params.id.length === 10){
+      const del = await Section.deleteOne({'id': req.params.id})
       if (del.deletedCount){
-        res.status(200).send(del)
+
+        const del1 = await SectionName.deleteOne({'id': req.params.id + '-n'})
+        if (del1.deletedCount){
+
+          res.status(200).send({
+            msg: "Section and sectionName deleted...",
+            del,
+            del1
+          })
+        } else {
+          res.status(200).send({
+            msg: "Section deleted but couldn't delete sectionName...",
+            del
+          })
+        }
       } else {
         res.status(400).send({
           errmsg: "Nothing to delete..."
