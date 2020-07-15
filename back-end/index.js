@@ -18,7 +18,11 @@ process.env.MSG ? console.log('\n', process.env.MSG) : console.log('\n', "Enviro
 require('./auth/passport')(passport);
 
 // routes
-const userRoute = require('./routes/users');
+const userRoutes = require('./routes/users');
+const adminRoutes = require('./routes/admin');
+const boardRoutes = require('./routes/board');
+const sectionRoutes = require('./routes/section');
+const tileRoutes = require('./routes/tile');
 
 
 /* SERVER SETUP */
@@ -81,7 +85,11 @@ app.use(express.static(__dirname + '/public/'));
 
 /* ROUTES */
 
-app.use('/api/user', userRoute);
+app.use('/api/user', userRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/board', boardRoutes);
+app.use('/api/section', sectionRoutes);
+app.use('/api/tile', tileRoutes);
 app.get('/api/credits', (req, res) => res.status(200).send({ msg: 'This project is developed by AliHafeez337.' }))
 
 // handle SPA

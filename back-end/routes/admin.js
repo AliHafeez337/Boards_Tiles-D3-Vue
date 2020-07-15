@@ -10,10 +10,9 @@ const User = require('../models/User');
 
 // Local imports
 const { ensureAuthenticated, adminAuthenticated } = require('../auth/auth');
-// const { JWTsecret } = require('../config/variables');
 
 // A hash generator promise for password...
-var genHash = async (password) => {
+var genHash = password => {
   return new Promise(async (resolve, reject) => {
     try {
       bcrypt.genSalt(9, (err, salt) => {
@@ -22,7 +21,7 @@ var genHash = async (password) => {
         });
       });
     } catch (e) {
-      reject();
+      reject(e);
     }
   });
 };
@@ -44,13 +43,16 @@ router.post(
     ]);
     console.log(body)
 
-    if (body.password != null && body.password2 != null){
+    if (!(body.usertype === 'admin' || body.usertype === 'user' || body.usertype === 'fleet')){
+      res.status(400).send({
+        'errmsg': "Invalid usertype."
+      })
+    } else if (body.password != null && body.password2 != null){
       if (body.password !== body.password2){
         res.status(400).send({
           'errmsg': "Passwords must match..."
         })
-      }
-      else{
+      } else {
         genHash(body.password)
           .then(async (hash) => {
             body.password = hash;
@@ -59,10 +61,6 @@ router.post(
             newUser
               .save()
               .then(user => {
-                req.flash(
-                  'success_msg',
-                  'You are now registered and can log in'
-                );
                 res.status(200).send({
                   'msg': "Registered successfully!",
                   user
@@ -70,7 +68,7 @@ router.post(
               })
               .catch(err => {
                 console.log(err)
-                res.status(200).send({
+                res.status(400).send({
                   'errmsg': err
                 });
               });
@@ -82,10 +80,11 @@ router.post(
             });
           });
       }
+    } else {
+      res.status(400).send({
+        errmsg: "Please provide complete data.",
+      });
     }
-    res.status(400).send({
-      errmsg: "Please provide complete data.",
-    });
   }
 )
 
@@ -106,12 +105,15 @@ router.patch(
       "password2"
     ]);
 
-    if (!id.match(/^[0-9a-fA-F]{24}$/)){ // if object id is not valid
+    if (!(body.usertype === 'admin' || body.usertype === 'user' || body.usertype === 'fleet')){
+      res.status(400).send({
+        'errmsg': "Invalid usertype."
+      })
+    } else if (!id.match(/^[0-9a-fA-F]{24}$/)){ // if object id is not valid
       res.status(400).send({
         'errmsg': "Valid Id must be provided..."
       })
-    }
-    else{
+    } else {
       if (body.password != null && body.password2 != null){
         if (body.password !== body.password2){
           res.status(400).send({
@@ -139,8 +141,7 @@ router.patch(
               });
             });
         }
-      }
-      else{
+      } else {
         var doc = await User.findByIdAndUpdate(
           { _id: id },
           body,
@@ -162,16 +163,23 @@ router.delete(
   adminAuthenticated, 
   async (req, res) => {
     const id = req.params.id;
-    var doc = await User.deleteOne({ _id: id });
-    console.log(doc);
-    if (doc.deletedCount == 0){
+
+    if (!id.match(/^[0-9a-fA-F]{24}$/)){ // if object id is not valid
       res.status(400).send({
-        'errmsg': "Sorry, unable delete user."
+        'errmsg': "Valid Id must be provided..."
       })
     } else {
-      res.status(200).send({
-        'msg': "User deleted successfully!"
-      }) 
+      var doc = await User.deleteOne({ _id: id });
+      console.log(doc);
+      if (doc.deletedCount == 0){
+        res.status(400).send({
+          'errmsg': "Sorry, unable delete user."
+        })
+      } else {
+        res.status(200).send({
+          'msg': "User deleted successfully!"
+        }) 
+      }
     }
   }
 )
