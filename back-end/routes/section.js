@@ -1,10 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const mongoose = require('mongoose');
 const _ = require("lodash");
-
-var ObjectId = mongoose.Schema.ObjectId;
 
 // Loading models
 const Board = require('../models/Board');
@@ -162,11 +159,6 @@ router.patch(
         console.log("Admin is updating the section.")
 
         var body = _.pick(req.body, [
-          // 'board',
-          // 'id',
-          // 'name',
-          // 'max_trucks',
-          // 'max_trailers',
           'width',
           'height',
           'x',

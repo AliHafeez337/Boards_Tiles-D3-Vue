@@ -22,7 +22,9 @@ const userRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
 const boardRoutes = require('./routes/board');
 const sectionRoutes = require('./routes/section');
+const sectionNameRoutes = require('./routes/sectionName');
 const tileRoutes = require('./routes/tile');
+const labelRoutes = require('./routes/label');
 
 
 /* SERVER SETUP */
@@ -89,7 +91,9 @@ app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/board', boardRoutes);
 app.use('/api/section', sectionRoutes);
+app.use('/api/sectionName', sectionNameRoutes);
 app.use('/api/tile', tileRoutes);
+app.use('/api/label', labelRoutes);
 app.get('/api/credits', (req, res) => res.status(200).send({ msg: 'This project is developed by AliHafeez337.' }))
 
 // handle SPA
