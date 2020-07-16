@@ -59,5 +59,23 @@ module.exports = {
         'errmsg': "Unauthorized, You must be a fleet to access this resource."
       });
     }
+  },
+  adminUserAuthenticated: (req, res, next) => {
+    if (req.user.usertype === 'admin' || req.user.usertype === 'user') {
+      return next()
+    } else {
+      res.status(401).send({
+        'errmsg': "Unauthorized, You must be an admin or a user to access this resource."
+      });
+    }
+  },
+  adminUserFleetAuthenticated: (req, res, next) => {
+    if (req.user.usertype === 'admin' || req.user.usertype === 'user' || req.user.usertype === 'fleet') {
+      return next()
+    } else {
+      res.status(401).send({
+        'errmsg': "Unauthorized, You must be an admin or a user to access this resource."
+      });
+    }
   }
 };

@@ -12,7 +12,7 @@ const Section = require('../models/Section');
 const SectionName = require('../models/SectionName');
 
 // Local imports
-const { ensureAuthenticated, adminAuthenticated } = require('../auth/auth');
+const { ensureAuthenticated } = require('../auth/auth');
 
 // Update a sectionName
 router.patch(
@@ -27,9 +27,6 @@ router.patch(
         console.log("Admin is updating the sectionName.")
 
         var body = _.pick(req.body, [
-          // 'board',
-          // 'id',
-          // 'name',
           'width',
           'height',
           'x',
