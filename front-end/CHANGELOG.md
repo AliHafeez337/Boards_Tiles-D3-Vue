@@ -8,3 +8,6 @@
 
 ## [1.0.0] 2018-08-24
 ### Stable Original Release
+
+ <!--- Original demo: http://demos.creative-tim.com/vue-now-ui-kit --->
+ <!--- Original documentation: https://demos.creative-tim.com/vue-now-ui-kit/documentation/component-docs/navbars.html --->

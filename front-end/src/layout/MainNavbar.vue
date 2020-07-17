@@ -1,10 +1,9 @@
 <template>
   <navbar
-    position="fixed"
-    type="primary"
-    :transparent="transparent"
-    :color-on-scroll="colorOnScroll"
+    :transparent="false"
+    :type=type
     menu-classes="ml-auto"
+    position="fixed"
   >
     <template slot-scope="{ toggle, isToggled }">
       <router-link v-popover:popover1 class="navbar-brand" to="/">
@@ -23,59 +22,67 @@
       </el-popover>
     </template>
     <template slot="navbar-menu">
-      <li class="nav-item">
-        <a
-          class="nav-link"
-          href="https://www.creative-tim.com/product/vue-now-ui-kit"
-          target="_blank"
-        >
-          <i class="now-ui-icons arrows-1_cloud-download-93"></i>
-          <p>Download</p>
-        </a>
-      </li>
+      <fginput
+        v-if="ifBoard"
+        placeholder="Search the tile"
+        v-model="search"
+      >
+      </fginput>
       <drop-down
+        v-if="ifBoard"
         tag="li"
-        title="Components"
-        icon="now-ui-icons design_app"
+        title="New"
+        icon="now-ui-icons ui-1_simple-add"
         class="nav-item"
       >
-        <nav-link to="/">
-          <i class="now-ui-icons business_chart-pie-36"></i> All components
-        </nav-link>
         <a
-          href="https://demos.creative-tim.com/vue-now-ui-kit/documentation"
-          target="_blank"
+          href="javascript:void(0)"
+          @click="pushSection()"
           class="dropdown-item"
         >
-          <i class="now-ui-icons design_bullet-list-67"></i> Documentation
+          Section
         </a>
-      </drop-down>
-      <drop-down
-              tag="li"
-              title="Examples"
-              icon="now-ui-icons design_image"
-              class="nav-item"
-      >
-        <nav-link to="/landing">
-          <i class="now-ui-icons education_paper"></i> Landing
-        </nav-link>
-        <nav-link to="/login">
-          <i class="now-ui-icons users_circle-08"></i> Login
-        </nav-link>
-        <nav-link to="/profile">
-          <i class="now-ui-icons users_single-02"></i> Profile
-        </nav-link>
+        <a
+          href="javascript:void(0)"
+          @click="pushTile()"
+          class="dropdown-item"
+        >
+          Tile
+        </a>
       </drop-down>
       <li class="nav-item">
         <a
           class="nav-link btn btn-neutral"
-          href="https://www.creative-tim.com/product/vue-now-ui-kit-pro"
-          target="_blank"
+          href="javascript:void(0)"
+          @click="boards()"
         >
-          <i class="now-ui-icons arrows-1_share-66"></i>
-          <p>Upgrade to PRO</p>
+          <i class="now-ui-icons ui-1_check"></i>
+          &nbsp;
+          <p>Boards</p>
         </a>
       </li>
+
+      <drop-down
+        tag="li"
+        title=""
+        icon="now-ui-icons sport_user-run"
+        class="nav-item"
+      >
+        <a
+          href="javascript:void(0)"
+          @click="me()"
+          class="dropdown-item"
+        >
+          Profile
+        </a>
+        <a
+          href="javascript:void(0)"
+          @click="logout()"
+          class="dropdown-item"
+        >
+          Logout
+        </a>
+      </drop-down>
 
       <li class="nav-item">
         <a
@@ -123,18 +130,88 @@
 <script>
 import { DropDown, NavbarToggleButton, Navbar, NavLink } from '@/components';
 import { Popover } from 'element-ui';
+import fginput from '../components/Inputs/formGroupInput-duplicate';
+
+import { config } from '../CONFIG';
+import Services from './../services'
+
 export default {
   name: 'main-navbar',
-  props: {
-    transparent: Boolean,
-    colorOnScroll: Number
-  },
   components: {
     DropDown,
     Navbar,
     NavbarToggleButton,
     NavLink,
-    [Popover.name]: Popover
+    [Popover.name]: Popover,
+    fginput
+  },
+  props: {
+    transparent: Boolean,
+    colorOnScroll: Number
+  },
+  data() {
+    return {
+      type: 'white', //['white', 'default', 'primary', 'danger', 'success', 'warning', 'info']
+      search: '',
+      pickers: {
+        datePicker: ''
+      },
+      profile: this.$store.getters.getProfile,
+      service: new Services()
+    }
+  },
+  watch: {
+    search: function (val) {
+      // this.$store.dispatch('copyBoard')
+      this.$store.dispatch('setSearch', val)
+    }
+  },
+  computed: {
+    ifBoard() {
+      if (this.$store.getters.getBoard){
+        return true
+      } else {
+        return false
+      }
+    }
+  },
+  methods: {
+    scrollToElement() {
+      let element_id = document.getElementById("downloadSection");
+      if (element_id) {
+        element_id.scrollIntoView({ block: "end", behavior: "smooth" });
+      }
+    },
+    pushSection() {
+      this.scrollToElement();
+      if (this.$store.getters.getBoard){
+        this.$store.dispatch('setModalSection', true)
+      }
+    },
+    pushTile() {
+      this.scrollToElement();
+      if (this.$store.getters.getBoard){
+        this.$store.dispatch('setModalTile', true)
+      }
+    },
+    boards() {
+      this.$store.dispatch('setModalBoard', true)
+    },
+    logout() {
+      this.service.logout()
+        .then(res => {
+          localStorage.removeItem('token')
+          this.$store.dispatch('setProfile',  {})
+          this.$store.dispatch('setToken',  '')
+          this.$router.push("/login")
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    me() {
+      this.$store.dispatch('setModalProfile',  true)
+    }
   }
 };
 </script>

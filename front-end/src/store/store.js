@@ -16,7 +16,10 @@ export const store = new Vuex.Store({
     modalColor: false,
     color: '',
     modalDetails: false,
-    tile: {}
+    tile: {},
+    profile: {},
+    token: '' || localStorage.getItem('token'),
+    modalProfile: false,
   },
   mutations,
   actions,

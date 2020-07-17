@@ -19,6 +19,15 @@ const getters = {
   },
   getTile: function(state) {
     return state.tile;
+  },
+  getProfile: function(state) {
+    return state.profile;
+  },
+  getToken: function(state) {
+    return state.token;
+  },
+  getModalProfile: function(state) {
+    return state.modalProfile;
   }
 }
 
