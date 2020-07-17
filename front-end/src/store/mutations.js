@@ -5,7 +5,10 @@ const mutations = {
   SET_MODALCOLOR: (state, data) => { state.modalColor = data },
   SET_COLOR: (state, data) => { state.color = data },
   SET_MODALDETAILS: (state, data) => { state.modalDetails = data },
-  SET_TILE: (state, data) => { state.tile = data }
+  SET_TILE: (state, data) => { state.tile = data },
+  SET_PROFILE: (state, data) => { state.profile = data },
+  SET_TOKEN: (state, data) => { state.token = data },
+  SET_MODALPROFILE: (state, data) => { state.modalProfile = data }
 }
 
 export default mutations;

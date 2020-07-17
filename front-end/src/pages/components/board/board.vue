@@ -1,6 +1,50 @@
 
 <template>
   <div id="board">
+    
+    <!-- Modal Profile -->
+    <modal :show="modalProfile" headerClasses="justify-content-center">
+      <h4 slot="header" class="title title-up">Profile</h4>
+      <div class="datepicker-container">
+        <strong>Name:</strong>&nbsp;
+        <fginput
+          placeholder="Name"
+          v-model="name"
+        />
+        <br />
+        <strong>Email:</strong>&nbsp;
+        <fginput
+          placeholder="Email"
+          v-model="emaill"
+        />
+        <br />
+        <strong>Password:</strong>&nbsp;
+        <fginput
+          placeholder="Password"
+          v-model="password"
+        />
+        <br />
+        <strong>Password:</strong>&nbsp;
+        <fginput
+          placeholder="Password"
+          v-model="password2"
+        />
+        <br />
+        <strong>Created At:</strong>&nbsp;
+        <span>{{createdAt}}</span>
+        <br />
+        <br />
+      </div>
+      <template slot="footer">
+        <nbutton type="success" @click="UpdateProfile()" :disabled="isDisabled2()"
+          >Update profile</nbutton
+        >
+        <nbutton type="danger" @click="closeButton()"
+          >Close</nbutton
+        >
+      </template>
+    </modal>
+
     <!-- Navbar Warning -->
     <!-- style="position: static;" -->
     <navbar type="warning" menu-classes="ml-auto" v-if="ifBoard">
@@ -189,6 +233,8 @@
   import { config } from '../../../CONFIG';
   import { Navbar, DropDown } from '@/components';
   import colorPicker from '@caohenghu/vue-colorpicker'
+  import validator from 'validator';
+  import Services from './../../../services';
 
   export default {
     components: {
@@ -200,6 +246,12 @@
       Navbar,
       DropDown,
       colorPicker
+    },
+    created() {
+      // console.log(this.$store.getters.getProfile)
+      this.name = this.$store.getters.getProfile.name
+      this.emaill = this.$store.getters.getProfile.email
+      this.createdAt = this.$store.getters.getProfile.createdAt
     },
     data() {
       return {
@@ -216,7 +268,13 @@
           max_trucks: 2,
           max_trailers: 2
         },
-        color: '#59c7f9'
+        color: '#59c7f9',
+        name: '',
+        emaill: '',
+        createdAt: '',
+        password: '',
+        password2: '',
+        service: new Services()
       }
     },
     computed: {
@@ -229,6 +287,9 @@
        } else {
          return true
        }
+      },
+      modalProfile() {
+        return this.$store.getters.getModalProfile;
       },
       modalTile() {
         return this.$store.getters.getModalTile;
@@ -269,6 +330,11 @@
       }
     },
     watch: {
+      modalProfile: function(val){
+        this.name = this.$store.getters.getProfile.name
+        this.emaill = this.$store.getters.getProfile.email
+        this.createdAt = this.$store.getters.getProfile.createdAt
+      },
       sections: function (val) {
         console.log('SECTIONS', val)
         this.d3 += 1
@@ -377,6 +443,27 @@
           return true
         }
       },
+      isDisabled2: function() {
+        if ((!this.emaill) || (!validator.isEmail(this.emaill)) || (this.password !== this.password2)){
+          return true
+        } else {
+          return false
+        }
+      },
+      UpdateProfile: function() {
+        console.log("Update profile clicked")
+        this.service.update(this.name, this.emaill, this.password, this.password2)
+          .then(data => {
+            // console.log(data)
+            this.name = data.doc.name
+            this.emaill = data.doc.email
+            this.createdAt = data.doc.createdAt
+            this.$store.dispatch('setProfile', data.doc)
+          })
+          .catch(err =>{
+            console.log(err)
+          })
+      },
       AddTile: function() {
         if (this.tile.event_due){
           this.tile.event_due = this.tile.event_due.getTime() /  1000
@@ -428,6 +515,7 @@
         this.$store.dispatch('setModalColor', false)
         this.$store.dispatch('setModalDetails', false)
         this.$store.dispatch('setTile', {})
+        this.$store.dispatch('setModalProfile', false)
       }
     }
   }

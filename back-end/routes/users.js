@@ -30,8 +30,12 @@ var genHash = password => {
 // Register
 router.post('/register', (req, res) => {
 
-  const { usertype, name, email, password, password2 } = req.body;
+  const { secret, usertype, name, email, password, password2 } = req.body;
   let errors = [];
+
+  if (secret !== process.env.REGISTRATION_SECRET){
+    errors.push({ errmsg: 'Unauthorized.' });
+  }
 
   if (!(usertype === 'admin' || usertype === 'user' || usertype === 'fleet')){
     errors.push({ errmsg: 'Invalid usertype.' });

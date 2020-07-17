@@ -19,6 +19,15 @@ const actions = {
   },
   setTile: ({ commit }, data) => {
     commit('SET_TILE', data)
+  },
+  setProfile: ({ commit }, data) => {
+    commit('SET_PROFILE', data)
+  },
+  setToken: ({ commit }, data) => {
+    commit('SET_TOKEN', data)
+  },
+  setModalProfile: ({ commit }, data) => {
+    commit('SET_MODALPROFILE', data)
   }
 }
 
