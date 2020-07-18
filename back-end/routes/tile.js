@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const _ = require("lodash");
+const { MongoClient, ObjectId } = require('mongodb');
 
 // Loading models
 const Board = require('../models/Board');
@@ -82,25 +83,54 @@ router.patch(
   adminUserAuthenticated,
   async (req, res) => {
     if (req.params.id.match(/^[0-9a-fA-F]{24}$/)){
-      var body = _.pick(req.body, [
-        'x',
-        'y',
-        'color',
-      ])
+      var body = {...req.body}
+      if (body.id){
+        delete body.id
+      }
+      if (body._id){
+        delete body._id
+      }
+      if (body.board){
+        delete body.board
+      }
+      // console.log(body)
 
       if (body) {
-        var tile = await Tile.findByIdAndUpdate(req.params.id, body, { new: true })
+        MongoClient.connect(
+          process.env.DATABASE, 
+          {
+            useNewUrlParser: true,
+            // useCreateIndex: true,
+            useUnifiedTopology: true
+          },
+          async (err, client) => {
+          if (err) {
+            return console.log('Unable to connect to MongoDB server');
+          }
 
-        if (tile){
-          res.status(200).send({
-            msg: "Tile updated successfully...",
-            tile
-          })
-        } else {
-          res.status(400).send({
-            errmsg: "Coudn't update the tile..."
-          })
-        }
+          const db = client.db(process.env.DB_NAME);
+          const collection = 'tiles';
+          await db.collection(collection)
+            .findOneAndUpdate(
+              { '_id': new ObjectId(req.params.id) },
+              { $set: body },
+              { new: true }              
+            )
+            .then(async tile => {
+              res.status(200).send({
+                msg: "Tile updated successfully...",
+                tile
+              })
+            })
+            .catch(err => {
+              console.log(err)
+              res.status(400).send({
+                errmsg: "Coudn't update the tile..."
+              })
+            })
+
+          client.close();
+        });
       }
     } else {
       res.status(400).send({
@@ -118,28 +148,62 @@ router.patch(
   adminUserFleetAuthenticated,
   async (req, res) => {
     if (req.params.id.match(/^[0-9a-fA-F]{24}$/)){
-      var body = _.pick(req.body, [
-        'backLeft',
-        'backLTitle',
-        'backRight',
-        'backRTitle',
-        'event_name',
-        'event_due'
-      ])
+      var body = {...req.body}
+      if (body.name){
+        delete body.name
+      }
+      if (body.id){
+        delete body.id
+      }
+      if (body._id){
+        delete body._id
+      }
+      if (body.board){
+        delete body.board
+      }
+      if (body.x){
+        delete body.x
+      }
+      if (body.y){
+        delete body.y
+      }
+      console.log(body)
 
       if (body) {
-        var tile = await Tile.findByIdAndUpdate(req.params.id, body, { new: true })
+        MongoClient.connect(
+          process.env.DATABASE, 
+          {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+          },
+          async (err, client) => {
+          if (err) {
+            return console.log('Unable to connect to MongoDB server');
+          }
 
-        if (tile){
-          res.status(200).send({
-            msg: "Tile updated successfully...",
-            tile
-          })
-        } else {
-          res.status(400).send({
-            errmsg: "Coudn't update the tile..."
-          })
-        }
+          const db = client.db(process.env.DB_NAME);
+          const collection = 'tiles';
+          await db.collection(collection)
+            .findOneAndUpdate(
+              { '_id': new ObjectId(req.params.id) },
+              { $set: body },
+              { new: true }              
+            )
+            .then(async tile => {
+              res.status(200).send({
+                msg: "Tile updated successfully...",
+                tile
+              })
+            })
+            .catch(err => {
+              console.log(err)
+              res.status(400).send({
+                errmsg: "Coudn't update the tile..."
+              })
+            })
+
+          client.close();
+        });
       }
     } else {
       res.status(400).send({
@@ -157,23 +221,35 @@ router.get(
   adminUserAuthenticated,
   async (req, res) => {
     if (req.query.board.match(/^[0-9a-fA-F]{24}$/)){
-      Tile.find({ 'board': req.query.board })
-        .exec(function(err, tiles){
+
+      MongoClient.connect(
+        process.env.DATABASE, 
+        {
+          useNewUrlParser: true,
+          useUnifiedTopology: true
+        },
+        async (err, client) => {
+        if (err) {
+          return console.log('Unable to connect to MongoDB server');
+        }
+
+        const db = client.db(process.env.DB_NAME);
+        const collection = 'tiles';
+
+        await db.collection(collection)
+        .find({ 'board': new ObjectId(req.query.board) })
+        .toArray((err, results) => {
           if (err){
+            // console.log(err)
             res.status(400).send({
-              errmsg: "No tiles found..."
+              'errmsg': "Unable to find any labels for this image..."
             })
-          }
-          if (tiles.length){
-            res.status(200).send({
-              tiles
-            })
-          } else {
-            res.status(400).send({
-              errmsg: "No tiles found..."
-            })
-          }
-        });
+          };
+          res.status(200).send(results)
+
+          client.close();
+        })
+      });
     } else {
       res.status(400).send({
         errmsg: "Please specify a valid board id..."
