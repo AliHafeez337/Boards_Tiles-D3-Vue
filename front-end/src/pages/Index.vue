@@ -23,7 +23,6 @@
 <script>
 import board from './components/board/board';
 import ViewProfile from './ViewProfile';
-import Services from './../services';
 
 export default {
   name: 'index',
@@ -31,23 +30,7 @@ export default {
   components: {
     board,
     ViewProfile
-  },
-  created() {
-    if (!this.$store.getters.getToken){
-      this.$router.push("/login")
-    } else if (!this.$store.getters.getProfile.name){
-      console.log("Profile doesn't exist.")
-      
-      var service = new Services();
-      service.profile()
-        .then(me => {
-          this.$store.dispatch('setProfile', me)
-        })
-        .catch(err => {
-          this.$router.push("/login")
-        })
-    }
-  },
+  }
 };
 </script>
 <style></style>

@@ -11,6 +11,16 @@
         </span>
       </div>
     </navbar>
+    
+    <!-- Navbar Warning -->
+    <!-- style="position: static;" -->
+    <navbar type="danger" menu-classes="ml-auto" v-if="iferr">
+      <div class="navbar-translate">
+        <span style="color: white; text-align: center;">
+          {{this.errmsg}}
+        </span>
+      </div>
+    </navbar>
     <!-- End Navbar Warning -->
 
     <!-- Modal Tile -->
@@ -82,23 +92,37 @@
         >
       </template>
       <div class="datepicker-container" v-if="addBoard">
+        <span>Board name must be unique.</span>
+        <br />
+        <br />
         <fginput
           placeholder="Enter the new board name."
           v-model="tempBoardName"
         />
       </div>
       <div class="datepicker-container" v-else>
-        <ol id="example-1">
-          <li v-for="(board, index) in boards" :key="index">
-            <a
-              href="javascript:void(0)"
-              @click="setBoard(board)"
-              class="dropdown-item"
-            >
-              {{ board }}
-            </a>
-          </li>
-        </ol>
+
+
+          <table style="width:100%">
+            <tr v-for="(board, index) in boards" :key="index">
+              <td>
+                {{ index + 1 }}
+              </td>
+              <td>
+                <a
+                  href="javascript:void(0)"
+                  @click="setBoard(board)"
+                  class="dropdown-item"
+                >
+                  {{ board.name }}
+                </a>
+              </td>
+              <td style="color: red; cursor: pointer" @click="deleteBoard(board._id)">
+                Delete
+              </td>
+            </tr>
+          </table>
+
       </div>
       <template slot="footer">
         <nbutton v-if="addBoard" type="success" @click="addNewBoard()" :disabled="!tempBoardName"
@@ -190,7 +214,6 @@
   import { config } from '../../../CONFIG';
   import { Navbar, DropDown } from '@/components';
   import colorPicker from '@caohenghu/vue-colorpicker'
-  import Services from './../../../services';
 
   export default {
     components: {
@@ -218,20 +241,32 @@
           max_trucks: 2,
           max_trailers: 2
         },
-        color: '#59c7f9',
-        service: new Services()
+        color: '#59c7f9'
       }
+    },
+    created() {
+      this.$store.dispatch('setBoards')
     },
     computed: {
       boards() {
         return this.$store.getters.getBoards
       },
       ifBoard() {
-       if (this.$store.getters.getBoard){
-         return false
-       } else {
+        if (this.$store.getters.getBoard.name){
+          return false
+        } else {
+          return true
+        }
+      },
+      iferr() {
+       if (this.$store.getters.getErr){
          return true
+       } else {
+         return false
        }
+      },
+      errmsg() {
+        return this.$store.getters.getErrmsg
       },
       modalTile() {
         return this.$store.getters.getModalTile;
@@ -317,7 +352,7 @@
       },
       setBoard(board) {
         this.scrollToElement();
-        if (board === 'board1'){
+        if (board.name === 'board1'){
           var sections =  [
             { 'id': 'aqxn9u0yv3', 'name': '0ABC', 'max_trucks': 1, 'max_trailers': 1, 'width': config.section_width, 'height': config.section_height, "x": 20, 'y': 20, 'color': config.new_section_color },
             { 'id': 'a0nyn15mj3', 'name': '1BCD', 'max_trucks': 1, 'max_trailers': 2, 'width': config.section_width, 'height': config.section_height, "x": 250, 'y': 20, 'color': config.new_section_color },
@@ -360,8 +395,11 @@
           this.closeButton()
         }
       },
-      AddBoard() {
-        // this.$store.dispatch('AddBoard', board)
+      deleteBoard(id) {
+        console.log(id)
+        if (confirm("Do you really want to delete this board and all the data associated with it?")){
+          this.$store.dispatch('deleteBoard', id)
+        }
       },
       ID() {
         return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 1) + Math.random().toString(36).substr(2, 9);

@@ -142,6 +142,18 @@ export default {
         element_id.scrollIntoView({ block: "end", behavior: "smooth" });
       }
     },
+    logout() {
+      this.service.logout()
+        .then(res => {
+          localStorage.removeItem('token')
+          this.$store.dispatch('setProfile',  {})
+          this.$store.dispatch('setToken',  '')
+          this.$router.push("/login")
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
     me() {
       this.$store.dispatch('setModalProfile',  true)
     },

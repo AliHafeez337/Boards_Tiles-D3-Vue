@@ -10,3 +10,5 @@ export const getSectionName1 = state => state.sectionName1;
 export const getTiles1 = state => state.tiles1;
 export const getLabels1 = state => state.labels1;
 export const getZoom = state => state.zoom;
+export const getErr = state => state.err;
+export const getErrmsg = state => state.errmsg;

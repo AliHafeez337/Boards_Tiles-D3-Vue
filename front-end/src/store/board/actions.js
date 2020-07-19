@@ -1,4 +1,5 @@
 import { config } from './../../CONFIG';
+import axios from './../../axios';
 
 // Searches only the trailer
 export const setSearch = ({ commit, getters }, data) => {
@@ -55,14 +56,89 @@ export const setBoard = ({ commit }, name) => {
   commit('SET_BOARD', name)
 };
 
-export const AddBoard = ({ commit, getters }, board) => {
+export const AddBoard = async ({ commit, getters }, board) => {
   var boards = [...getters.getBoards]
-  boards.push(board)
-  commit('SET_BOARDS', boards)
+
+  try {
+    var res = await axios({
+      method: 'post',
+      url: `/board/add`,
+      data: { name:board }
+    });
+
+    if (res.data){
+      if (res.data.msg){
+        boards.push(res.data.board)
+        commit('SET_BOARDS', boards)
+      } else if (res.data.errmsg){
+        commit('SET_ERR', { bool: true, errmsg: res.data.errmsg })
+        setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 1000)
+      }
+    } else {
+      commit('SET_ERR', { bool: true, errmsg: "No data received" })
+      setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 1000)
+    }
+  } catch(err) {
+    if (err.errmsg){
+      err = err.errmsg
+    }
+    commit('SET_ERR', { bool: true, errmsg: err })
+    setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 1000)
+  }
 };
 
-export const setBoards = ({ commit }, data) => {
-  commit('SET_BOARDS', data)
+export const setBoards = async ({ commit }) => {
+
+  try {
+    var res = await axios({
+      method: 'get',
+      url: `/board/getAll`
+    });
+
+    if (res.data){
+      commit('SET_BOARDS', res.data)
+    } else {
+      commit('SET_ERR', { bool: true, errmsg: "No data received" })
+      setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 1000)
+    }
+  } catch(err) {
+    // console.log(err)
+    if (err.errmsg){
+      err = err.errmsg
+    }
+    commit('SET_ERR', { bool: true, errmsg: err })
+    setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 1000)
+  }
+};
+
+export const deleteBoard = async ({ commit, getters }, id) => {
+  var boards = [...getters.getBoards]
+
+  try {
+    var res = await axios({
+      method: 'delete',
+      url: `/board/delete/${id}`
+    });
+
+    if (res.data){
+      if (res.data.msg){
+        boards = boards.filter(board => board._id !== id)
+        commit('SET_BOARDS', boards)
+      } else if (res.data.errmsg){
+        commit('SET_ERR', { bool: true, errmsg: res.data.errmsg })
+        setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 1000)
+      }
+    } else {
+      commit('SET_ERR', { bool: true, errmsg: "No data received" })
+      setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 1000)
+    }
+  } catch(err) {
+    if (err.errmsg){
+      err = err.errmsg
+    }
+    commit('SET_ERR', { bool: true, errmsg: err })
+    setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 1000)
+  }
 };
 
 export const resetBoard = ({ commit, getters }, data) => {
