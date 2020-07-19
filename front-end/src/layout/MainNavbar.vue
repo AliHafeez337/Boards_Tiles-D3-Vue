@@ -5,7 +5,7 @@
     menu-classes="ml-auto"
     position="fixed"
   >
-    <template slot-scope="{ toggle, isToggled }">
+    <template v-if="Admin()" slot-scope="{ toggle, isToggled }">
       <router-link v-popover:popover1 class="navbar-brand" to="/users">
         Users
       </router-link>
@@ -181,6 +181,10 @@ export default {
       if (element_id) {
         element_id.scrollIntoView({ block: "end", behavior: "smooth" });
       }
+    },
+    Admin() {
+      if (this.$store.getters.getProfile && this.$store.getters.getProfile.usertype === 'admin')
+        return true
     },
     pushSection() {
       this.scrollToElement();

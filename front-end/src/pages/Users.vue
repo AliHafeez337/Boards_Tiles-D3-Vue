@@ -208,6 +208,10 @@ export default {
     }
   },
   created() {
+    if (this.$store.getters.getProfile && this.$store.getters.getProfile.usertype !== 'admin'){
+      this.$router.push("/")
+    }
+
     this.service.allUsers()
       .then(data => {
         // console.log(data)
