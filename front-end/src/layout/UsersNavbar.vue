@@ -6,8 +6,8 @@
     position="fixed"
   >
     <template slot-scope="{ toggle, isToggled }">
-      <router-link v-popover:popover1 class="navbar-brand" to="/users">
-        Users
+      <router-link v-popover:popover1 class="navbar-brand" to="/">
+        Home
       </router-link>
       <el-popover
         ref="popover1"
@@ -17,48 +17,21 @@
         trigger="hover"
       >
         <div class="popover-body">
-          Go to the users page.
+          Go to the main page.
         </div>
       </el-popover>
     </template>
     <template slot="navbar-menu">
-      <fginput
-        v-if="ifBoard"
-        placeholder="Search the tile"
-        v-model="search"
-      >
-      </fginput>
-      <drop-down
-        v-if="ifBoard"
-        tag="li"
-        title="New"
-        icon="now-ui-icons ui-1_simple-add"
-        class="nav-item"
-      >
-        <a
-          href="javascript:void(0)"
-          @click="pushSection()"
-          class="dropdown-item"
-        >
-          Section
-        </a>
-        <a
-          href="javascript:void(0)"
-          @click="pushTile()"
-          class="dropdown-item"
-        >
-          Tile
-        </a>
-      </drop-down>
+      
       <li class="nav-item">
         <a
           class="nav-link btn btn-neutral"
           href="javascript:void(0)"
-          @click="boards()"
+          @click="newUser()"
         >
-          <i class="now-ui-icons ui-1_check"></i>
+          <i class="now-ui-icons emoticons_satisfied"></i>
           &nbsp;
-          <p>Boards</p>
+          <p>Add a new user.</p>
         </a>
       </li>
 
@@ -136,7 +109,7 @@ import { config } from '../CONFIG';
 import Services from './../services'
 
 export default {
-  name: 'main-navbar',
+  name: 'users-navbar',
   components: {
     DropDown,
     Navbar,
@@ -152,10 +125,6 @@ export default {
   data() {
     return {
       type: 'white', //['white', 'default', 'primary', 'danger', 'success', 'warning', 'info']
-      search: '',
-      pickers: {
-        datePicker: ''
-      },
       profile: this.$store.getters.getProfile,
       service: new Services()
     }
@@ -166,48 +135,12 @@ export default {
       this.$store.dispatch('setSearch', val)
     }
   },
-  computed: {
-    ifBoard() {
-      if (this.$store.getters.getBoard){
-        return true
-      } else {
-        return false
-      }
-    }
-  },
   methods: {
     scrollToElement() {
       let element_id = document.getElementById("downloadSection");
       if (element_id) {
         element_id.scrollIntoView({ block: "end", behavior: "smooth" });
       }
-    },
-    pushSection() {
-      this.scrollToElement();
-      if (this.$store.getters.getBoard){
-        this.$store.dispatch('setModalSection', true)
-      }
-    },
-    pushTile() {
-      this.scrollToElement();
-      if (this.$store.getters.getBoard){
-        this.$store.dispatch('setModalTile', true)
-      }
-    },
-    boards() {
-      this.$store.dispatch('setModalBoard', true)
-    },
-    logout() {
-      this.service.logout()
-        .then(res => {
-          localStorage.removeItem('token')
-          this.$store.dispatch('setProfile',  {})
-          this.$store.dispatch('setToken',  '')
-          this.$router.push("/login")
-        })
-        .catch(err => {
-          console.log(err)
-        })
     },
     me() {
       this.$store.dispatch('setModalProfile',  true)

@@ -100,7 +100,7 @@ router.patch(
       "name",
       "usertype",
       "email",
-      "archived",
+      // "archived",
       "password",
       "password2"
     ]);
@@ -180,6 +180,28 @@ router.delete(
           'msg': "User deleted successfully!"
         }) 
       }
+    }
+  }
+)
+
+// Admin can get all users
+router.get(
+  '/all',
+  passport.authenticate('jwt', {session: false}),
+  ensureAuthenticated,
+  adminAuthenticated, 
+  async (req, res) => {
+    var users = await User.find({ 'archived': false })
+
+    if (users.length){
+      res.status(200).send({
+        msg: "Users found",
+        users
+      });
+    } else {
+      res.status(400).send({
+        errmsg: "No user found"
+      });
     }
   }
 )

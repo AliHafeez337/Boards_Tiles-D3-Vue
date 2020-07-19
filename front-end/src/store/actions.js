@@ -28,6 +28,9 @@ const actions = {
   },
   setModalProfile: ({ commit }, data) => {
     commit('SET_MODALPROFILE', data)
+  },
+  setModalUser: ({ commit }, data) => {
+    commit('SET_MODALUSER', data)
   }
 }
 

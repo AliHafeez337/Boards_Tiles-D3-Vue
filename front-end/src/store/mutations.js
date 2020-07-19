@@ -8,7 +8,8 @@ const mutations = {
   SET_TILE: (state, data) => { state.tile = data },
   SET_PROFILE: (state, data) => { state.profile = data },
   SET_TOKEN: (state, data) => { state.token = data },
-  SET_MODALPROFILE: (state, data) => { state.modalProfile = data }
+  SET_MODALPROFILE: (state, data) => { state.modalProfile = data },
+  SET_MODALUSER: (state, data) => { state.modalUser = data }
 }
 
 export default mutations;
