@@ -2,11 +2,87 @@ import axios from './axios';
 
 class Services {
 
+  // Admin adds a new user
+  newUser(user) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        var res = await axios({
+          method: 'post',
+          url: `/admin/create`,
+          data: user
+        });
+
+        if (res.data){
+          if (res.data.msg){
+            resolve(res.data)
+          } else if (res.data.errmsg){
+            reject(res.data.errmsg)
+          }
+        } else {
+          reject("Nothing came up on this route.")
+        }
+      } catch(err) {
+        // console.log(err)
+        reject(err)
+      }
+    })
+  }
+
+  // Admin updates a user
+  updateUser(user) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        var res = await axios({
+          method: 'patch',
+          url: `/admin/update/${user._id}`,
+          data: user
+        });
+
+        if (res.data){
+          if (res.data.msg){
+            resolve(res.data)
+          } else if (res.data.errmsg){
+            reject(res.data.errmsg)
+          }
+        } else {
+          reject("Nothing came up on this route.")
+        }
+      } catch(err) {
+        // console.log(err)
+        reject(err)
+      }
+    })
+  }
+
+  // Admin can get all users
+  allUsers() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        var res = await axios({
+          method: 'get',
+          url: '/admin/all'
+        });
+
+        if (res.data){
+          if (res.data.msg){
+            resolve(res.data)
+          } else if (res.data.errmsg){
+            reject(res.data.errmsg)
+          }
+        } else {
+          reject("Nothing came up on this route.")
+        }
+      } catch(err) {
+        // console.log(err)
+        reject(err)
+      }
+    })
+  }
+
   // Update user
   update(name, email, password, password2) {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log('run')
         var res
         if (name && email && password && password2 && password === password2){
           res = await axios({

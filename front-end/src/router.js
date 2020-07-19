@@ -1,20 +1,32 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Index from './pages/Index.vue';
+import Users from './pages/Users.vue';
 import Login from './pages/Login.vue';
 import MainNavbar from './layout/MainNavbar.vue';
+import UsersNavbar from './layout/UsersNavbar.vue';
 import MainFooter from './layout/MainFooter.vue';
 import LoginNavbar from './layout/LoginNavbar.vue';
 
 Vue.use(Router);
 
 export default new Router({
+  mode: 'history',
   linkExactActiveClass: 'active',
   routes: [
     {
       path: '/',
       name: 'index',
       components: { default: Index, header: MainNavbar, footer: MainFooter },
+      props: {
+        header: { colorOnScroll: 400 },
+        footer: { backgroundColor: 'black' }
+      }
+    },
+    {
+      path: '/users',
+      name: 'users',
+      components: { default: Users, header: UsersNavbar, footer: MainFooter },
       props: {
         header: { colorOnScroll: 400 },
         footer: { backgroundColor: 'black' }

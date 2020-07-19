@@ -28,6 +28,9 @@ const getters = {
   },
   getModalProfile: function(state) {
     return state.modalProfile;
+  },
+  getModalUser: function(state) {
+    return state.modalUser;
   }
 }
 
