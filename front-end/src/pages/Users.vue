@@ -225,7 +225,13 @@ export default {
   methods: {
     deleteUser(id){
       if (confirm("Do you really want to delete this user?")) {
-        console.log(id)
+        this.service.deleteUser(id)
+          .then(data => {
+            this.users = this.users.filter(user => user._id !== id)
+          })
+          .catch(err => {
+            console.log(err)
+          })
       }
     },
     editUser(user){

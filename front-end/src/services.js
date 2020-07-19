@@ -2,6 +2,31 @@ import axios from './axios';
 
 class Services {
 
+  // Admin deletes a user
+  deleteUser(id) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        var res = await axios({
+          method: 'delete',
+          url: `/admin/delete/${id}`
+        });
+
+        if (res.data){
+          if (res.data.msg){
+            resolve(res.data)
+          } else if (res.data.errmsg){
+            reject(res.data.errmsg)
+          }
+        } else {
+          reject("Nothing came up on this route.")
+        }
+      } catch(err) {
+        // console.log(err)
+        reject(err)
+      }
+    })
+  }
+
   // Admin adds a new user
   newUser(user) {
     return new Promise(async (resolve, reject) => {
