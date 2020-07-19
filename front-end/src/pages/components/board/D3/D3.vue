@@ -1173,38 +1173,40 @@
           // console.log(number, a, b)
 
           var tile = d3.select('#' + label.tile)
-          
-          var x = tile._groups[0][0].x.animVal.value;
-          var y = tile._groups[0][0].y.animVal.value;
 
-          var parent = d3.select('#' + label.tile + '-p')
+          if (tile._groups[0][0]){
+            var x = tile._groups[0][0].x.animVal.value;
+            var y = tile._groups[0][0].y.animVal.value;
 
-          var thisLabel = parent
-                            .append('rect')
-                            .attr('class', d => 'label ' + ((x + 2) + (number * config.tile_width)) + '-' + (y + 2))
-                            .attr('id', label.tile + '-' + number)
-          thisLabel
-            .attr("width", config.label_width)
-            .attr("height", config.label_height)
-            .attr("x", (x + 2) + ((number * (config.label_width + config.gap_between_labels)) + config.lebel_padding_from_left) - +config.label_width)
-            .attr("y", (y + 2))
-            .attr("rx", config.labels_edges_round)
-            .attr("ry", config.labels_edges_round)
-            .style("opacity", config.label_opacity)
-            .style("fill", label.color)
-            // .on("click", function(d){
-            //   removeLabel(this, d);
-            // })
-            .on('contextmenu', function (d) {
-              var coords = d3.mouse(this);
-              createContextMenu(d, coords[0], coords[1], labelMenu, '.contextGroup', this);
-            })
-            .call(
-              d3.drag()
-                .on("start", function started(d) {
-                  tileDrag(d)
-                })
-            );
+            var parent = d3.select('#' + label.tile + '-p')
+
+            var thisLabel = parent
+                              .append('rect')
+                              .attr('class', d => 'label ' + ((x + 2) + (number * config.tile_width)) + '-' + (y + 2))
+                              .attr('id', label.tile + '-' + number)
+            thisLabel
+              .attr("width", config.label_width)
+              .attr("height", config.label_height)
+              .attr("x", (x + 2) + ((number * (config.label_width + config.gap_between_labels)) + config.lebel_padding_from_left) - +config.label_width)
+              .attr("y", (y + 2))
+              .attr("rx", config.labels_edges_round)
+              .attr("ry", config.labels_edges_round)
+              .style("opacity", config.label_opacity)
+              .style("fill", label.color)
+              // .on("click", function(d){
+              //   removeLabel(this, d);
+              // })
+              .on('contextmenu', function (d) {
+                var coords = d3.mouse(this);
+                createContextMenu(d, coords[0], coords[1], labelMenu, '.contextGroup', this);
+              })
+              .call(
+                d3.drag()
+                  .on("start", function started(d) {
+                    tileDrag(d)
+                  })
+              );
+          }
         })
 
         var tooltip = svgContainer

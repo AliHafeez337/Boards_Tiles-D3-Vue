@@ -72,18 +72,18 @@ export const AddBoard = async ({ commit, getters }, board) => {
         commit('SET_BOARDS', boards)
       } else if (res.data.errmsg){
         commit('SET_ERR', { bool: true, errmsg: res.data.errmsg })
-        setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 1000)
+        setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
       }
     } else {
       commit('SET_ERR', { bool: true, errmsg: "No data received" })
-      setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 1000)
+      setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
     }
   } catch(err) {
     if (err.errmsg){
       err = err.errmsg
     }
     commit('SET_ERR', { bool: true, errmsg: err })
-    setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 1000)
+    setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
   }
 };
 
@@ -99,7 +99,7 @@ export const setBoards = async ({ commit }) => {
       commit('SET_BOARDS', res.data)
     } else {
       commit('SET_ERR', { bool: true, errmsg: "No data received" })
-      setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 1000)
+      setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
     }
   } catch(err) {
     // console.log(err)
@@ -107,7 +107,7 @@ export const setBoards = async ({ commit }) => {
       err = err.errmsg
     }
     commit('SET_ERR', { bool: true, errmsg: err })
-    setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 1000)
+    setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
   }
 };
 
@@ -126,18 +126,18 @@ export const deleteBoard = async ({ commit, getters }, id) => {
         commit('SET_BOARDS', boards)
       } else if (res.data.errmsg){
         commit('SET_ERR', { bool: true, errmsg: res.data.errmsg })
-        setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 1000)
+        setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
       }
     } else {
       commit('SET_ERR', { bool: true, errmsg: "No data received" })
-      setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 1000)
+      setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
     }
   } catch(err) {
     if (err.errmsg){
       err = err.errmsg
     }
     commit('SET_ERR', { bool: true, errmsg: err })
-    setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 1000)
+    setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
   }
 };
 
@@ -152,36 +152,124 @@ export const resetBoard = ({ commit, getters }, data) => {
   commit('SET_LABELS1', [])
 }
 
-export const setSections = ({ commit }, sections) => {
+export const setSections = async ({ commit }, id) => {
   // get from the database
-  setTimeout(() => {
-    commit('SET_SECTIONS', sections)
-    commit('SET_SECTIONS1', sections)
-  }, 1000)
+
+  try {
+    var res = await axios({
+      method: 'get',
+      url: `/section/getAll/?board=${id}`
+    });
+
+    if (res.data){
+      if (res.data.sections){
+        commit('SET_SECTIONS', res.data.sections)
+        commit('SET_SECTIONS1', res.data.sections)
+      } else if (res.data.errmsg){
+        commit('SET_ERR', { bool: true, errmsg: res.data.errmsg })
+        setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+      }
+    } else {
+      commit('SET_ERR', { bool: true, errmsg: "No data received" })
+      setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+    }
+  } catch(err) {
+    if (err.errmsg){
+      err = err.errmsg
+    }
+    commit('SET_ERR', { bool: true, errmsg: err })
+    setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+  }
 };
 
-export const setSectionName = ({ commit }, sectionName) => {
+export const setSectionName = async ({ commit }, id) => {
   // get from the database
-  setTimeout(() => {
-    commit('SET_SECTIONNAME', sectionName)
-    commit('SET_SECTIONNAME1', sectionName)
-  }, 1000)
+
+  try {
+    var res = await axios({
+      method: 'get',
+      url: `/sectionName/getAll/?board=${id}`
+    });
+
+    if (res.data){
+      if (res.data.sectionNames){
+        commit('SET_SECTIONNAME', res.data.sectionNames)
+        commit('SET_SECTIONNAME1', res.data.sectionNames)
+      } else if (res.data.errmsg){
+        commit('SET_ERR', { bool: true, errmsg: res.data.errmsg })
+        setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+      }
+    } else {
+      commit('SET_ERR', { bool: true, errmsg: "No data received" })
+      setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+    }
+  } catch(err) {
+    if (err.errmsg){
+      err = err.errmsg
+    }
+    commit('SET_ERR', { bool: true, errmsg: err })
+    setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+  }
 };
 
-export const setTiles = ({ commit }, tiles) => {
+export const setTiles = async ({ commit }, id) => {
   // get from the database
-  setTimeout(() => {
-    commit('SET_TILES', tiles)
-    commit('SET_TILES1', tiles)
-  }, 1000)
+
+  try {
+    var res = await axios({
+      method: 'get',
+      url: `/tile/getAll/?board=${id}`
+    });
+
+    if (res.data){
+      if (res.data.errmsg){
+        commit('SET_ERR', { bool: true, errmsg: res.data.errmsg })
+        setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+      } else {
+        commit('SET_TILES', res.data)
+        commit('SET_TILES1', res.data)
+      }
+    } else {
+      commit('SET_ERR', { bool: true, errmsg: "No data received" })
+      setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+    }
+  } catch(err) {
+    if (err.errmsg){
+      err = err.errmsg
+    }
+    commit('SET_ERR', { bool: true, errmsg: err })
+    setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+  }
 };
 
-export const setLabels = ({ commit }, labels) => {
+export const setLabels = async ({ commit }, id) => {
   // get from the database
-  setTimeout(() => {
-    commit('SET_LABELS', labels)
-    commit('SET_LABELS1', labels)
-  }, 1000)
+  
+  try {
+    var res = await axios({
+      method: 'get',
+      url: `/label/getAll/?board=${id}`
+    });
+
+    if (res.data){
+      if (res.data.labels){
+        commit('SET_LABELS', res.data.labels)
+        commit('SET_LABELS1', res.data.labels)
+      } else if (res.data.errmsg){
+        commit('SET_ERR', { bool: true, errmsg: res.data.errmsg })
+        setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+      }
+    } else {
+      commit('SET_ERR', { bool: true, errmsg: "No data received" })
+      setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+    }
+  } catch(err) {
+    if (err.errmsg){
+      err = err.errmsg
+    }
+    commit('SET_ERR', { bool: true, errmsg: err })
+    setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+  }
 };
 
 export const pushSection = ({ commit, getters }, section) => {
@@ -208,7 +296,7 @@ export const pushSection = ({ commit, getters }, section) => {
     commit('SET_SECTIONS', sections)
     commit('SET_SECTIONS1', sections)
     commit('SET_LABELS', getters.getLabels1)
-  }, 1000)
+  }, 2000)
   // save into the database
 };
 
@@ -226,7 +314,7 @@ export const pushTile = ({ commit, getters }, tile) => {
     commit('SET_SECTIONNAME', sectionName)
     commit('SET_LABELS', getters.getLabels1)
     
-  }, 1000)
+  }, 2000)
   // save into the database
 };
 
@@ -235,7 +323,7 @@ export const pushLabel = ({ commit, getters }, label) => {
   setTimeout(() => {
     labels.push(label)
     commit('SET_LABELS1', labels)
-  }, 1000)
+  }, 2000)
   // save into the database
 };
 
@@ -246,7 +334,7 @@ export const changeSectionColor = ({ commit, getters }, data) => {
   })
   setTimeout(() => {
     commit('SET_SECTIONS1', sections)
-  }, 1000)
+  }, 2000)
   // save into the database
 };
 
@@ -257,7 +345,7 @@ export const changeTileColor = ({ commit, getters }, data) => {
   })
   setTimeout(() => {
     commit('SET_TILES1', tiles)
-  }, 1000)
+  }, 2000)
   // save into the database
 };
 
@@ -286,7 +374,7 @@ export const changeSection = ({ commit, getters }, data) => {
   setTimeout(() => {
     commit('SET_SECTIONS1', sections)
     commit('SET_TILES1', tiles)
-  }, 1000)
+  }, 2000)
   // save into the database
 };
 
@@ -304,7 +392,7 @@ export const changeSectionName = ({ commit, getters }, data) => {
   console.log(getters.getSectionName1, sections)
   setTimeout(() => {
     commit('SET_SECTIONNAME1', sections)
-  }, 1000)
+  }, 2000)
   // save into the database
 };
 
@@ -322,7 +410,7 @@ export const changeTile = ({ commit, getters }, data) => {
   })
   setTimeout(() => {
     commit('SET_TILES1', tiles)
-  }, 1000)
+  }, 2000)
 
   console.log(getters.getTiles1)
   // save into the database
@@ -338,7 +426,7 @@ export const removeLabel = ({ commit, getters }, data) => {
   })
   setTimeout(() => {
     commit('SET_LABELS1', labels)
-  }, 1000)
+  }, 2000)
   // save into the database
 };
 
@@ -358,7 +446,7 @@ export const removeTile = ({ commit, getters }, id) => {
   setTimeout(() => {
     commit('SET_TILES1', tiles)
     commit('SET_LABELS1', labels)
-  }, 1000)
+  }, 2000)
   // save into the database
 };
 
@@ -374,7 +462,7 @@ export const removeSection = ({ commit, getters }, id) => {
   setTimeout(() => {
     commit('SET_SECTIONS1', sections)
     commit('SET_SECTIONNAME1', sectionName)
-  }, 1000)
+  }, 2000)
   // save into the database
 };
 
@@ -386,7 +474,7 @@ export const changeZoom = ({ commit }, data) => {
   }
   setTimeout(() => {
     commit('SET_ZOOM', zoom)
-  }, 1000)
+  }, 2000)
 };
 
 export const arrangeTiles = ({ commit, getters }, id) => {
@@ -684,7 +772,7 @@ export const arrangeTiles = ({ commit, getters }, id) => {
   commit('SET_SECTIONS', getters.getSections1)
   commit('SET_SECTIONNAME', getters.getSectionName1)
   commit('SET_LABELS', getters.getLabels1)
-  // setTimeout(() => console.log(this.$store.getters.getTiles), 1000)
+  // setTimeout(() => console.log(this.$store.getters.getTiles), 2000)
 };
 
 export const sortTiles = ({ commit, getters }, id) => {
