@@ -9,7 +9,7 @@ Vue.use(Vuex);
 
 const state = {
   board: '',
-  boards: ['board1'],
+  boards: [],
   sections: [],
   sectionName: [],
   tiles: [],
@@ -23,7 +23,9 @@ const state = {
     x: null,
     y: null
   },
-  search: null
+  search: null,
+  err: false,
+  errmsg: ''
 }
 
 export default {

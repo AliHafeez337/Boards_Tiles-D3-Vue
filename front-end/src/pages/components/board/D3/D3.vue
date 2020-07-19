@@ -1230,6 +1230,7 @@
         const zoom = d3
                       .zoom()
                       .scaleExtent([config.max_zoom_out, config.max_zoom_in])
+                      // .translateExtent([[0, 0],[800, 600]])
                       .on("zoom", () => {
                         const transform = d3.event.transform;
                         this.zoomChanged++
