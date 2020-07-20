@@ -12,3 +12,4 @@ export const getLabels1 = state => state.labels1;
 export const getZoom = state => state.zoom;
 export const getErr = state => state.err;
 export const getErrmsg = state => state.errmsg;
+export const getSaving = state => state.saving;

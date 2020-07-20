@@ -11,3 +11,4 @@ export const SET_TILES1 = (state, tiles) => { state.tiles1 = tiles };
 export const SET_LABELS1 = (state, labels) => { state.labels1 = labels };
 export const SET_ZOOM = (state, zoom) => { state.zoom = zoom };
 export const SET_ERR = (state, data) => { state.err = data.bool; state.errmsg = data.errmsg };
+export const SET_SAVING = (state, data) => { state.saving = data };

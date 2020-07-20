@@ -92,8 +92,8 @@
               // getColor()
               colorPallet()
                 .then(color => {
-                  changeColor(rect, color)
-                  changeColor(frame, color)
+                  changeColor(d, rect, color)
+                  changeColor(d, frame, color)
                 })
             }
           },
@@ -342,7 +342,7 @@
               var rect = d3.select('#' + d.id)
               // getColor()
               colorPallet()
-                .then(color => changeColor(rect, color))
+                .then(color => changeColor(d, rect, color))
             }
           },
           {
@@ -459,17 +459,17 @@
           })
         }
         
-        var changeColor = (selection, color) => {
+        var changeColor = (d, selection, color) => {
           const id = selection.attr('id'), type = selection.attr('class').split(" ")[0];
           // console.log(id, type)
           selection.style("fill", color);
 
           if (type === 'tile'){
-            this.$store.dispatch('changeTileColor', { id, color });
+            this.$store.dispatch('changeTileColor', { _id: d._id, color });
           } else if (type === 'section'){
-            this.$store.dispatch('changeSectionColor', { id, color });
+            this.$store.dispatch('changeSectionColor', { _id: d._id, color });
           } else if (type === 'sectionTextFrame'){
-            store.dispatch('changeSectionName', { 
+            store.dispatch('changeSectionName', {
               id: id,
               width: selection.attr('width'),
               height: selection.attr('height'),
@@ -678,7 +678,7 @@
             //   rect.attr('y')
             // )
 
-            store.dispatch('changeSectionName', { 
+            store.dispatch('changeSectionName', {
               id: frame1.attr('id'),
               width: rect.attr('width'),
               height: rect.attr('height'),
@@ -687,8 +687,8 @@
               color: dd.color
             })
 
-            store.dispatch('changeSection', { 
-              id: rect.attr('id'),
+            store.dispatch('changeSection', {
+              _id: d._id,
               width: rect.attr('width'),
               height: rect.attr('height'),
               x: rect.attr('x'),
@@ -725,11 +725,11 @@
           .attr("ry", config.section_edges_round)
           .style("fill", d => d.color)
           .style("opacity", config.section_opacity)
-          .on("click", function() {
-            console.log('SECTION CLICKED')
-            getColor()
-              .then(color => changeColor(d3.select(this), color))
-          })
+          // .on("click", function() {
+          //   console.log('SECTION CLICKED')
+          //   getColor()
+          //     .then(color => changeColor(d3.select(this), color))
+          // })
           .on('contextmenu', function (d) {
             var coords = d3.mouse(this);
             createContextMenu(d, coords[0], coords[1], sectionMenuItems, '.contextGroup');
@@ -810,8 +810,8 @@
 
             rect.classed("dragging", false);
 
-            store.dispatch('changeSectionName', { 
-              id: dd.id,
+            store.dispatch('changeSectionName', {
+              id: d.id,
               width: rect.attr('width'),
               height: rect.attr('height'),
               x: rect.attr('x'),

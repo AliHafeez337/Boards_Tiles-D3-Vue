@@ -25,11 +25,11 @@ router.post(
     ])
 
     if (!body.board.match(/^[0-9a-fA-F]{24}$/)) {
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Valid board id must be provided..."
       })
     } else if (!body.tile){
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Tile id must be provided..."
       })
     } else {
@@ -53,12 +53,12 @@ router.post(
           })
           .catch(err => {
             console.log(err)
-            res.status(400).send({
+            res.status(200).send({
               'errmsg': err
             });
           });
       } else {
-        res.status(400).send({
+        res.status(200).send({
           errmsg: "No board or tile exists..."
         })
       }
@@ -81,12 +81,12 @@ router.delete(
           del
         })
       } else {
-        res.status(400).send({
+        res.status(200).send({
           errmsg: "Nothing to delete..."
         })
       }
     } else {
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Please specify a valid id..."
       })
     }
@@ -104,8 +104,8 @@ router.get(
       Label.find({ 'board': req.query.board })
         .exec(function(err, labels){
           if (err){
-            res.status(400).send({
-              errmsg: "No labels found..."
+            res.status(200).send({
+              errmsg: "No tile found..."
             })
           }
           if (labels.length){
@@ -113,13 +113,13 @@ router.get(
               labels
             })
           } else {
-            res.status(400).send({
-              errmsg: "No labels found..."
+            res.status(200).send({
+              errmsg: "No tile found..."
             })
           }
         });
     } else {
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Please specify a valid board id..."
       })
     }

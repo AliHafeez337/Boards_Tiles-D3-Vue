@@ -22,6 +22,17 @@
       </el-popover>
     </template>
     <template slot="navbar-menu">
+      <li class="nav-item" v-if="Saving">
+        <a
+          class="nav-link btn btn-neutral"
+          href="javascript:void(0)"
+          style="cursor: progress;"
+        >
+          <i class="now-ui-icons arrows-1_cloud-upload-94"></i>
+          &nbsp;
+          <p style="font-size: 15px">Saving progress...</p>
+        </a>
+      </li>
       <fginput
         v-if="ifBoard"
         placeholder="Search the tile"
@@ -58,7 +69,7 @@
         >
           <i class="now-ui-icons ui-1_check"></i>
           &nbsp;
-          <p>Boards</p>
+          <p style="font-size: 12px">Boards</p>
         </a>
       </li>
 
@@ -169,6 +180,13 @@ export default {
   computed: {
     ifBoard() {
       if (this.$store.getters.getBoard){
+        return true
+      } else {
+        return false
+      }
+    },
+    Saving() {
+      if (this.$store.getters.getSaving){
         return true
       } else {
         return false

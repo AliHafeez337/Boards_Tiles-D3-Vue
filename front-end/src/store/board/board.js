@@ -25,7 +25,8 @@ const state = {
   },
   search: null,
   err: false,
-  errmsg: ''
+  errmsg: '',
+  saving: 0
 }
 
 export default {
