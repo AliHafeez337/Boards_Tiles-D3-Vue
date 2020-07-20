@@ -35,11 +35,11 @@ router.post(
     ])
 
     if (!body.board.match(/^[0-9a-fA-F]{24}$/)) {
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Valid board id must be provided..."
       })
     } else if (!body.name || !body.id){
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Tile name and id is required..."
       })
     } else {
@@ -62,12 +62,12 @@ router.post(
           })
           .catch(err => {
             console.log(err)
-            res.status(400).send({
+            res.status(200).send({
               'errmsg': err
             });
           });
       } else {
-        res.status(400).send({
+        res.status(200).send({
           errmsg: "No board exists..."
         })
       }
@@ -124,7 +124,7 @@ router.patch(
             })
             .catch(err => {
               console.log(err)
-              res.status(400).send({
+              res.status(200).send({
                 errmsg: "Coudn't update the tile..."
               })
             })
@@ -133,7 +133,7 @@ router.patch(
         });
       }
     } else {
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Please specify a valid id..."
       })
     }
@@ -197,7 +197,7 @@ router.patch(
             })
             .catch(err => {
               console.log(err)
-              res.status(400).send({
+              res.status(200).send({
                 errmsg: "Coudn't update the tile..."
               })
             })
@@ -206,7 +206,7 @@ router.patch(
         });
       }
     } else {
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Please specify a valid id..."
       })
     }
@@ -241,8 +241,8 @@ router.get(
         .toArray((err, results) => {
           if (err){
             // console.log(err)
-            res.status(400).send({
-              'errmsg': "Unable to find any labels for this image..."
+            res.status(200).send({
+              'errmsg': "Unable to find any labels for this board..."
             })
           };
           res.status(200).send(results)
@@ -251,7 +251,7 @@ router.get(
         })
       });
     } else {
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Please specify a valid board id..."
       })
     }
@@ -275,12 +275,12 @@ router.delete(
           msg: "Tile and all the associated labels with the tile are deleted..."
         })
       } else {
-        res.status(400).send({
+        res.status(200).send({
           errmsg: "Nothing to delete..."
         })
       }
     } else {
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Please specify a valid id..."
       })
     }

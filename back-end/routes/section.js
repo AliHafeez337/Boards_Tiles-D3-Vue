@@ -32,11 +32,11 @@ router.post(
     ])
 
     if (!body.board.match(/^[0-9a-fA-F]{24}$/)) {
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Valid board id must be provided..."
       })
     } else if (!body.name || !body.id){
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Section name and id is required..."
       })
     } else {
@@ -95,12 +95,12 @@ router.post(
           })
           .catch(err => {
             console.log(err)
-            res.status(400).send({
+            res.status(200).send({
               'errmsg': err
             });
           });
       } else {
-        res.status(400).send({
+        res.status(200).send({
           errmsg: "No board exists..."
         })
       }
@@ -134,12 +134,12 @@ router.delete(
           })
         }
       } else {
-        res.status(400).send({
+        res.status(200).send({
           errmsg: "Nothing to delete..."
         })
       }
     } else {
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Please specify a valid id..."
       })
     }
@@ -184,18 +184,18 @@ router.patch(
             section
           })
         } else {
-          res.status(400).send({
+          res.status(200).send({
             errmsg: "Coudn't update the section..."
           })
         }
       } else {
-        res.status(400).send({
+        res.status(200).send({
           errmsg: "You are not authorized to update the section..."
         })
       }
 
     } else {
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Please specify a valid id..."
       })
     }
@@ -212,8 +212,8 @@ router.get(
       Section.find({ 'board': req.query.board })
         .exec(function(err, sections){
           if (err){
-            res.status(400).send({
-              errmsg: "No sections found..."
+            res.status(200).send({
+              errmsg: "No location found..."
             })
           }
           if (sections.length){
@@ -221,13 +221,13 @@ router.get(
               sections
             })
           } else {
-            res.status(400).send({
-              errmsg: "No sections found..."
+            res.status(200).send({
+              errmsg: "No location found..."
             })
           }
         });
     } else {
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Please specify a valid board id..."
       })
     }

@@ -51,17 +51,17 @@ router.patch(
             sectionName
           })
         } else {
-          res.status(400).send({
+          res.status(200).send({
             errmsg: "Coudn't update the sectionName..."
           })
         }
       } else {
-        res.status(400).send({
+        res.status(200).send({
           errmsg: "You are not authorized to update the sectionName..."
         })
       }
     } else {
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Please specify a valid id..."
       })
     }
@@ -78,8 +78,8 @@ router.get(
       SectionName.find({ 'board': req.query.board })
         .exec(function(err, sectionNames){
           if (err){
-            res.status(400).send({
-              errmsg: "No sectionNames found..."
+            res.status(200).send({
+              errmsg: "No location found..."
             })
           }
           if (sectionNames.length){
@@ -87,13 +87,13 @@ router.get(
               sectionNames
             })
           } else {
-            res.status(400).send({
-              errmsg: "No sectionNames found..."
+            res.status(200).send({
+              errmsg: "No location found..."
             })
           }
         });
     } else {
-      res.status(400).send({
+      res.status(200).send({
         errmsg: "Please specify a valid board id..."
       })
     }
