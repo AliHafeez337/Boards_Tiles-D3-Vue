@@ -89,11 +89,12 @@
               var frame = d3.select('#' + d.id + '-n');
 
               // either getColor() or colorPallet(), both work...
-              // getColor()
-              colorPallet()
+
+              getColor()
+              // colorPallet()
                 .then(color => {
-                  changeColor(d, rect, color)
-                  changeColor(d, frame, color)
+                  changeColor(d, _this, rect, color)
+                  changeColor(d, _this, frame, color)
                 })
             }
           },
@@ -293,8 +294,8 @@
               var x = Number(rect.attr('x'));
               var y = Number(rect.attr('y'));
 
-              // getColor()
-              colorPallet()
+              getColor()
+              // colorPallet()
                 .then(color => {
                   var number = parent.selectAll('rect')._groups[0].length
 
@@ -336,13 +337,14 @@
           },
           {
             title: 'Change color',
-            action: (d, _this) => {
+            action: async (d, _this) => {
               console.log('Tile color button clicked');
 
-              var rect = d3.select('#' + d.id)
-              // getColor()
-              colorPallet()
-                .then(color => changeColor(d, rect, color))
+              var rect = await d3.select('#' + d.id)
+              console.log(rect)
+              getColor()
+              // colorPallet()
+                .then(color => changeColor(d, _this, rect, color))
             }
           },
           {
@@ -444,22 +446,23 @@
 
         const store = this.$store;
 
-        var colorPallet = () => {
-          return new Promise(resolve => {
-            store.dispatch('setModalColor', true)
-            var colorInterval = setInterval(function() {
-              if (store.getters.getColor){
-                clearInterval(colorInterval)
-                const c = store.getters.getColor
-                console.log(c)
-                store.dispatch('setColor', '')
-                resolve(c)
-              }
-            }, 250)
-          })
-        }
+        // var colorPallet = () => {
+        //   return new Promise(resolve => {
+        //     store.dispatch('setColor', '')
+        //     store.dispatch('setModalColor', true)
+        //     var colorInterval = setInterval(function() {
+        //       if (store.getters.getColor){
+        //         clearInterval(colorInterval)
+        //         const c = store.getters.getColor
+        //         console.log(c)
+        //         store.dispatch('setColor', '')
+        //         resolve(c)
+        //       }
+        //     }, 250)
+        //   })
+        // }
         
-        var changeColor = (d, selection, color) => {
+        var changeColor = (d, _this, selection, color) => {
           const id = selection.attr('id'), type = selection.attr('class').split(" ")[0];
           // console.log(id, type)
           selection.style("fill", color);
@@ -725,11 +728,6 @@
           .attr("ry", config.section_edges_round)
           .style("fill", d => d.color)
           .style("opacity", config.section_opacity)
-          // .on("click", function() {
-          //   console.log('SECTION CLICKED')
-          //   getColor()
-          //     .then(color => changeColor(d3.select(this), color))
-          // })
           .on('contextmenu', function (d) {
             var coords = d3.mouse(this);
             createContextMenu(d, coords[0], coords[1], sectionMenuItems, '.contextGroup');
@@ -970,7 +968,13 @@
                           .data(this.tiles)
                           .enter()
                           .append('g')
-                          .attr('class', d => 'g gTile ' + d.x.toString() + '-' + d.y.toString())
+                          .attr('class', d => {
+                            if (d.x && d.y){
+                              return 'g gTile ' + d.x.toString() + '-' + d.y.toString()
+                            } else {
+                              this.$store.commit('SET_ERR', { bool: true, errmsg: `Didn't receieve x and y values of tile ${d.name} from the API, please reselect the board... Don't worry, the data is saved...` })
+                            }
+                          })
                           .attr('id', d => d.id + '-p');
 
         var tile = tileGroup

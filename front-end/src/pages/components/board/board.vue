@@ -138,7 +138,7 @@
     </modal>
 
     <!-- Modal Color -->
-    <modal :show="modalColor" headerClasses="justify-content-center">
+    <!-- <modal :show="modalColor" headerClasses="justify-content-center">
       <template slot="header">
         <h4 class="title title-up">Select Color</h4>
       </template>
@@ -160,9 +160,9 @@
           >Close</nbutton
         >
       </template>
-    </modal>
+    </modal> -->
 
-    <!-- <input type="color" id="color" hidden/> -->
+    <input type="color" id="color" hidden/>
     
     <!-- Modal Detils -->
     <modal :show="modalDetails" headerClasses="justify-content-center">
@@ -355,55 +355,13 @@
         this.addBoard = false
       },
       setBoard(board) {
+        this.$store.commit('SET_ERR', { bool: false, errmsg: "" })
         this.scrollToElement();
         this.$store.dispatch('setBoard', board)
         this.$store.dispatch('setSections', board._id)
         this.$store.dispatch('setSectionName', board._id)
         this.$store.dispatch('setTiles', board._id)
         this.$store.dispatch('setLabels', board._id)
-
-        // if (board.name === 'board1'){
-        //   var sections =  [
-        //     { 'id': 'aqxn9u0yv3', 'name': '0ABC', 'max_trucks': 1, 'max_trailers': 1, 'width': config.section_width, 'height': config.section_height, "x": 20, 'y': 20, 'color': config.new_section_color },
-        //     { 'id': 'a0nyn15mj3', 'name': '1BCD', 'max_trucks': 1, 'max_trailers': 2, 'width': config.section_width, 'height': config.section_height, "x": 250, 'y': 20, 'color': config.new_section_color },
-        //     { 'id': 'ayquazchds', 'name': '2CDE', 'max_trucks': 2, 'max_trailers': 1, 'width': config.section_width, 'height': config.section_height, "x": 520, 'y': 20, 'color': config.new_section_color }
-        //   ], sectionName = [
-        //     { 'id': 'aqxn9u0yv3-n', 'name': '0ABC', 'width': config.section_width, 'height': config.section_height, "x": 20, 'y': 20, 'color': config.new_section_color },
-        //     { 'id': 'a0nyn15mj3-n', 'name': '1BCD', 'width': config.section_width, 'height': config.section_height, "x": 250, 'y': 20, 'color': config.new_section_color },
-        //     { 'id': 'ayquazchds-n', 'name': '2CDE', 'width': config.section_width, 'height': config.section_height, "x": 520, 'y': 20, 'color': config.new_section_color }
-        //   ], tiles = [
-        //     { 'id': 'atrnrt7tmm', 'name': 'B02PSL', "x": 260, 'y': 50, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': true, 'backRTitle': 'ccc', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
-        //     { 'id': 'atrnrt7tmp', 'name': 'B03PSL', "x": 260, 'y': 150, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
-        //     { 'id': 'azkbug6kyx', 'name': 'A1PSL', "x": 30, 'y': 50, "color" : "brown", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593537002 }, // due in next 3 days
-        //     { 'id': 'atrnrt7tmn', 'name': 'HB023', "x": 350, 'y': 50, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
-        //     { 'id': 'btrnrt7tmn', 'name': 'H000', "x": 350, 'y': 80, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
-        //     { 'id': 'ctrnrt7tmn', 'name': 'H002', "x": 350, 'y': 110, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
-        //     { 'id': 'dtrnrt7tmn', 'name': 'H003', "x": 350, 'y': 140, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
-        //     { 'id': 'etrnrt7tmn', 'name': 'H802', "x": 350, 'y': 170, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
-        //     { 'id': 'ftrnrt7tmn', 'name': 'H803', "x": 350, 'y': 200, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
-        //     { 'id': 'gtrnrt7tmn', 'name': 'L256', "x": 350, 'y': 230, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
-        //     { 'id': 'htrnrt7tmn', 'name': 'XL710', "x": 350, 'y': 260, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
-        //     { 'id': 'atrnrt7tmo', 'name': 'MB022', "x": 260, 'y': 100, "color" : "purple", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': 1593882602 }, // due in next 7 days
-        //     { 'id': 'ak693b4ofl', 'name': 'C10PSL', "x": 530, 'y': 50, "color" : "#DA70D6", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': null }, // 1595869802 = due in next 30 days
-        //     { 'id': 'ak693b4ofm', 'name': 'MC101', "x": 625, 'y': 50, "color" : "#DA70D6", 'backLeft': false, 'backLTitle': '', 'backRight': false, 'backRTitle': '', 'event_name': 'Event', 'event_due': null } // 1595869802 = due in next 30 days
-        //   ], labels = [
-        //     { 'tile': 'atrnrt7tmm', "color" : "orange" },
-        //     { 'tile': 'azkbug6kyx', "color" : "red" },
-        //     { 'tile': 'atrnrt7tmm', "color" : "red" },
-        //     { 'tile': 'ak693b4ofl', "color" : "green" },
-        //     { 'tile': 'atrnrt7tmm', "color" : "red" }
-        //   ]
-        //   this.$store.dispatch('setBoard', board)
-        //   this.$store.dispatch('setSections', sections)
-        //   this.$store.dispatch('setSectionName', sectionName)
-        //   this.$store.dispatch('setTiles', tiles)
-        //   this.$store.dispatch('setLabels', labels)
-        //   this.closeButton()
-        // } else {
-        //   this.$store.dispatch('setBoard', board)
-        //   this.$store.dispatch('resetBoard', [])
-        //   this.closeButton()
-        // }
       },
       deleteBoard(id) {
         console.log(id)
@@ -412,7 +370,7 @@
         }
       },
       ID() {
-        return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 1) + Math.random().toString(36).substr(2, 9);
+        return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 1) + new Date().getTime();
       },
       isDisabled: function() {
         if (this.tile.name){

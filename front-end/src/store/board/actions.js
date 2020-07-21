@@ -191,6 +191,12 @@ export const setSections = async ({ commit, getters }, id) => {
     if (res.data){
       if (res.data.sections){
 
+        res.data.sections.forEach(section => {
+          if (!(section.board || section.id || section._id || section.x || section.y || section.width || section.height || section.color)){
+            commit('SET_ERR', { bool: true, errmsg: "API didn't provide some values of some section/s, please reselect the board..." })
+          }
+        })
+
         commit('SET_SECTIONS', res.data.sections)
         commit('SET_SECTIONS1', res.data.sections)
 
@@ -229,6 +235,12 @@ export const setSectionName = async ({ commit, getters }, id) => {
     if (res.data){
 
       if (res.data.sectionNames){
+
+        res.data.sectionNames.forEach(sectionName => {
+          if (!(sectionName.board || sectionName.id || sectionName._id || sectionName.x || sectionName.y || sectionName.name || sectionName.color)){
+            commit('SET_ERR', { bool: true, errmsg: "API didn't provide some values of some sectionName/s, please reselect the board..." })
+          }
+        })
 
         commit('SET_SECTIONNAME', res.data.sectionNames)
         commit('SET_SECTIONNAME1', res.data.sectionNames)
@@ -271,8 +283,16 @@ export const setTiles = async ({ commit, getters }, id) => {
         commit('SET_ERR', { bool: true, errmsg: res.data.errmsg })
         setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
       } else {
+
+        res.data.forEach(tile => {
+          if (!(tile.board || tile.id || tile._id || tile.x || tile.y || tile.color)){
+            commit('SET_ERR', { bool: true, errmsg: "API didn't provide some values of some tile/s, please reselect the board..." })
+          }
+        })
+
         commit('SET_TILES', res.data)
         commit('SET_TILES1', res.data)
+
       }
     } else {
       commit('SET_ERR', { bool: true, errmsg: "No data received" })
@@ -304,6 +324,12 @@ export const setLabels = async ({ commit, getters }, id) => {
 
     if (res.data){
       if (res.data.labels){
+
+        res.data.labels.forEach(label => {
+          if (!(label.board || label.tile || label._id || label.color)){
+            commit('SET_ERR', { bool: true, errmsg: "API didn't provide some values of some label/s, please reselect the board..." })
+          }
+        })
 
         commit('SET_LABELS', res.data.labels)
         commit('SET_LABELS1', res.data.labels)
@@ -536,7 +562,7 @@ export const changeTileColor = async ({ commit, getters }, data) => {
     if (res.data){
       if (res.data.tile){
         var tiles = getters.getTiles1.map(tile => {
-          tile.id === res.data.tile.id ? tile.color = res.data.tile.color : null
+          tile.id === res.data.tile.id ? tile.color = data.color : null
           return tile
         })
         commit('SET_TILES1', tiles)
@@ -632,8 +658,8 @@ export const changeSection = async ({ commit, getters }, data) => {
         
             if (res.data){
               if (res.data.tile){
-                tile.x = res.data.tile.x,
-                tile.y = res.data.tile.y
+                tile.x = _tile.x,
+                tile.y = _tile.y
         
               } else if (res.data.errmsg){
                 commit('SET_ERR', { bool: true, errmsg: res.data.errmsg })
