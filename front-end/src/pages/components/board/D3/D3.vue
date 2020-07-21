@@ -971,9 +971,10 @@
                           .attr('class', d => {
                             if (d.x && d.y){
                               return 'g gTile ' + d.x.toString() + '-' + d.y.toString()
-                            } else {
-                              this.$store.commit('SET_ERR', { bool: true, errmsg: `Didn't receieve x and y values of tile ${d.name} from the API, please reselect the board... Don't worry, the data is saved...` })
-                            }
+                            } 
+                            // else {
+                            //   this.$store.commit('SET_ERR', { bool: true, errmsg: `Didn't receieve x and y values of tile ${d.name} from the API, please reselect the board... Don't worry, the data is saved...` })
+                            // }
                           })
                           .attr('id', d => d.id + '-p');
 
@@ -1233,10 +1234,11 @@
                     .range([window.innerHeight, 0])
 
 
+        // Board size: right 5000, left -200, top -170 bottom -2200
         const zoom = d3
                       .zoom()
                       .scaleExtent([config.max_zoom_out, config.max_zoom_in])
-                      // .translateExtent([[0, 0],[800, 600]])
+                      .translateExtent([[-200,-170],[4800,2200]])
                       .on("zoom", () => {
                         const transform = d3.event.transform;
                         this.zoomChanged++
