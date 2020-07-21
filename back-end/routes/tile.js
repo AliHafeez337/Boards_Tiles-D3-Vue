@@ -119,7 +119,7 @@ router.patch(
             .then(async tile => {
               res.status(200).send({
                 msg: "Tile updated successfully...",
-                tile
+                tile: tile.value
               })
             })
             .catch(err => {
@@ -192,7 +192,7 @@ router.patch(
             .then(async tile => {
               res.status(200).send({
                 msg: "Tile updated successfully...",
-                tile
+                tile: tile.value
               })
             })
             .catch(err => {
@@ -265,7 +265,7 @@ router.delete(
   ensureAuthenticated, 
   adminUserAuthenticated,
   async (req, res) => {
-    if (req.params.id.length === 10){
+    if (req.params.id.length === 14){
       const del = await Tile.deleteOne({'id': req.params.id})
       if (del.deletedCount){
 

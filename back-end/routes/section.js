@@ -115,7 +115,7 @@ router.delete(
   ensureAuthenticated, 
   adminAuthenticated,
   async (req, res) => {
-    if (req.params.id.length === 10){
+    if (req.params.id.length === 14){
       const del = await Section.deleteOne({'id': req.params.id})
       if (del.deletedCount){
 

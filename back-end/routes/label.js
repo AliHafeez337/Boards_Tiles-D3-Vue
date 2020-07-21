@@ -73,7 +73,7 @@ router.delete(
   ensureAuthenticated, 
   adminUserFleetAuthenticated,
   async (req, res) => {
-    if (req.params.tile.length === 10){
+    if (req.params.tile.length === 14){
       const del = await Label.deleteOne({'tile': req.params.tile})
       if (del.deletedCount){
         res.status(200).send({
@@ -105,7 +105,7 @@ router.get(
         .exec(function(err, labels){
           if (err){
             res.status(200).send({
-              errmsg: "No tile found..."
+              errmsg: "No label found..."
             })
           }
           if (labels.length){
@@ -114,7 +114,7 @@ router.get(
             })
           } else {
             res.status(200).send({
-              errmsg: "No tile found..."
+              errmsg: "No label found..."
             })
           }
         });

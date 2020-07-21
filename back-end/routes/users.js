@@ -262,6 +262,7 @@ router.get(
   passport.authenticate('jwt', {session: false}),
   ensureAuthenticated, 
   async (req, res, next) => {
+    // console.log(Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 1) + new Date().getTime())
     res.send(req.user);
   }
 );
