@@ -5,7 +5,6 @@ import Users from './pages/Users.vue';
 import Login from './pages/Login.vue';
 import MainNavbar from './layout/MainNavbar.vue';
 import UsersNavbar from './layout/UsersNavbar.vue';
-import MainFooter from './layout/MainFooter.vue';
 import LoginNavbar from './layout/LoginNavbar.vue';
 
 Vue.use(Router);
@@ -17,7 +16,7 @@ export default new Router({
     {
       path: '/',
       name: 'index',
-      components: { default: Index, header: MainNavbar, footer: MainFooter },
+      components: { default: Index, header: MainNavbar },
       props: {
         header: { colorOnScroll: 400 },
         footer: { backgroundColor: 'black' }
@@ -26,7 +25,7 @@ export default new Router({
     {
       path: '/users',
       name: 'users',
-      components: { default: Users, header: UsersNavbar, footer: MainFooter },
+      components: { default: Users, header: UsersNavbar },
       props: {
         header: { colorOnScroll: 400 },
         footer: { backgroundColor: 'black' }
