@@ -90,12 +90,14 @@
 
               // either getColor() or colorPallet(), both work...
 
-              getColor()
-              // colorPallet()
-                .then(color => {
-                  changeColor(d, _this, rect, color)
-                  changeColor(d, _this, frame, color)
-                })
+              // getColor()
+              // // colorPallet()
+              //   .then(color => {
+              //     changeColor(d, _this, rect, color)
+              //     changeColor(d, _this, frame, color)
+              //   })
+
+              setColor(d, [rect, frame])
             }
           },
           {
@@ -341,10 +343,12 @@
               console.log('Tile color button clicked');
 
               var rect = await d3.select('#' + d.id)
-              console.log(rect)
-              getColor()
-              // colorPallet()
-                .then(color => changeColor(d, _this, rect, color))
+              
+              // getColor()
+              // // colorPallet()
+              //   .then(color => changeColor(d, _this, rect, color))
+                
+              setColor(d, [rect])
             }
           },
           {
@@ -461,27 +465,65 @@
         //     }, 250)
         //   })
         // }
-        
-        var changeColor = (d, _this, selection, color) => {
-          const id = selection.attr('id'), type = selection.attr('class').split(" ")[0];
-          // console.log(id, type)
-          selection.style("fill", color);
 
-          if (type === 'tile'){
-            this.$store.dispatch('changeTileColor', { _id: d._id, color });
-          } else if (type === 'section'){
-            this.$store.dispatch('changeSectionColor', { _id: d._id, color });
-          } else if (type === 'sectionTextFrame'){
-            store.dispatch('changeSectionName', {
-              id: id,
-              width: selection.attr('width'),
-              height: selection.attr('height'),
-              x: selection.attr('x'),
-              y: selection.attr('y'),
-              color: color 
+        var setColor = function (d, selections) {
+          // IMPORTANT: Remove the old input color element with old event listeneres and place a new one with no event listener
+          // coppied from: https://stackoverflow.com/questions/9251837/how-to-remove-all-listeners-in-an-element
+          var old_element = document.querySelector('#color');
+          var new_element = old_element.cloneNode(true);
+          old_element.parentNode.replaceChild(new_element, old_element);
+
+          // Now select the new element
+          var colorInput = document.querySelector('#color');
+          // Click the new element
+          colorInput.click();
+          // Add event listener, whenever user clicks 'ok', this function fires
+          colorInput.addEventListener('input', () => {
+            var color = colorInput.value;
+
+            selections.forEach(selection => {
+              const id = selection.attr('id'), type = selection.attr('class').split(" ")[0];
+              // console.log(id, type)
+              selection.style("fill", color);
+
+              if (type === 'tile'){
+                store.dispatch('changeTileColor', { _id: d._id, color });
+              } else if (type === 'section'){
+                store.dispatch('changeSectionColor', { _id: d._id, color });
+              } else if (type === 'sectionTextFrame'){
+                store.dispatch('changeSectionName', {
+                  id: id,
+                  width: selection.attr('width'),
+                  height: selection.attr('height'),
+                  x: selection.attr('x'),
+                  y: selection.attr('y'),
+                  color: color 
+                })
+              }
             })
-          }
+          })
         }
+        
+        // var changeColor = (d, _this, selection, color) => {
+        //   const id = selection.attr('id'), type = selection.attr('class').split(" ")[0];
+        //   // console.log(id, type)
+        //   selection.style("fill", color);
+
+        //   if (type === 'tile'){
+        //     this.$store.dispatch('changeTileColor', { _id: d._id, color });
+        //   } else if (type === 'section'){
+        //     this.$store.dispatch('changeSectionColor', { _id: d._id, color });
+        //   } else if (type === 'sectionTextFrame'){
+        //     store.dispatch('changeSectionName', {
+        //       id: id,
+        //       width: selection.attr('width'),
+        //       height: selection.attr('height'),
+        //       x: selection.attr('x'),
+        //       y: selection.attr('y'),
+        //       color: color 
+        //     })
+        //   }
+        // }
 
         var removeLabel = (t, d) => {
           var label = d3.select(t);
