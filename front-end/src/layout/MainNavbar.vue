@@ -50,6 +50,7 @@
           href="javascript:void(0)"
           @click="pushSection()"
           class="dropdown-item"
+          v-if="profile.usertype === 'admin'"
         >
           Section
         </a>

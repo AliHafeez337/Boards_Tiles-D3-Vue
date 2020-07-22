@@ -752,11 +752,21 @@ export const changeTile = ({ commit, getters }, data) => {
 
       // if((data.x || data.y || data.name) && (profile.usertype === 'admin' || profile.usertype === 'user')){
         try {
-          var res = axios({
-            method: 'patch',
-            url: `/tile/update/${tile._id}`,
-            data
-          });
+
+          if (getters.getProfile.usertype === 'admin' || getters.getProfile.usertype === 'user'){
+            var res = axios({
+              method: 'patch',
+              url: `/tile/update/${tile._id}`,
+              data
+            });
+          } else {
+            var res = axios({
+              method: 'patch',
+              url: `/tile/update1/${tile._id}`,
+              data
+            });
+          }
+
 
           setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
 

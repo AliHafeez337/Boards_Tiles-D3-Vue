@@ -217,8 +217,7 @@ router.patch(
 router.get(
   '/getAll',  
   passport.authenticate('jwt', {session: false}),
-  ensureAuthenticated, 
-  adminUserAuthenticated,
+  ensureAuthenticated,
   async (req, res) => {
     if (req.query.board.match(/^[0-9a-fA-F]{24}$/)){
 
