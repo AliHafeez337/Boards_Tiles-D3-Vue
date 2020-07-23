@@ -87,7 +87,7 @@
     <modal :show="modalBoard" headerClasses="justify-content-center">
       <template slot="header">
         <h4 class="title title-up">Boards</h4>
-        <nbutton v-if="!addBoard" type="success" @click="newBoard()"
+        <nbutton v-if="!addBoard && (profile.usertype === 'admin' || profile.usertype === 'user')" type="success" @click="newBoard()"
           >New Board</nbutton
         >
       </template>
@@ -241,7 +241,8 @@
           max_trucks: 2,
           max_trailers: 2
         },
-        color: '#59c7f9'
+        color: '#59c7f9',
+        profile: this.$store.getters.getProfile
       }
     },
     created() {

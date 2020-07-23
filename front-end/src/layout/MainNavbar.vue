@@ -40,7 +40,7 @@
       >
       </fginput>
       <drop-down
-        v-if="ifBoard"
+        v-if="ifBoardAndUser"
         tag="li"
         title="New"
         icon="now-ui-icons ui-1_simple-add"
@@ -181,6 +181,13 @@ export default {
   computed: {
     ifBoard() {
       if (this.$store.getters.getBoard){
+        return true
+      } else {
+        return false
+      }
+    },
+    ifBoardAndUser() {
+      if (this.$store.getters.getBoard && (this.$store.getters.getProfile.usertype === 'admin' || this.$store.getters.getProfile.usertype === 'user')){
         return true
       } else {
         return false
