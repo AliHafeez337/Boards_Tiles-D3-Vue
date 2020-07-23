@@ -40,7 +40,7 @@
           <el-date-picker
             type="date"
             popper-class="date-picker date-picker-primary"
-            placeholder="Date Time Picker"
+            placeholder="Event due time"
             v-model="tile.event_due"
           >
           </el-date-picker>
@@ -87,7 +87,7 @@
     <modal :show="modalBoard" headerClasses="justify-content-center">
       <template slot="header">
         <h4 class="title title-up">Boards</h4>
-        <nbutton v-if="!addBoard" type="success" @click="newBoard()"
+        <nbutton v-if="!addBoard && (profile.usertype === 'admin' || profile.usertype === 'user')" type="success" @click="newBoard()"
           >New Board</nbutton
         >
       </template>
@@ -171,23 +171,59 @@
       </template>
       <div class="datepicker-container">
         <strong>Tile name:</strong>&nbsp;
-        <span>{{tileDetails.name}}</span>
-        <br />
+        <div v-if="profile.usertype === 'fleet'">
+          <span>{{tileDetails.name}}</span>
+          <br />
+        </div>
+        <fginput
+          v-else
+          placeholder="Name"
+          v-model="tileDetails.name"
+        />
         <strong>Event name:</strong>&nbsp;
-        <span>{{tileDetails.event_name}}</span>
-        <br />
+        <fginput
+          placeholder="Title"
+          v-model="tileDetails.event_name"
+        />
         <strong>Event due date:</strong>&nbsp;
-        <span>{{tileDetails.due1}}</span>
-        <br />
+        <fginput>
+          <el-date-picker
+            type="date"
+            popper-class="date-picker date-picker-primary"
+            placeholder="Event due time"
+            v-model="due2"
+          >
+          </el-date-picker>
+        </fginput>
         <strong>Back-loaded left title:</strong>&nbsp;
-        <span>{{tileDetails.backLTitle}}</span>
-        <br />
+        <fginput
+          placeholder="Title"
+          v-model="tileDetails.backLTitle"
+        />
         <strong>Back-loaded right title:</strong>&nbsp;
-        <span>{{tileDetails.backRTitle}}</span>
-        <br />
+        <fginput
+          placeholder="Title"
+          v-model="tileDetails.backRTitle"
+        />
+        <div class="row">
+          <div class="col-6">
+            <fginput
+              placeholder="Key"
+            />
+          </div>
+          <div class="col-6">
+            <fginput
+              placeholder="Value"
+            />
+          </div>
+        </div>
+
         <br />
       </div>
       <template slot="footer">
+        <nbutton type="success" @click="updateTileDetails()"
+          >Update details</nbutton
+        >
         <nbutton type="danger" @click="closeButton()"
           >Close</nbutton
         >
@@ -241,7 +277,9 @@
           max_trucks: 2,
           max_trailers: 2
         },
-        color: '#59c7f9'
+        color: '#59c7f9',
+        profile: this.$store.getters.getProfile,
+        due2: null
       }
     },
     created() {
@@ -284,9 +322,10 @@
         return this.$store.getters.getModalDetails;
       },
       tileDetails() {
+        console.log(this.$store.getters.getTile)
         var a = this.$store.getters.getTile
         if (a.event_due){
-          a.due1 = new Date(a.event_due * 1000);
+          this.due2 = new Date(a.event_due * 1000);
         }
         return a;
       },
@@ -437,6 +476,26 @@
         this.$store.dispatch('setModalColor', false)
         this.$store.dispatch('setModalDetails', false)
         this.$store.dispatch('setTile', {})
+      },
+      updateTileDetails() {
+        // console.log(this.tileDetails, this.due2.getTime() / 1000)
+        var doc = {...this.tileDetails}
+
+        doc.event_due = this.due2.getTime() / 1000
+        if (doc.backLTitle){
+          doc.backLeft = true
+        } else {
+          doc.backLeft = false
+        }
+        if (doc.backRTitle){
+          doc.backRight = true
+        } else {
+          doc.backRight = false
+        }
+        
+        this.$store.dispatch('changeTile', doc)
+        this.d3++
+        // this.$store.dispatch('copyBoard')
       }
     }
   }
