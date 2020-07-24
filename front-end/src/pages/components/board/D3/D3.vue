@@ -67,7 +67,9 @@
         var thisComponent = this
 
         var sectionMenuItems = [], tileMenuItems = []
+
         if (this.usertype === 'fleet'){
+
           sectionMenuItems = [
             {
               title: 'Arrange tiles',
@@ -350,7 +352,9 @@
               }
             }
           ];
+
         } else {
+
           sectionMenuItems = [
             {
               title: 'Arrange tiles',
@@ -682,6 +686,7 @@
               }
             }
           ];
+          
         }
 
         const backLoadedLeft = [

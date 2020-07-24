@@ -205,18 +205,60 @@
           placeholder="Title"
           v-model="tileDetails.backRTitle"
         />
+        <div v-for="(key1, index) in tempKeys" :key="index">
+          <strong>{{key1}}</strong>&nbsp;
+          <div class="row">
+            <div class="col-9">
+              <fginput
+                placeholder="Title"
+                v-model="tileDetails[key1]"
+              />
+            </div>
+            <div class="col-3">
+              <span
+                style="color: red; cursor: pointer;"
+                @click="removeField(key1, 1)"
+              >Remove</span>
+            </div>
+          </div>
+        </div>
+
+        <div v-for="(key1, index) in extraF" :key="index + keyIncrement">
+          <strong>{{key1}}</strong>&nbsp;
+          <div class="row">
+            <div class="col-9">
+              <fginput
+                placeholder="Title"
+                v-model="extraFileds[key1]"
+              />
+            </div>
+            <div class="col-3">
+              <span
+                style="color: red; cursor: pointer;"
+                @click="removeField(key1, 2)"
+              >Remove</span>
+            </div>
+          </div>
+        </div>
+
+        <strong>Or add a new property...</strong>
         <div class="row">
           <div class="col-6">
             <fginput
               placeholder="Key"
+              v-model="addKey"
             />
           </div>
           <div class="col-6">
             <fginput
               placeholder="Value"
+              v-model="addValue"
             />
           </div>
         </div>
+        <nbutton type="primary" @click="addField()"
+          >Add</nbutton
+        >
 
         <br />
       </div>
@@ -279,7 +321,12 @@
         },
         color: '#59c7f9',
         profile: this.$store.getters.getProfile,
-        due2: null
+        due2: null,
+        addKey: '',
+        addValue: '',
+        tempKeys: null,
+        extraFileds: {},
+        keyIncrement: 0
       }
     },
     created() {
@@ -322,12 +369,7 @@
         return this.$store.getters.getModalDetails;
       },
       tileDetails() {
-        console.log(this.$store.getters.getTile)
-        var a = this.$store.getters.getTile
-        if (a.event_due){
-          this.due2 = new Date(a.event_due * 1000);
-        }
-        return a;
+        return this.$store.getters.getTile
       },
       sections() {
         return this.$store.getters.getSections;
@@ -343,6 +385,16 @@
       },
       search() {
         return this.$store.getters.getSearch;
+      },
+      extraF: {
+        // getter
+        get: function () {
+          return Object.keys(this.extraFileds)
+        },
+        // setter
+        set: function (newValue) {
+          this.extraFileds = newValue
+        }
       }
     },
     watch: {
@@ -365,7 +417,23 @@
       search: function (val) {
         console.log('SEARCH', val)
         this.d3 += 1
-      }
+      },
+      tileDetails: function (val) {
+        if (val.event_due){
+          this.due2 = new Date(val.event_due * 1000);
+        }
+
+        this.tempKeys = Object.keys(val).filter(key1 => {
+          this.keyIncrement++
+          if (!(key1 === 'name' || key1 === 'backLTitle' || key1 === 'backLeft' || key1 === 'backRTitle' || key1 === 'backRight' || key1 === 'back_title' || key1 === 'board' || key1 === 'color' || key1 === 'createdAt' || key1 === 'due1' || key1 === 'event_due' || key1 === 'event_name' || key1 === 'id' || key1 === 'x' || key1 === 'y' || key1 === '__v' || key1 === '_id')){
+            return key1
+          }
+        })
+        // console.log(this.tempKeys)
+      },
+      // extraFileds: function (val) {
+      //   console.log(val)
+      // }
     },
     methods: {
       changeColor(color) {
@@ -496,6 +564,42 @@
         this.$store.dispatch('changeTile', doc)
         this.d3++
         // this.$store.dispatch('copyBoard')
+      },
+      addField(){
+        if (this.addKey && this.addValue){
+          this.tileDetails[this.addKey] = this.addValue
+          this.tempKeys[this.addKey] = this.addValue
+          this.extraFileds[this.addKey] = this.addValue
+          this.extraFileds = {...this.extraFileds}
+
+          Object.keys(this.extraFileds).forEach(key => {
+            if (this.tileDetails[key]){
+              this.tileDetails[key] = this.extraFileds[key]
+            }
+          })
+
+          console.log(this.tileDetails, this.tempKeys, this.extraFileds)
+
+          this.addKey = ''
+          this.addValue = ''
+        }
+      },
+      removeField(field, no) {
+        if (no === 1){
+          delete this.tileDetails[field]
+          this.tempKeys = this.tempKeys.filter(key => key !== field)
+
+        } else if (no === 2){
+          delete this.tileDetails[field]
+          this.tempKeys = this.tempKeys.filter(key => key !== field)
+
+          delete this.extraFileds[field]
+          // The below setter is not simple like the above
+          this.extraF = this.extraF.filter(key => key !== field)
+        }
+        console.log(field, no, this.tileDetails, this.tempKeys, this.extraFileds, this.extraF)
+          
+        this.$store.dispatch('removeTileField', { tile: this.tileDetails, field })
       }
     }
   }

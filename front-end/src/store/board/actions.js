@@ -894,6 +894,47 @@ export const removeTile = async ({ commit, getters }, id) => {
   // save into the database
 };
 
+export const removeTileField = async ({ commit, getters }, data) => {
+  commit('SET_SAVING', +getters.getSaving + 1)
+  
+  try {
+    var res = await axios({
+      method: 'post',
+      url: `/tile/deleteField/${data.tile._id}`,
+      data: { field_name: data.field }
+    });
+
+    setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
+
+    if (res.data){
+      if (res.data.msg){
+
+        var tiles = getters.getTiles1.filter(tile => tile._id !== data.tile._id)
+        tiles.push(res.data.tile)
+        console.log(tiles)
+        commit('SET_TILES1', tiles)
+      
+      } else if (res.data.errmsg){
+        // commit('SET_ERR', { bool: true, errmsg: res.data.errmsg })
+        // setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+      }
+    } else {
+      commit('SET_ERR', { bool: true, errmsg: "No data received" })
+      setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+    }
+  } catch(err) {
+    if (err.errmsg){
+      err = err.errmsg
+    }
+
+    setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
+    // commit('SET_ERR', { bool: true, errmsg: err })
+    // setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+  }
+
+  // save into the database
+};
+
 export const removeSection = ({ commit, getters }, id) => {
   commit('SET_SAVING', +getters.getSaving + 1)
 

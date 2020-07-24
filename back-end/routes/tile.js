@@ -286,4 +286,107 @@ router.delete(
   }
 )
 
+// Delete a field from a tile
+router.post(
+  '/deleteField/:id',  
+  passport.authenticate('jwt', {session: false}),
+  ensureAuthenticated,
+  async (req, res) => {
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)){
+      
+      if (
+        !(
+          req.body.field_name === 'name' || 
+          req.body.field_name === 'backLTitle' || 
+          req.body.field_name === 'backLeft' || 
+          req.body.field_name === 'backRTitle' || 
+          req.body.field_name === 'backRight' || 
+          req.body.field_name === 'back_title' || 
+          req.body.field_name === 'board' || 
+          req.body.field_name === 'color' || 
+          req.body.field_name === 'createdAt' || 
+          // req.body.field_name === 'due1' || 
+          req.body.field_name === 'event_due' || 
+          req.body.field_name === 'event_name' || 
+          req.body.field_name === 'id' || 
+          req.body.field_name === 'x' || 
+          req.body.field_name === 'y' || 
+          req.body.field_name === '__v' || 
+          req.body.field_name === '_id'
+        )
+      ){
+
+        MongoClient.connect(
+          process.env.DATABASE, 
+          {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+          },
+          async (err, client) => {
+            if (err) {
+              return console.log('Unable to connect to MongoDB server');
+            }
+    
+            const db = client.db(process.env.DB_NAME);
+            const collection = 'tiles';
+    
+            await db.collection(collection)
+            .find({ '_id': new ObjectId(req.params.id) })
+            .toArray(async (err, result) => {
+              if (err){
+                // console.log(err)
+                res.status(200).send({
+                  'errmsg': "Unable to find any labels for this board..."
+                })
+              };
+              var doc = {...result[0]}
+
+              if  (req.body.field_name in doc){
+                delete doc[req.body.field_name]
+
+                const del = await Tile.deleteOne({'_id': doc._id})
+                if (del.deletedCount){
+                  
+                  
+                  await db.collection(collection)
+                    .save(doc)
+                    .then(tile => {
+                      res.status(200).send({
+                        'msg': "Tile updated successfully!",
+                        tile: doc,
+                        result: tile.result
+                      });
+                    })
+                    .catch(err => {
+                      console.log(err)
+                      res.status(200).send({
+                        'errmsg': err
+                      });
+                    });
+
+                }
+
+              } else {
+                res.status(200).send({
+                  'errmsg': "Unable to find this property in the tile...",
+                  tile: doc
+                })
+              }
+    
+              client.close();
+            })
+          });  
+      } else {
+        res.status(401).send({
+          errmsg: "Sorry, can not delete this field name..."
+        });
+      }
+    } else {
+      res.status(200).send({
+        errmsg: "Please specify a valid tile id..."
+      })
+    }
+  }
+)
+
 module.exports = router;
