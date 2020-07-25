@@ -281,7 +281,7 @@
         <input id="upload" type=file  name="files[]">
       </div>
       <template slot="footer">
-        <nbutton type="success" @click="submitFile()" :disabled="!files"
+        <nbutton type="success" @click="submitFile()" :disabled="isDisabled2"
           >Upload</nbutton
         >
         <nbutton type="danger" @click="closeButton()"
@@ -347,7 +347,7 @@
         extraFileds: {},
         keyIncrement: 0,
         errMSG: '',
-        files: null
+        file_contents: null
       }
     },
     created() {
@@ -422,6 +422,9 @@
       },
       modalImport(){
         return this.$store.getters.getModalImport;
+      },
+      isDisabled2() {
+        return !this.file_contents || !(this.errMSG === '')
       }
     },
     watch: {
@@ -632,7 +635,6 @@
       ExcelToJSON: function() {
 
         this.parseExcel = function(file, thisComponent) {
-          console.log(thisComponent)
           var reader = new FileReader();
 
           reader.onload = function(e) {
@@ -644,37 +646,51 @@
               // Here is your object
               var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
               var json_object = JSON.stringify(XL_row_object);
-              console.log(JSON.parse(json_object));
+              // console.log(JSON.parse(json_object));
 
               var name = false, _id = false, id = false, createdAt = false,  __v = false, x = false, y = false, color = false
 
-              var data = JSON.parse(json_object)
-              Object.keys(data[0]).forEach(key => {
-                if (key.toLowerCase() === 'name'){
-                  name = true
-                }
-                if (key.toLowerCase() === '_id'){
-                  _id = true
-                }
-                if (key.toLowerCase() === 'id'){
-                  id = true
-                }
-                if (key.toLowerCase() === 'createdat'){
-                  createdAt = true
-                }
-                if (key.toLowerCase() === '__v'){
-                  __v = true
-                }
-                if (key.toLowerCase() === 'x'){
-                  x = true
-                }
-                if (key.toLowerCase() === 'y'){
-                  y = true
-                }
-                if (key.toLowerCase() === 'color'){
-                  color = true
-                }
+              var json_object2 = []
+
+              JSON.parse(json_object).forEach(data => {
+                var obj = {...data}
+
+                Object.keys(data).forEach(key => {
+                  if (key.toLowerCase() === 'name'){
+                    name = true
+                  }
+                  if (key.toLowerCase() === '_id'){
+                    _id = true
+                  }
+                  if (key.toLowerCase() === 'id'){
+                    id = true
+                  }
+                  if (key.toLowerCase() === 'createdat'){
+                    createdAt = true
+                  }
+                  if (key.toLowerCase() === '__v'){
+                    __v = true
+                  }
+                  if (key.toLowerCase() === 'x'){
+                    x = true
+                  }
+                  if (key.toLowerCase() === 'y'){
+                    y = true
+                  }
+                  if (key.toLowerCase() === 'color'){
+                    color = true
+                  }
+                  if (key === 'backLTitle'){
+                    obj.backLeft = true
+                  }
+                  if (key === 'backRTitle'){
+                    obj.backRight = true
+                  }
+                })
+                json_object2.push(obj)
+
               })
+              console.log('File contents after parsing...', json_object2);
 
               if (!name){
                 thisComponent.errMSG = "name is required..."
@@ -695,7 +711,7 @@
               } else {
                 thisComponent.errMSG = ""
 
-                thisComponent.$store.dispatch('changeTilesByFile', json_object)
+                thisComponent.file_contents = json_object2
               }
 
             })
@@ -709,11 +725,12 @@
         };
       },
       handleFileSelect(evt) {
-        this.files = evt.target.files; // FileList object
+        var files = evt.target.files; // FileList object
+        var xl2json = new this.ExcelToJSON();
+        xl2json.parseExcel(files[0], this);
       },
       submitFile(){
-        var xl2json = new this.ExcelToJSON();
-        xl2json.parseExcel(this.files[0], this);
+        this.$store.dispatch('changeTilesByFile', this.file_contents)
       }
     }
   }
