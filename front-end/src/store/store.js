@@ -20,7 +20,8 @@ export const store = new Vuex.Store({
     profile: {},
     token: '' || localStorage.getItem('token'),
     modalProfile: false,
-    modalUser: false
+    modalUser: false,
+    modalImport: false
   },
   mutations,
   actions,

@@ -389,4 +389,85 @@ router.post(
   }
 )
 
+// Update tiles from file data
+router.patch(
+  '/getFile',  
+  passport.authenticate('jwt', {session: false}),
+  ensureAuthenticated,
+  async (req, res) => {
+    if (req.query.board.match(/^[0-9a-fA-F]{24}$/)){
+      
+      var tiles = []
+
+      // const da = JSON.parse(req.body.tiles)
+      // console.log(da)
+      // for (let index = 0; index < da.length; index++) {
+
+      JSON.parse(req.body.tiles).forEach(async tile => {
+        console.log('Tile: ', tile)
+        // console.log('Tile: ', da[index])
+        if (!(tile._id || tile.id || tile.x || tile.y || tile.color || tile.createdAt || tile.__v)){
+        // if (!(da[index]._id || da[index].id || da[index].x || da[index].y || da[index].color || da[index].createdAt || da[index].__v)){
+
+          await MongoClient.connect(
+            process.env.DATABASE, 
+            {
+              useNewUrlParser: true,
+              useUnifiedTopology: true
+            },
+            async (err, client) => {
+              if (err) {
+                return console.log('Unable to connect to MongoDB server');
+              }
+      
+              const db = client.db(process.env.DB_NAME);
+              const collection = 'tiles';
+    
+              await db.collection(collection)
+              .find({ 'name': tile.name })
+              // .find({ 'name': da[index].name })
+              .toArray(async (err, result) => {
+                if (result[0]){
+                  console.log('Tile found', result[0])
+                  // Update result[0]
+                  
+                  await db.collection(collection)
+                  .findOneAndUpdate(
+                    { '_id': result[0]._id },
+                    { $set: tile },
+                    // { $set: da[index] },
+                    { new: true }              
+                  )
+                  .then(doc => {
+                    client.close();
+                    tiles.push(doc)
+                  })
+                  .catch(e => {
+                    client.close();
+                    console.log(e)
+                  })
+
+                } else {
+                  client.close();
+                }
+              })
+
+            })
+
+        }
+      }
+      )
+      console.log(tiles)
+
+      res.status(200).send({
+        msg: "wait..."
+      })
+    } else {
+      res.status(200).send({
+        errmsg: "Please specify a valid board id..."
+      })
+    }
+  }
+)
+
 module.exports = router;

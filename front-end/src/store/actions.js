@@ -31,6 +31,9 @@ const actions = {
   },
   setModalUser: ({ commit }, data) => {
     commit('SET_MODALUSER', data)
+  },
+  setModalImport: ({ commit }, data) => {
+    commit('SET_MODALIMPORT', data)
   }
 }
 
