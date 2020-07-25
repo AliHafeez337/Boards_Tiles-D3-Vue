@@ -19,7 +19,8 @@
     "vue-lazyload": "^1.2.6",
     "vue-router": "^3.0.2",
     "vue2-transitions": "^0.2.3",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "xlsx": "^0.16.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.4.0",

@@ -9,7 +9,8 @@ const mutations = {
   SET_PROFILE: (state, data) => { state.profile = data },
   SET_TOKEN: (state, data) => { state.token = data },
   SET_MODALPROFILE: (state, data) => { state.modalProfile = data },
-  SET_MODALUSER: (state, data) => { state.modalUser = data }
+  SET_MODALUSER: (state, data) => { state.modalUser = data },
+  SET_MODALIMPORT: (state, data) => { state.modalImport = data }
 }
 
 export default mutations;

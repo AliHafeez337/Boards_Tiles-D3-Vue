@@ -31,6 +31,9 @@ const getters = {
   },
   getModalUser: function(state) {
     return state.modalUser;
+  },
+  getModalImport: function(state) {
+    return state.modalImport;
   }
 }
 

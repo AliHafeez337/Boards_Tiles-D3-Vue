@@ -61,6 +61,13 @@
         >
           Tile
         </a>
+        <a
+          href="javascript:void(0)"
+          @click="setImport()"
+          class="dropdown-item"
+        >
+          Import
+        </a>
       </drop-down>
       <li class="nav-item">
         <a
@@ -244,6 +251,11 @@ export default {
     },
     newUser() {
       this.$store.dispatch('setModalUser',  true)
+    },
+    setImport() {
+      if (this.$store.getters.getBoard){
+        this.$store.dispatch('setModalImport', true)
+      }
     }
   }
 };

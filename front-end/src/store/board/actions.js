@@ -797,6 +797,39 @@ export const changeTile = ({ commit, getters }, data) => {
   // save into the database
 };
 
+export const changeTilesByFile = ({ commit, getters }, data) => {
+  commit('SET_SAVING', +getters.getSaving + 1)
+  
+  try {
+
+    var res = axios({
+      method: 'patch',
+      url: `/tile/getFile/?board=${getters.getBoard._id}`,
+      data: {
+        tiles: data
+      }
+    });
+
+    setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
+
+    if (res.data){
+      if (res.data.errmsg){
+        commit('SET_ERR', { bool: true, errmsg: res.data.errmsg })
+        setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+      }
+    }
+  } catch(err) {
+    if (err.errmsg){
+      err = err.errmsg
+    }
+
+    setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
+    commit('SET_ERR', { bool: true, errmsg: err })
+    setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+  }
+  // save into the database
+};
+
 export const removeLabel = async ({ commit, getters }, data) => {
   commit('SET_SAVING', +getters.getSaving + 1)
 

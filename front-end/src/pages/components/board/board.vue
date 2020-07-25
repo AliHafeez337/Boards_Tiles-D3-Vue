@@ -272,6 +272,24 @@
       </template>
     </modal>
 
+    <!-- Modal Import -->
+    <modal :show="modalImport" headerClasses="justify-content-center">
+      <h4 slot="header" class="title title-up">Import tile/s & property/ies</h4>
+      <div class="datepicker-container">
+        <span style="color: red;" v-if="errMSG">{{errMSG}}</span>
+        <br />
+        <input id="upload" type=file  name="files[]">
+      </div>
+      <template slot="footer">
+        <nbutton type="success" @click="submitFile()" :disabled="!files"
+          >Upload</nbutton
+        >
+        <nbutton type="danger" @click="closeButton()"
+          >Close</nbutton
+        >
+      </template>
+    </modal>
+
     <D3 
       :sections="sections" 
       :sectionName="sectionName" 
@@ -292,6 +310,7 @@
   import { config } from '../../../CONFIG';
   import { Navbar, DropDown } from '@/components';
   import colorPicker from '@caohenghu/vue-colorpicker'
+  import XLSX from 'xlsx'
 
   export default {
     components: {
@@ -326,11 +345,16 @@
         addValue: '',
         tempKeys: null,
         extraFileds: {},
-        keyIncrement: 0
+        keyIncrement: 0,
+        errMSG: '',
+        files: null
       }
     },
     created() {
       this.$store.dispatch('setBoards')
+    },
+    mounted() {
+      document.getElementById('upload').addEventListener('change', this.handleFileSelect, false);
     },
     computed: {
       boards() {
@@ -395,6 +419,9 @@
         set: function (newValue) {
           this.extraFileds = newValue
         }
+      },
+      modalImport(){
+        return this.$store.getters.getModalImport;
       }
     },
     watch: {
@@ -544,6 +571,7 @@
         this.$store.dispatch('setModalColor', false)
         this.$store.dispatch('setModalDetails', false)
         this.$store.dispatch('setTile', {})
+        this.$store.dispatch('setModalImport', false)
       },
       updateTileDetails() {
         // console.log(this.tileDetails, this.due2.getTime() / 1000)
@@ -597,9 +625,95 @@
           // The below setter is not simple like the above
           this.extraF = this.extraF.filter(key => key !== field)
         }
-        console.log(field, no, this.tileDetails, this.tempKeys, this.extraFileds, this.extraF)
+        // console.log(field, no, this.tileDetails, this.tempKeys, this.extraFileds, this.extraF)
           
         this.$store.dispatch('removeTileField', { tile: this.tileDetails, field })
+      },
+      ExcelToJSON: function() {
+
+        this.parseExcel = function(file, thisComponent) {
+          console.log(thisComponent)
+          var reader = new FileReader();
+
+          reader.onload = function(e) {
+            var data = e.target.result;
+            var workbook = XLSX.read(data, {
+              type: 'binary'
+            });
+            workbook.SheetNames.forEach(function(sheetName) {
+              // Here is your object
+              var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+              var json_object = JSON.stringify(XL_row_object);
+              console.log(JSON.parse(json_object));
+
+              var name = false, _id = false, id = false, createdAt = false,  __v = false, x = false, y = false, color = false
+
+              var data = JSON.parse(json_object)
+              Object.keys(data[0]).forEach(key => {
+                if (key.toLowerCase() === 'name'){
+                  name = true
+                }
+                if (key.toLowerCase() === '_id'){
+                  _id = true
+                }
+                if (key.toLowerCase() === 'id'){
+                  id = true
+                }
+                if (key.toLowerCase() === 'createdat'){
+                  createdAt = true
+                }
+                if (key.toLowerCase() === '__v'){
+                  __v = true
+                }
+                if (key.toLowerCase() === 'x'){
+                  x = true
+                }
+                if (key.toLowerCase() === 'y'){
+                  y = true
+                }
+                if (key.toLowerCase() === 'color'){
+                  color = true
+                }
+              })
+
+              if (!name){
+                thisComponent.errMSG = "name is required..."
+              } else if (_id) {
+                thisComponent.errMSG = "_id is not allowed..."
+              } else if (id) { 
+                thisComponent.errMSG = "id is not allowed..."
+              } else if (createdAt) {
+                thisComponent.errMSG = "createdAt is not allowed..."
+              } else if (x) {
+                thisComponent.errMSG = "x is not allowed..."
+              } else if (y) {
+                thisComponent.errMSG = "y is not allowed..."
+              } else if (color) {
+                thisComponent.errMSG = "color is not allowed..."
+              } else if (__v) {
+                thisComponent.errMSG = "__v is not allowed..."
+              } else {
+                thisComponent.errMSG = ""
+
+                thisComponent.$store.dispatch('changeTilesByFile', json_object)
+              }
+
+            })
+          };
+
+          reader.onerror = function(ex) {
+            console.log(ex);
+          };
+
+          reader.readAsBinaryString(file);
+        };
+      },
+      handleFileSelect(evt) {
+        this.files = evt.target.files; // FileList object
+      },
+      submitFile(){
+        var xl2json = new this.ExcelToJSON();
+        xl2json.parseExcel(this.files[0], this);
       }
     }
   }

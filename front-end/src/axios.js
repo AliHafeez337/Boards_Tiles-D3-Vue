@@ -1,7 +1,9 @@
 import axios from 'axios'
 import { store } from './store/store';
+import { back_end_url, back_end_route } from './../VARIABLES'
 
-const apiURL = 'http://localhost:3000/api';
+const apiURL = back_end_url + back_end_route;
+// const apiURL = 'http://localhost:3000/api';
 
 axios.defaults.baseURL = apiURL
 
