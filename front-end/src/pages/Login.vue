@@ -8,9 +8,12 @@
       <div class="container">
         <div class="col-md-5 ml-auto mr-auto">
           <card type="login" plain>
-            <div slot="header" class="logo-container">
+            <!-- <div slot="header" class="logo-container">
               <img v-lazy="'img/now-logo.png'" alt="" />
-            </div>
+            </div> -->
+
+            <h2>{{siteName}}</h2>
+            <br />
 
             <h5 v-show="this.showErr" style="color: red">Unauthorized</h5>
             <fg-input
@@ -61,7 +64,7 @@
         </div>
       </div>
     </div>
-    <main-footer></main-footer>
+    <!-- <main-footer></main-footer> -->
   </div>
 </template>
 <script>
@@ -70,11 +73,13 @@ import { Card, Button, FormGroupInput } from '@/components';
 import MainFooter from '@/layout/MainFooter';
 import validator from 'validator';
 import Services from './../services';
+import { site_name } from './../../VARIABLES'
 
 export default {
   name: 'login-page',
   bodyClass: 'login-page',
   created() {
+    // console.log(site_name)
     if (this.$store.getters.getToken){
       this.$router.push("/")
     }
@@ -91,7 +96,8 @@ export default {
         email: '',
         password: ''
       },
-      showErr: false
+      showErr: false,
+      siteName: site_name
     }
   },
   computed: {

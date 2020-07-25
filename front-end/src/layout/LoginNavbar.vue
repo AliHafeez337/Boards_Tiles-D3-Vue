@@ -7,9 +7,9 @@
   >
     <template slot-scope="{ toggle, isToggled }">
       <router-link v-popover:popover1 class="navbar-brand" to="/">
-        Now Ui Kit
+        {{siteName}}
       </router-link>
-      <el-popover
+      <!-- <el-popover
         ref="popover1"
         popper-class="popover"
         placement="bottom"
@@ -19,7 +19,7 @@
         <div class="popover-body">
           Designed by Invision. Coded by Creative Tim
         </div>
-      </el-popover>
+      </el-popover> -->
     </template>
     <template slot="navbar-menu">
       <li class="nav-item">
@@ -70,6 +70,7 @@ import { NavbarToggleButton, Navbar, NavLink } from '@/components';
 import { Popover } from 'element-ui';
 
 import { config } from '../CONFIG';
+import { site_name } from './../../VARIABLES'
 
 export default {
   name: 'login-navbar',
@@ -84,6 +85,7 @@ export default {
   },
   data() {
     return {
+      siteName: site_name,
       type: 'white', //['white', 'default', 'primary', 'danger', 'success', 'warning', 'info']
     }
   }
