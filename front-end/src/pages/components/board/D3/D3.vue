@@ -930,18 +930,21 @@
                 // console.log('changing dimensions', this.usertype)
                 
                 let newWidth = w + (coords1[0] - (+x + +w)), newHeight = h + (coords1[1] - (+y + +h));
-                d.width = newWidth, d.height = newHeight
-                rect
-                  .attr('width', newWidth)
-                  .attr('height', newHeight);
-                // frame
-                //   .attr("x", d => {
-                //     return  +d.x + (+newWidth / 2) - (+d.name.length * 5 / 2) - 10
-                //   })
-                // text
-                //   .attr("x", d => {
-                //     return  +d.x + (+newWidth / 2) - (+d.name.length * 5 / 2)
-                //   })
+
+                if (newWidth >= 150 && newHeight >= 200){
+                  d.width = newWidth, d.height = newHeight
+                  rect
+                    .attr('width', newWidth)
+                    .attr('height', newHeight);
+                  // frame
+                  //   .attr("x", d => {
+                  //     return  +d.x + (+newWidth / 2) - (+d.name.length * 5 / 2) - 10
+                  //   })
+                  // text
+                  //   .attr("x", d => {
+                  //     return  +d.x + (+newWidth / 2) - (+d.name.length * 5 / 2)
+                  //   })
+                }
               } else {
                 // console.log('changing location')
 
