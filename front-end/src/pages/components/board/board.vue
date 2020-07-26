@@ -492,7 +492,16 @@
         this.addBoard = false
       },
       setBoard(board) {
+        this.$store.commit('SET_SECTIONS', [])
+        this.$store.commit('SET_SECTIONS1', [])
+        this.$store.commit('SET_SECTIONNAME', [])
+        this.$store.commit('SET_SECTIONNAME1', [])
+        this.$store.commit('SET_TILES', [])
+        this.$store.commit('SET_TILES1', [])
+        this.$store.commit('SET_LABELS', [])
+        this.$store.commit('SET_LABELS1', [])
         this.$store.commit('SET_ERR', { bool: false, errmsg: "" })
+        
         this.scrollToElement();
         this.$store.dispatch('setBoard', board)
         this.$store.dispatch('setSections', board._id)
@@ -685,6 +694,16 @@
                   }
                   if (key === 'backRTitle'){
                     obj.backRight = true
+                  }
+                  if (key === 'event_due'){
+                    // console.log(data[key], 
+                    // new Date(Math.round((data.event_due - 25569)*86400*1000)),
+                    // new Date(Math.round((data.event_due - 25569)*86400*1000)).getTime()
+                    // )
+                    if (new Date(Math.round((data.event_due - 25569)*86400*1000))) {
+                      // console.log(new Date(Math.round((data.event_due - 25569)*86400*1000)).getTime() / 1000)
+                      obj.event_due = new Date(Math.round((data.event_due - 25569)*86400*1000)).getTime() / 1000
+                    }
                   }
                 })
                 json_object2.push(obj)
