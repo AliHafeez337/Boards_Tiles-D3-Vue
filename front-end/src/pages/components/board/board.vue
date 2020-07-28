@@ -492,6 +492,8 @@
         this.addBoard = false
       },
       setBoard(board) {
+        document.title = board.name
+
         this.$store.commit('SET_SECTIONS', [])
         this.$store.commit('SET_SECTIONS1', [])
         this.$store.commit('SET_SECTIONNAME', [])
@@ -589,7 +591,9 @@
         // console.log(this.tileDetails, this.due2.getTime() / 1000)
         var doc = {...this.tileDetails}
 
-        doc.event_due = this.due2.getTime() / 1000
+        if (this.due2){
+          doc.event_due = this.due2.getTime() / 1000
+        }
         if (doc.backLTitle){
           doc.backLeft = true
         } else {
@@ -695,7 +699,7 @@
                   if (key === 'backRTitle'){
                     obj.backRight = true
                   }
-                  if (key === 'event_due'){
+                  if (key === 'event_due' && data.event_due){
                     // console.log(data[key], 
                     // new Date(Math.round((data.event_due - 25569)*86400*1000)),
                     // new Date(Math.round((data.event_due - 25569)*86400*1000)).getTime()

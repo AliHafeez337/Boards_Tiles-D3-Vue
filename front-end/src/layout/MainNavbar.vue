@@ -39,6 +39,8 @@
         v-model="search"
       >
       </fginput>
+      &nbsp;
+      &nbsp;
       <drop-down
         v-if="ifBoardAndUser"
         tag="li"
@@ -80,7 +82,18 @@
           <p style="font-size: 12px">Boards</p>
         </a>
       </li>
-
+      <!-- <li class="nav-item"> -->
+        <a
+          v-if="ifBoard"
+          class="nav-link btn btn-neutral"
+          href="javascript:void(0)"
+          @click="resetBoard()"
+        >
+          <i class="now-ui-icons loader_refresh"></i>
+          &nbsp;
+          <p style="font-size: 12px">Refresh Board</p>
+        </a>
+      <!-- </li> -->
       <drop-down
         tag="li"
         title=""
@@ -256,6 +269,26 @@ export default {
       if (this.$store.getters.getBoard){
         this.$store.dispatch('setModalImport', true)
       }
+    },
+    resetBoard() {
+      this.$store.commit('SET_SECTIONS', [])
+      this.$store.commit('SET_SECTIONS1', [])
+      this.$store.commit('SET_SECTIONNAME', [])
+      this.$store.commit('SET_SECTIONNAME1', [])
+      this.$store.commit('SET_TILES', [])
+      this.$store.commit('SET_TILES1', [])
+      this.$store.commit('SET_LABELS', [])
+      this.$store.commit('SET_LABELS1', [])
+      this.$store.commit('SET_ERR', { bool: false, errmsg: "" })
+      
+      let board = this.$store.getters.getBoard;
+
+      this.scrollToElement();
+      this.$store.dispatch('setBoard', board)
+      this.$store.dispatch('setSections', board._id)
+      this.$store.dispatch('setSectionName', board._id)
+      this.$store.dispatch('setTiles', board._id)
+      this.$store.dispatch('setLabels', board._id)
     }
   }
 };

@@ -195,6 +195,8 @@
               action: (d, _this) => {
                 console.log("Removing event clicked.")
 
+                d3.select('#' + d.id + '-w').style('opacity', 0);
+
                 d.event_name = '', d.event_due = ''
                 store.dispatch('changeTile', { 
                   id: d.id,
@@ -497,6 +499,8 @@
               title: 'Remove event',
               action: (d, _this) => {
                 console.log("Removing event clicked.")
+
+                d3.select('#' + d.id + '-w').style('opacity', 0);
 
                 d.event_name = '', d.event_due = ''
                 store.dispatch('changeTile', { 
@@ -948,7 +952,8 @@
               } else {
                 // console.log('changing location')
 
-                if (thisComponent.usertype === 'admin'){
+                if (thisComponent.usertype === 'admin' && w + coords1[0] < 4750 && w + coords1[1] < 2200){
+                  // max right is 4800 max bottom is 2200
 
                   d.x = coords1[0], d.y = coords1[1]
                   rect.raise().attr("x", d.x = coords1[0]).attr("y", d.y = coords1[1]);

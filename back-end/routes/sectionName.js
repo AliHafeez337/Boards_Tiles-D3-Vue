@@ -8,7 +8,7 @@ var ObjectId = mongoose.Schema.ObjectId;
 
 // Loading models
 const Board = require('../models/Board');
-const Section = require('../models/Section');
+const History = require('../models/History');
 const SectionName = require('../models/SectionName');
 
 // Local imports
@@ -21,6 +21,11 @@ router.patch(
   ensureAuthenticated, 
   async (req, res) => {
     if (req.params.id.match(/^[0-9a-fA-F]{24}$/)){
+      const sectionName1 = await SectionName.findById(req.params.id)
+      const board1 = await Board.findById(sectionName1.board)
+
+      var body = null, x = false, y = false, color = false
+
       var body = null
 
       if (req.user.usertype === 'admin'){
@@ -33,6 +38,16 @@ router.patch(
           'y',
           'color'
         ])
+        
+        if (body.x !== sectionName1.x){
+          x = true
+        }
+        if (body.y !== sectionName1.y){
+          y = true
+        }
+        if (body.color !== sectionName1.color){
+          color = true
+        }
       }
       if (req.user.usertype === 'user'){
         console.log("User is updating the sectionName.")
@@ -40,10 +55,38 @@ router.patch(
         var body = _.pick(req.body, [
           'color'
         ])
+        
+        if (body.color !== sectionName1.color){
+          color = true
+        }
       }
       
       if (body) {
         var sectionName = await SectionName.findByIdAndUpdate(req.params.id, body, { new: true })
+
+        if (sectionName1.name && board1.name){
+          if (x){
+            var history = new History({
+              user: req.user,
+              change: `Updated the x of a sectionName naming '${sectionName1.name}' from board '${board1.name}'.`
+            })
+            history.save()
+          }
+          if (y){
+            var history = new History({
+              user: req.user,
+              change: `Updated the y of a sectionName naming '${sectionName1.name}' from board '${board1.name}'.`
+            })
+            history.save()
+          }
+          if (color){
+            var history = new History({
+              user: req.user,
+              change: `Updated the color of a sectionName naming '${sectionName1.name}' from board '${board1.name}'.`
+            })
+            history.save()
+          }
+        }
 
         if (sectionName){
           res.status(200).send({

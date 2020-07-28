@@ -5,6 +5,7 @@ const _ = require("lodash");
 
 // Loading models
 const Board = require('../models/Board');
+const History = require('../models/History');
 const Tile = require('../models/Tile');
 const Label = require('../models/Label');
 
@@ -43,6 +44,14 @@ router.post(
         label
           .save()
           .then(async label => {
+            
+          if (tile[0].name && tile[0]._id && board.name && board._id){
+            var history = new History({
+              user: req.user,
+              change: `Added a new label on '${tile[0].name}' in board '${board.name}'.`
+            })
+            history.save()
+          }
 
             // tile = await tile.populate('board', [ '_id', 'name', 'createAt' ]);
 
@@ -74,8 +83,20 @@ router.delete(
   adminUserFleetAuthenticated,
   async (req, res) => {
     if (req.params.tile.length === 14){
+      const tile = await Tile.find({'id': req.params.tile});
+      const label = await Label.find({'tile': req.params.tile});
+      const board = await Board.findById(tile[0].board);
       const del = await Label.deleteOne({'tile': req.params.tile})
       if (del.deletedCount){
+
+        if (label[0].color && label[0]._id && tile[0].name && tile[0]._id && board.name && board._id){
+          var history = new History({
+            user: req.user,
+            change: `Deleted a label of color '${label[0].color}' on tile '${tile[0].name}' in board '${board.name}'.`
+          })
+          history.save()
+        }
+
         res.status(200).send({
           msg: "Labels deleted...",
           del

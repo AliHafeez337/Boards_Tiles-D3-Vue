@@ -6,6 +6,7 @@ const { MongoClient, ObjectId } = require('mongodb');
 
 // Loading models
 const Board = require('../models/Board');
+const History = require('../models/History');
 const Tile = require('../models/Tile');
 const Label = require('../models/Label');
 
@@ -53,6 +54,14 @@ router.post(
           .save()
           .then(async tile => {
 
+            if (body.name && board.name){
+              var history = new History({
+                user: req.user,
+                change: `Added a tile of name '${body.name}' in board '${board.name}'.`
+              })
+              history.save()
+            }
+
             // tile = await tile.populate('board', [ '_id', 'name', 'createAt' ]);
 
             res.status(200).send({
@@ -83,6 +92,8 @@ router.patch(
   adminUserAuthenticated,
   async (req, res) => {
     if (req.params.id.match(/^[0-9a-fA-F]{24}$/)){
+      const tile1 = await Tile.findById(req.params.id)
+      
       var body = {...req.body}
       if (body.id){
         delete body.id
@@ -117,6 +128,18 @@ router.patch(
               { new: true }              
             )
             .then(async tile => {
+              const board1 = await Board.findById(tile.value.board)
+              
+              Object.keys(body).forEach(key => {
+                if (body[key] !== tile1[key]){
+                  var history = new History({
+                    user: req.user,
+                    change: `Updated the ${key} of a tile naming '${tile.value.name}' from board '${board1.name}'.`
+                  })
+                  history.save()
+                }
+              })
+
               res.status(200).send({
                 msg: "Tile updated successfully...",
                 tile: tile.value
@@ -148,6 +171,8 @@ router.patch(
   adminUserFleetAuthenticated,
   async (req, res) => {
     if (req.params.id.match(/^[0-9a-fA-F]{24}$/)){
+      const tile1 = await Tile.findById(req.params.id)
+
       var body = {...req.body}
       if (body.name){
         delete body.name
@@ -190,6 +215,18 @@ router.patch(
               { new: true }              
             )
             .then(async tile => {
+              const board1 = await Board.findById(tile.value.board)
+              
+              Object.keys(body).forEach(key => {
+                if (body[key] !== tile1[key]){
+                  var history = new History({
+                    user: req.user,
+                    change: `Updated the ${key} of a tile naming '${tile.value.name}' from board '${board1.name}'.`
+                  })
+                  history.save()
+                }
+              })
+
               res.status(200).send({
                 msg: "Tile updated successfully...",
                 tile: tile.value
@@ -265,8 +302,18 @@ router.delete(
   adminUserAuthenticated,
   async (req, res) => {
     if (req.params.id.length === 14){
+      const tile1 = await Tile.find({'id': req.params.id})
+      const board = await Board.findById(tile1[0].board)
       const del = await Tile.deleteOne({'id': req.params.id})
       if (del.deletedCount){
+
+        if (tile1[0].name && board.name){
+          var history = new History({
+            user: req.user,
+            change: `Deleted a tile naming '${tile1[0].name}' from board '${board.name}'.`
+          })
+          history.save()
+        }
 
         await Label.deleteMany({'tile': req.params.id})
 
@@ -293,6 +340,7 @@ router.post(
   ensureAuthenticated,
   async (req, res) => {
     if (req.params.id.match(/^[0-9a-fA-F]{24}$/)){
+      const tile1 = await Tile.findById(req.params.id)
       
       if (
         !(
@@ -347,10 +395,19 @@ router.post(
                 const del = await Tile.deleteOne({'_id': doc._id})
                 if (del.deletedCount){
                   
-                  
                   await db.collection(collection)
                     .save(doc)
-                    .then(tile => {
+                    .then(async tile => {
+                      const board = await Board.findById(tile1.board)
+
+                      if (tile1.name && board.name){
+                        var history = new History({
+                          user: req.user,
+                          change: `Deleted a property ${req.body.field_name} of tile naming '${tile1.name}' from board '${board.name}'.`
+                        })
+                        history.save()
+                      }
+
                       res.status(200).send({
                         'msg': "Tile updated successfully!",
                         tile: doc,
@@ -396,6 +453,7 @@ router.patch(
   ensureAuthenticated,
   async (req, res) => {
     if (req.query.board.match(/^[0-9a-fA-F]{24}$/)){
+      var board1 = {}
       
       var tiles = []
 
@@ -424,6 +482,10 @@ router.patch(
                 if (result[0]){
                   console.log('Tile found', result[0])
                   
+                  if (!board1){
+                    board1 = await Board.findById(result[0].board)
+                  }
+                  
                   await db.collection(collection)
                   .findOneAndUpdate(
                     { '_id': result[0]._id },
@@ -432,6 +494,14 @@ router.patch(
                   )
                   .then(doc => {
                     client.close();
+                    
+                    Object.keys(tile).forEach(key => {
+                      var history = new History({
+                        user: req.user,
+                        change: `Updated the ${key} of a tile naming '${tile.name}' from board '${board1.name}'.`
+                      })
+                      history.save()
+                    })
                     tiles.push(doc)
                   })
                   .catch(e => {

@@ -3,7 +3,6 @@
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require("body-parser");
-const path = require("path");
 const logger = require("morgan");
 const cookieParser = require("cookie-parser");
 const mongoose = require('mongoose');
@@ -76,6 +75,10 @@ app.use(
     saveUninitialized: true
   })
 );
+
+app.get(/.*/, (req, res, next) => {
+  next()
+})
 
 // Passport middleware
 app.use(passport.initialize());

@@ -8,6 +8,7 @@ var ObjectId = mongoose.Types.ObjectId;
 
 // Loading models
 const Board = require('../models/Board');
+const History = require('../models/History');
 const Section = require('../models/Section');
 const SectionName = require('../models/SectionName');
 const Tile = require('../models/Tile');
@@ -30,6 +31,13 @@ router.post(
       board
         .save()
         .then(board => {
+
+          var history = new History({
+            user: req.user,
+            change: `Created a new board naming '${body.name}'.`
+          })
+          history.save()
+
           res.status(200).send({
             'msg': "Board added successfully!",
             board
@@ -71,12 +79,20 @@ router.delete(
   ensureAuthenticated,
   async (req, res) => {
     if (req.params.id.match(/^[0-9a-fA-F]{24}$/)){
+      const board = await Board.findById(req.params.id)
+
       const del = await Board.deleteOne({'_id': req.params.id})
       if (del.deletedCount){
         await Section.deleteMany({'board': ObjectId(req.params.id)})
         await SectionName.deleteMany({'board': ObjectId(req.params.id)})
         await Tile.deleteMany({'board': ObjectId(req.params.id)})
         await Label.deleteMany({'board': ObjectId(req.params.id)})
+
+        var history = new History({
+          user: req.user,
+          change: `Deleted a board naming '${board.name}'.`
+        })
+        history.save()
 
         res.status(200).send({
           msg: "Board and all the associated sections, tiles, sectionNames and labels with that board are deleted successfully..."
