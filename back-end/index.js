@@ -76,6 +76,10 @@ app.use(
   })
 );
 
+app.get(/.*/, (req, res, next) => {
+  next()
+})
+
 // Passport middleware
 app.use(passport.initialize());
 // app.use(passport.session());
