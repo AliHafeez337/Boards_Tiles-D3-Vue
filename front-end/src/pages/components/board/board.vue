@@ -492,6 +492,8 @@
         this.addBoard = false
       },
       setBoard(board) {
+        document.title = board.name
+
         this.$store.commit('SET_SECTIONS', [])
         this.$store.commit('SET_SECTIONS1', [])
         this.$store.commit('SET_SECTIONNAME', [])
