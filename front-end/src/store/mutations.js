@@ -10,7 +10,9 @@ const mutations = {
   SET_TOKEN: (state, data) => { state.token = data },
   SET_MODALPROFILE: (state, data) => { state.modalProfile = data },
   SET_MODALUSER: (state, data) => { state.modalUser = data },
-  SET_MODALIMPORT: (state, data) => { state.modalImport = data }
+  SET_MODALIMPORT: (state, data) => { state.modalImport = data },
+  SET_LOGS: (state, data) => { state.logs = data },
+  SET_RECENTER: (state, data) => { state.recenter = data },
 }
 
 export default mutations;

@@ -296,6 +296,7 @@
       :tiles="tiles"
       :labels="labels"
       :search="search"
+      :center="recenter"
       :key="d3"
     />
   </div>
@@ -357,6 +358,9 @@
       document.getElementById('upload').addEventListener('change', this.handleFileSelect, false);
     },
     computed: {
+      recenter() {
+        return this.$store.getters.getRecenter
+      },
       boards() {
         return this.$store.getters.getBoards
       },
@@ -428,6 +432,11 @@
       }
     },
     watch: {
+      recenter: function (val) {
+        console.log('RECENTER', val)
+        this.$store.dispatch('setRecenter', false)
+        this.d3 += 1
+      }, 
       sections: function (val) {
         console.log('SECTIONS', val)
         this.d3 += 1

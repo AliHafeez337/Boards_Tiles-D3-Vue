@@ -34,6 +34,12 @@ const actions = {
   },
   setModalImport: ({ commit }, data) => {
     commit('SET_MODALIMPORT', data)
+  },
+  setLogs: ({ commit }, data) => {
+    commit('SET_LOGS', data)
+  },
+  setRecenter: ({ commit }, data) => {
+    commit('SET_RECENTER', data)
   }
 }
 

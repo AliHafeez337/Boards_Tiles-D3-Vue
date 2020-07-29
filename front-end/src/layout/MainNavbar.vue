@@ -20,6 +20,21 @@
           Go to the users page.
         </div>
       </el-popover>
+
+      <router-link v-popover:popover1 class="navbar-brand" to="/history">
+        History
+      </router-link>
+      <el-popover
+        ref="popover1"
+        popper-class="popover"
+        placement="bottom"
+        width="200"
+        trigger="hover"
+      >
+        <div class="popover-body">
+          Go to the logs page.
+        </div>
+      </el-popover>
     </template>
     <template slot="navbar-menu">
       <li class="nav-item" v-if="Saving">
@@ -91,9 +106,21 @@
         >
           <i class="now-ui-icons loader_refresh"></i>
           &nbsp;
-          <p style="font-size: 12px">Refresh Board</p>
+          <p style="font-size: 12px">Refresh</p>
         </a>
       <!-- </li> -->
+      <li class="nav-item">
+        <a
+          v-if="ifBoard"
+          class="nav-link btn btn-neutral"
+          href="javascript:void(0)"
+          @click="recenterBoard()"
+        >
+          <i class="now-ui-icons"></i>
+          &nbsp;
+          <p style="font-size: 12px">Recenter</p>
+        </a>
+      </li>
       <drop-down
         tag="li"
         title=""
@@ -289,6 +316,14 @@ export default {
       this.$store.dispatch('setSectionName', board._id)
       this.$store.dispatch('setTiles', board._id)
       this.$store.dispatch('setLabels', board._id)
+    },
+    recenterBoard() {
+      this.$store.commit('SET_ZOOM', {
+        k: 0.3,
+        x: 50,
+        y: 30
+      })
+      this.$store.dispatch('setRecenter', true)
     }
   }
 };
