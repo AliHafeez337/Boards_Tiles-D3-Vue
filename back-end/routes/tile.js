@@ -480,9 +480,9 @@ router.patch(
               .find({ 'name': tile.name })
               .toArray(async (err, result) => {
                 if (result[0]){
-                  console.log('Tile found', result[0])
+                  // console.log('Tile found', result[0])
                   
-                  if (!board1){
+                  if (!board1.name){
                     board1 = await Board.findById(result[0].board)
                   }
                   

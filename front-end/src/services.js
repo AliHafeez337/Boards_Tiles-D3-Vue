@@ -2,6 +2,56 @@ import axios from './axios';
 
 class Services {
 
+  // Delete the history
+  deleteLog(id) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        var res = await axios({
+          method: 'delete',
+          url: `/history/delete/${id}`
+        });
+
+        if (res.data){
+          if (res.data.msg){
+            resolve(res.data)
+          } else if (res.data.errmsg){
+            reject(res.data.errmsg)
+          }
+        } else {
+          reject("Nothing came up on this route.")
+        }
+      } catch(err) {
+        // console.log(err)
+        reject(err)
+      }
+    })
+  }
+
+  // Get the history
+  searchLogs(from, to) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        var res = await axios({
+          method: 'get',
+          url: `/history/get?from=${from}&to=${to}`
+        });
+
+        if (res.data){
+          if (res.data.length){
+            resolve(res.data)
+          } else if (res.data.errmsg){
+            reject(res.data.errmsg)
+          }
+        } else {
+          reject("Nothing came up on this route.")
+        }
+      } catch(err) {
+        // console.log(err)
+        reject(err)
+      }
+    })
+  }
+
   // Admin deletes a user
   deleteUser(id) {
     return new Promise(async (resolve, reject) => {

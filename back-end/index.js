@@ -24,6 +24,7 @@ const sectionRoutes = require('./routes/section');
 const sectionNameRoutes = require('./routes/sectionName');
 const tileRoutes = require('./routes/tile');
 const labelRoutes = require('./routes/label');
+const historyRoutes = require('./routes/history');
 
 
 /* SERVER SETUP */
@@ -97,6 +98,7 @@ app.use('/api/section', sectionRoutes);
 app.use('/api/sectionName', sectionNameRoutes);
 app.use('/api/tile', tileRoutes);
 app.use('/api/label', labelRoutes);
+app.use('/api/history', historyRoutes);
 app.get('/api/credits', (req, res) => res.status(200).send({ msg: 'This project is developed by AliHafeez337.' }))
 
 // handle SPA

@@ -34,6 +34,12 @@ const getters = {
   },
   getModalImport: function(state) {
     return state.modalImport;
+  },
+  getLogs: function(state) {
+    return state.logs;
+  },
+  getRecenter: function(state) {
+    return state.recenter;
   }
 }
 

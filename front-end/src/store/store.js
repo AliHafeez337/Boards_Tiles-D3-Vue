@@ -21,7 +21,9 @@ export const store = new Vuex.Store({
     token: '' || localStorage.getItem('token'),
     modalProfile: false,
     modalUser: false,
-    modalImport: false
+    modalImport: false,
+    logs: [],
+    recenter: false
   },
   mutations,
   actions,
