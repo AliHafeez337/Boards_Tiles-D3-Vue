@@ -75,6 +75,7 @@
           href="javascript:void(0)"
           @click="pushTile()"
           class="dropdown-item"
+          v-if="profile.usertype === 'admin' || profile.usertype === 'user'"
         >
           Tile
         </a>
@@ -234,7 +235,7 @@ export default {
       }
     },
     ifBoardAndUser() {
-      if (this.$store.getters.getBoard && (this.$store.getters.getProfile.usertype === 'admin' || this.$store.getters.getProfile.usertype === 'user')){
+      if (this.$store.getters.getBoard && (this.$store.getters.getProfile.usertype === 'admin' || this.$store.getters.getProfile.usertype === 'user' || this.$store.getters.getProfile.usertype === 'fleet')){
         return true
       } else {
         return false
