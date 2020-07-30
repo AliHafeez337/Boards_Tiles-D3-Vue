@@ -352,6 +352,7 @@
       }
     },
     created() {
+      console.log("Board refreshed...")
       this.$store.dispatch('setBoards')
     },
     mounted() {
@@ -432,6 +433,9 @@
       }
     },
     watch: {
+      modalDetails: function (val) {
+        this.extraF = []
+      }, 
       recenter: function (val) {
         console.log('RECENTER', val)
         this.$store.dispatch('setRecenter', false)
@@ -469,10 +473,7 @@
           }
         })
         // console.log(this.tempKeys)
-      },
-      // extraFileds: function (val) {
-      //   console.log(val)
-      // }
+      }
     },
     methods: {
       changeColor(color) {
@@ -521,7 +522,6 @@
         this.$store.dispatch('setLabels', board._id)
       },
       deleteBoard(id) {
-        console.log(id)
         if (confirm("Do you really want to delete this board and all the data associated with it?")){
           this.$store.dispatch('deleteBoard', id)
         }
@@ -615,11 +615,13 @@
         }
         
         this.$store.dispatch('changeTile', doc)
+
         this.d3++
         // this.$store.dispatch('copyBoard')
       },
       addField(){
-        if (this.addKey && this.addValue){
+        if (this.addKey){
+        // if (this.addKey && this.addValue){
           this.tileDetails[this.addKey] = this.addValue
           this.tempKeys[this.addKey] = this.addValue
           this.extraFileds[this.addKey] = this.addValue
@@ -631,7 +633,7 @@
             }
           })
 
-          console.log(this.tileDetails, this.tempKeys, this.extraFileds)
+          // console.log(this.tileDetails, this.tempKeys, this.extraFileds)
 
           this.addKey = ''
           this.addValue = ''
