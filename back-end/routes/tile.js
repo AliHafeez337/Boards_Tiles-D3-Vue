@@ -107,7 +107,7 @@ router.patch(
       if (body.createdAt){
         delete body.createdAt
       }
-      // console.log(body)
+      console.log(body)
 
       if (body) {
         MongoClient.connect(
