@@ -104,9 +104,6 @@ router.patch(
       if (body.board){
         delete body.board
       }
-      if (body.createdAt){
-        delete body.createdAt
-      }
       // console.log(body)
 
       if (body) {
@@ -194,9 +191,6 @@ router.patch(
       }
       if (body.y){
         delete body.y
-      }
-      if (body.createdAt){
-        delete body.createdAt
       }
       console.log(body)
 
