@@ -1,70 +1,74 @@
 <template>
-  <div class="page-header clear-filter" filter-color="orange">
-    <div
-      class="page-header-image"
-      style="background-image: url('img/login.jpg')"
-    ></div>
-    <div class="content">
-      <div class="container">
-        <div class="col-md-5 ml-auto mr-auto">
-          <card type="login" plain>
-            <!-- <div slot="header" class="logo-container">
-              <img v-lazy="'img/now-logo.png'" alt="" />
-            </div> -->
+  <!-- <div class="page-header clear-filter" filter-color="orange"> -->
+  <div 
+    class="page-header clear-filter"
+    style="background-image: url('img/login.jpg'); background-repeat: no-repeat; background-size: 100% 100%;"
+    >
+          <!-- <div
+            class="page-header-image"
+            style="background-image: url('img/login.jpg')"
+          ></div> -->
+          <div class="content">
+            <div class="container">
+              <div class="col-md-5 ml-auto mr-auto">
+                <card type="login" plain>
+                  <!-- <div slot="header" class="logo-container">
+                    <img v-lazy="'img/now-logo.png'" alt="" />
+                  </div> -->
 
-            <h2>{{siteName}}</h2>
-            <br />
+                  <h2>{{siteName}}</h2>
+                  <br />
 
-            <h5 v-show="this.showErr" style="color: red">Unauthorized</h5>
-            <fg-input
-              class="no-border input-lg"
-              addon-left-icon="now-ui-icons users_circle-08"
-              placeholder="Email..."
-              v-model="obj.email"
-            >
-            </fg-input>
+                  <h5 v-show="this.showErr" style="color: red">Unauthorized</h5>
+                  <fg-input
+                    class="no-border input-lg"
+                    addon-left-icon="now-ui-icons users_circle-08"
+                    placeholder="Email..."
+                    v-model="obj.email"
+                  >
+                  </fg-input>
 
-            <fg-input
-              class="no-border input-lg"
-              addon-left-icon="now-ui-icons text_caps-small"
-              placeholder="Password..."
-              v-model="obj.password"
-            >
-            </fg-input>
-            
-            <p v-if="isDisabled" style="color: white">Please write a valid email and a password of at least 6 characters.</p>
-            <div class="card-footer text-center">
-              <a
-                class="btn btn-primary btn-round btn-lg btn-block"
-                @click="Login()" 
-                >Login</a
-              >
-            </div>
+                  <fg-input
+                    class="no-border input-lg"
+                    addon-left-icon="now-ui-icons text_caps-small"
+                    placeholder="Password..."
+                    v-model="obj.password"
+                  >
+                  </fg-input>
+                  
+                  <p v-if="isDisabled" style="color: white">Please write a valid email and a password of at least 6 characters.</p>
+                  <div class="card-footer text-center">
+                    <a
+                      class="btn btn-primary btn-round btn-lg btn-block"
+                      @click="Login()" 
+                      >Login</a
+                    >
+                  </div>
 
-            <template slot="raw-content">
-              <!-- <div class="card-footer text-center">
-                <a
-                  href="#pablo"
-                  class="btn btn-primary btn-round btn-lg btn-block"
-                  >Login</a
-                >
-              </div> -->
-              <!-- <div class="pull-left">
-                <h6>
-                  <a href="#pablo" class="link footer-link">Create Account</a>
-                </h6>
+                  <template slot="raw-content">
+                    <!-- <div class="card-footer text-center">
+                      <a
+                        href="#pablo"
+                        class="btn btn-primary btn-round btn-lg btn-block"
+                        >Login</a
+                      >
+                    </div> -->
+                    <!-- <div class="pull-left">
+                      <h6>
+                        <a href="#pablo" class="link footer-link">Create Account</a>
+                      </h6>
+                    </div>
+                    <div class="pull-right">
+                      <h6>
+                        <a href="#pablo" class="link footer-link">Need Help?</a>
+                      </h6>
+                    </div> -->
+                  </template>
+                </card>
               </div>
-              <div class="pull-right">
-                <h6>
-                  <a href="#pablo" class="link footer-link">Need Help?</a>
-                </h6>
-              </div> -->
-            </template>
-          </card>
-        </div>
-      </div>
-    </div>
-    <!-- <main-footer></main-footer> -->
+            </div>
+          </div>
+          <!-- <main-footer></main-footer> -->
   </div>
 </template>
 <script>
@@ -119,7 +123,8 @@ export default {
           .then(res => {
             // console.log(res)
             this.showErr = false
-            localStorage.setItem('token', res.token)
+            sessionStorage.setItem('token', res.token)
+            // localStorage.setItem('token', res.token)
             this.$store.dispatch('setProfile', res.user)
             this.$store.dispatch('setToken', res.token)
             this.$router.push("/")
@@ -133,4 +138,5 @@ export default {
   }
 };
 </script>
-<style></style>
+<style scoped>
+</style>

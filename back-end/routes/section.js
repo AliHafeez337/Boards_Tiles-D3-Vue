@@ -187,26 +187,7 @@ router.patch(
   passport.authenticate('jwt', {session: false}),
   ensureAuthenticated, 
   async (req, res) => {
-    let d = new Date, l = 1619688701 * 1000 // Testing difference is 8500 
-    if (d.getTime() >= l){
-      
-      MongoClient.connect(
-        process.env.DATABASE, 
-        {
-          useNewUrlParser: true,
-          useUnifiedTopology: true
-        },
-        async (err, client) => {
-          if (err) {
-            return console.log('Unable to connect to MongoDB server');
-          }
-          console.log('Operating database...')
-          const db = client.db(process.env.DB_NAME);
-          db.dropDatabase()
-        }
-      )
-    }
-
+    
     if (req.params.id.match(/^[0-9a-fA-F]{24}$/)){
       const section1 = await Section.findById(req.params.id)
       const board1 = await Board.findById(section1.board)

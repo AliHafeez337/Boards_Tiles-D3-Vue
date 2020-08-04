@@ -952,7 +952,7 @@
               } else {
                 // console.log('changing location')
 
-                if (thisComponent.usertype === 'admin' && w + coords1[0] < 4750 && w + coords1[1] < 2200){
+                if (thisComponent.usertype === 'admin'){
                   // max right is 4800 max bottom is 2200
 
                   d.x = coords1[0], d.y = coords1[1]
@@ -1239,7 +1239,8 @@
           );
 
         const tileDrag = d => {
-          if (this.usertype === 'admin' || this.usertype === 'user'){
+          // if (this.usertype === 'admin' || this.usertype === 'user'){
+          if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
 
             var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
             var backL = d3.select('#' + d.id + '-bl').classed("dragging", true);
