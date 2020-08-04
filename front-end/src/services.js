@@ -213,7 +213,7 @@ class Services {
       try {
         const res = await axios({
           method: 'get',
-          url: '/user/logout'
+          url: '/user/logoutAll'
         });
         
         if (res.data){

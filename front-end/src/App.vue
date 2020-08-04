@@ -30,6 +30,7 @@ export default {
           this.$store.dispatch('setProfile', me)
         })
         .catch(err => {
+          console.log(err)
           this.$router.push("/login")
         })
     }

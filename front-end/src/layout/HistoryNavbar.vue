@@ -161,7 +161,7 @@ export default {
     logout() {
       this.service.logout()
         .then(res => {
-          localStorage.removeItem('token')
+          sessionStorage.removeItem('token')
           this.$store.dispatch('setProfile',  {})
           this.$store.dispatch('setToken',  '')
           this.$router.push("/login")

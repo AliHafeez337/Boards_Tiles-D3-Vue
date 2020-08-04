@@ -799,6 +799,7 @@ export const changeTile = ({ commit, getters }, data) => {
 
 export const changeTilesByFile = ({ commit, getters }, data) => {
   commit('SET_SAVING', +getters.getSaving + 1)
+  console.log(getters.getBoard)
   
   try {
 
@@ -1327,11 +1328,20 @@ export const arrangeTiles = ({ commit, getters }, id) => {
     commit('SET_SAVING', +getters.getSaving + 1)
 
     try {
-      var res = await axios({
-        method: 'patch',
-        url: `/tile/update/${tile._id}`,
-        data: tile
-      });
+      if (getters.getProfile.usertype === 'admin' || getters.getProfile.usertype === 'user'){
+
+        var res = await axios({
+          method: 'patch',
+          url: `/tile/update/${tile._id}`,
+          data: tile
+        });
+      } else {
+        var res = await axios({
+          method: 'patch',
+          url: `/tile/update1/${tile._id}`,
+          data: tile
+        });
+      }
 
       setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
 
@@ -1746,11 +1756,20 @@ export const sortTiles = ({ commit, getters }, id) => {
     commit('SET_SAVING', +getters.getSaving + 1)
 
     try {
-      var res = await axios({
-        method: 'patch',
-        url: `/tile/update/${tile._id}`,
-        data: tile
-      });
+      if (getters.getProfile.usertype === 'admin' || getters.getProfile.usertype === 'user'){
+
+        var res = await axios({
+          method: 'patch',
+          url: `/tile/update/${tile._id}`,
+          data: tile
+        });
+      } else {
+        var res = await axios({
+          method: 'patch',
+          url: `/tile/update1/${tile._id}`,
+          data: tile
+        });
+      }
 
       setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
 

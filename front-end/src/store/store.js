@@ -18,7 +18,7 @@ export const store = new Vuex.Store({
     modalDetails: false,
     tile: {},
     profile: {},
-    token: '' || localStorage.getItem('token'),
+    token: '' || sessionStorage.getItem('token'),
     modalProfile: false,
     modalUser: false,
     modalImport: false,

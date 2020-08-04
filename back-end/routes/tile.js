@@ -189,12 +189,12 @@ router.patch(
       if (body.board){
         delete body.board
       }
-      if (body.x){
-        delete body.x
-      }
-      if (body.y){
-        delete body.y
-      }
+      // if (body.x){
+      //   delete body.x
+      // }
+      // if (body.y){
+      //   delete body.y
+      // }
       if (body.createdAt){
         delete body.createdAt
       }
@@ -463,8 +463,9 @@ router.patch(
       
       var tiles = []
 
+      console.log('board_id', req.query.board)
       req.body.tiles.forEach(async tile => {
-        console.log('Tile: ', tile)
+        // console.log('Tile: ', tile)
         
         if (!(tile._id || tile.id || tile.x || tile.y || tile.color || tile.createdAt || tile.__v)){
           
@@ -483,13 +484,13 @@ router.patch(
               const collection = 'tiles';
     
               await db.collection(collection)
-              .find({ 'name': tile.name })
+              .find({ 'name': tile.name, 'board': ObjectId(req.query.board) })
               .toArray(async (err, result) => {
                 if (result[0]){
                   // console.log('Tile found', result[0])
                   
                   if (!board1.name){
-                    board1 = await Board.findById(result[0].board)
+                    board1 = await Board.findById(req.query.board)
                   }
                   
                   await db.collection(collection)
