@@ -55,6 +55,17 @@ router.post(
 
             // tile = await tile.populate('board', [ '_id', 'name', 'createAt' ]);
 
+            req.io.emit('messageOfUpdate', {
+              type: 'new',
+              subject: 'label',
+              by: req.user,
+              id: label._id,
+              updated: label,
+              tile: tile,
+              board,
+              message: `${req.user.name} (${req.user.usertype}) has added a label of color '${label.color}' on tile '${tile.name}', please refresh the board ${board.name}.`
+            })
+
             res.status(200).send({
               'msg': "Label added successfully!",
               label
@@ -96,6 +107,17 @@ router.delete(
           })
           history.save()
         }
+
+        req.io.emit('messageOfUpdate', {
+          type: 'delete',
+          subject: 'label',
+          by: req.user,
+          id: label._id,
+          updated: label,
+          tile,
+          board,
+          message: `${req.user.name} (${req.user.usertype}) has deleted a label of color '${label.color}' on tile '${tile.name}', please refresh the board ${board.name}.`
+        })
 
         res.status(200).send({
           msg: "Labels deleted...",
