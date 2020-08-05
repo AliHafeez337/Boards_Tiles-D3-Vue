@@ -143,6 +143,26 @@ router.patch(
                 }
               })
 
+              req.io.emit('messageOfUpdate', {
+                type: 'update',
+                subject: 'tile',
+                by: req.user,
+                id: req.params.id,
+                updated: body,
+                board: board1,
+                message: `${req.user.name} (${req.user.usertype}) updated has tile, please refresh the board ${board1.name}.`
+              })
+
+              // req.connections.broadcast.emit('messageOfUpdate', {
+              //   type: 'update',
+              //   subject: 'tile',
+              //   by: req.user,
+              //   id: req.params.id,
+              //   updated: body,
+              //   board: board1,
+              //   message: `${req.user.name} (${req.user.usertype}) updated has tile, please refresh the board ${board1.name}.`
+              // })
+
               res.status(200).send({
                 msg: "Tile updated successfully...",
                 tile: tile.value
@@ -232,6 +252,26 @@ router.patch(
                   history.save()
                 }
               })
+
+              req.io.emit('messageOfUpdate', {
+                type: 'update',
+                subject: 'tile',
+                by: req.user,
+                id: req.params.id,
+                updated: body,
+                board: board1,
+                message: `${req.user.name} (${req.user.usertype}) updated has tile, please refresh the board ${board1.name}.`
+              })
+
+              // req.connections.broadcast.emit('messageOfUpdate', {
+              //   type: 'update',
+              //   subject: 'tile',
+              //   by: req.user,
+              //   id: req.params.id,
+              //   updated: body,
+              //   board: board1,
+              //   message: `${req.user.name} (${req.user.usertype}) updated has tile, please refresh the board ${board1.name}.`
+              // })
 
               res.status(200).send({
                 msg: "Tile updated successfully...",

@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 const mongoose = require('mongoose');
 const passport = require('passport');
 const http = require("http");
+const socketIO = require('socket.io');
 const cors = require ('cors');
 require('dotenv').config();
 
@@ -35,6 +36,25 @@ var server = http.createServer(app);
 server.listen(process.env.PORT, () => {
   console.log('\n', `Server started on port ${process.env.PORT}.`);
 });
+
+
+/* SOCKET IO */
+
+var connections
+var io = socketIO(server);
+
+io.on('connection', socket => {
+  connections = socket
+  socket.broadcast.emit('message', {
+    msg: "New user connected."
+  })
+})
+
+app.all(/.*/, (req, res, next) => {
+  // req.connections = connections
+  req.io = io
+  next()
+})
 
 
 /* LOCAL IMPORTS */
@@ -76,10 +96,6 @@ app.use(
     saveUninitialized: true
   })
 );
-
-app.get(/.*/, (req, res, next) => {
-  next()
-})
 
 // Passport middleware
 app.use(passport.initialize());

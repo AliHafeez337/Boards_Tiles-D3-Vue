@@ -10,6 +10,11 @@
 
 <script>
 import Services from './services'
+import { back_end_url } from '../VARIABLES'
+import io from 'socket.io-client';
+// var io = require('socket.io-client');
+
+var socket = io.connect(back_end_url, { resource: '/api/socket.io' });
 
 export default {
   created() {
@@ -34,6 +39,15 @@ export default {
           this.$router.push("/login")
         })
     }
+
+    socket.on("message",(obj)=>
+      {
+        console.log(obj)
+      })
+    socket.on("messageOfUpdate",(obj)=>
+      {
+        console.log(obj)
+      })
   }
 };
 </script>
