@@ -89,6 +89,18 @@ router.patch(
         }
 
         if (sectionName){
+
+          req.io.emit('messageOfUpdate', {
+            type: 'update',
+            subject: 'sectionName',
+            by: req.user,
+            id: sectionName._id,
+            original: sectionName1,
+            updated: sectionName,
+            board: board1,
+            message: `${req.user.name} (${req.user.usertype}) has updated the section name '${sectionName.name}', please refresh the board ${board1.name}.`
+          })
+
           res.status(200).send({
             msg: "SectionName updated successfully...",
             sectionName

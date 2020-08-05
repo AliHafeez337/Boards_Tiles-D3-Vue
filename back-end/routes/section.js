@@ -85,6 +85,16 @@ router.post(
                 }
                 // sectionName = await sectionName.populate('board', [ '_id', 'name', 'createAt' ]);
 
+                req.io.emit('messageOfUpdate', {
+                  type: 'new',
+                  subject: 'section and sectionName',
+                  by: req.user,
+                  id: section._id,
+                  updated: section,
+                  board,
+                  message: `${req.user.name} (${req.user.usertype}) has created a section '${section.name}', please refresh the board ${board.name}.`
+                })
+
                 res.status(200).send({
                   'msg': "Section and SectionName added successfully!",
                   section,
@@ -156,6 +166,16 @@ router.delete(
             })
             history.save()
           }
+
+          req.io.emit('messageOfUpdate', {
+            type: 'delete',
+            subject: 'section and sectionName',
+            by: req.user,
+            id: section._id,
+            updated: section,
+            board,
+            message: `${req.user.name} (${req.user.usertype}) has deleted a section '${section.name}', please refresh the board ${board.name}.`
+          })
 
           res.status(200).send({
             msg: "Section and sectionName deleted...",
@@ -280,6 +300,17 @@ router.patch(
             history.save()
           }
         }
+
+        req.io.emit('messageOfUpdate', {
+          type: 'update',
+          subject: 'section, sectionName and tiles',
+          by: req.user,
+          id: section._id,
+          original: section1, 
+          updated: section,
+          board: board1,
+          message: `${req.user.name} (${req.user.usertype}) has updated a section '${section.name}', please refresh the board ${board1.name}.`
+        })
 
         if (section){
           res.status(200).send({

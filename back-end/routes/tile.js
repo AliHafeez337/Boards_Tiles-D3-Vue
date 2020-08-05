@@ -64,6 +64,16 @@ router.post(
 
             // tile = await tile.populate('board', [ '_id', 'name', 'createAt' ]);
 
+            req.io.emit('messageOfUpdate', {
+              type: 'new',
+              subject: 'tile',
+              by: req.user,
+              id: tile._id,
+              updated: tile,
+              board,
+              message: `${req.user.name} (${req.user.usertype}) has created a new tile with name ${tile.name}, please refresh the board ${board.name}.`
+            })
+            
             res.status(200).send({
               'msg': "Tile added successfully!",
               tile
@@ -148,20 +158,11 @@ router.patch(
                 subject: 'tile',
                 by: req.user,
                 id: req.params.id,
-                updated: body,
+                original: req.body,
+                updated: tile.value,
                 board: board1,
-                message: `${req.user.name} (${req.user.usertype}) updated has tile, please refresh the board ${board1.name}.`
+                message: `${req.user.name} (${req.user.usertype}) has updated the tile '${tile.value.name}', please refresh the board ${board1.name}.`
               })
-
-              // req.connections.broadcast.emit('messageOfUpdate', {
-              //   type: 'update',
-              //   subject: 'tile',
-              //   by: req.user,
-              //   id: req.params.id,
-              //   updated: body,
-              //   board: board1,
-              //   message: `${req.user.name} (${req.user.usertype}) updated has tile, please refresh the board ${board1.name}.`
-              // })
 
               res.status(200).send({
                 msg: "Tile updated successfully...",
@@ -258,20 +259,11 @@ router.patch(
                 subject: 'tile',
                 by: req.user,
                 id: req.params.id,
-                updated: body,
+                original: req.body,
+                updated: tile.value,
                 board: board1,
-                message: `${req.user.name} (${req.user.usertype}) updated has tile, please refresh the board ${board1.name}.`
+                message: `${req.user.name} (${req.user.usertype}) has updated the tile '${tile.value.name}', please refresh the board ${board1.name}.`
               })
-
-              // req.connections.broadcast.emit('messageOfUpdate', {
-              //   type: 'update',
-              //   subject: 'tile',
-              //   by: req.user,
-              //   id: req.params.id,
-              //   updated: body,
-              //   board: board1,
-              //   message: `${req.user.name} (${req.user.usertype}) updated has tile, please refresh the board ${board1.name}.`
-              // })
 
               res.status(200).send({
                 msg: "Tile updated successfully...",
@@ -362,6 +354,17 @@ router.delete(
         }
 
         await Label.deleteMany({'tile': req.params.id})
+
+        req.io.emit('messageOfUpdate', {
+          type: 'delete',
+          subject: 'tile & its labels',
+          by: req.user,
+          id: tile1[0]._id,
+          original: tile1[0],
+          updated: null,
+          board,
+          message: `${req.user.name} (${req.user.usertype}) has deleted the tile '${tile1[0].name}', please refresh the board ${board.name}.`
+        })
 
         res.status(200).send({
           msg: "Tile and all the associated labels with the tile are deleted..."
@@ -454,6 +457,17 @@ router.post(
                         history.save()
                       }
 
+                      req.io.emit('messageOfUpdate', {
+                        type: 'update',
+                        subject: 'tile',
+                        by: req.user,
+                        id: tile._id,
+                        original: tile1,
+                        updated: tile,
+                        board: tile.board,
+                        message: `${req.user.name} (${req.user.usertype}) has deleted some fields/properties from the tile '${tile.name}', please refresh the board ${tile.board.name}.`
+                      })
+
                       res.status(200).send({
                         'msg': "Tile updated successfully!",
                         tile: doc,
@@ -499,7 +513,8 @@ router.patch(
   ensureAuthenticated,
   async (req, res) => {
     if (req.query.board.match(/^[0-9a-fA-F]{24}$/)){
-      var board1 = {}
+      // var board1 = {}
+      const board1 = await Board.findById(req.query.board)
       
       var tiles = []
 
@@ -529,9 +544,9 @@ router.patch(
                 if (result[0]){
                   // console.log('Tile found', result[0])
                   
-                  if (!board1.name){
-                    board1 = await Board.findById(req.query.board)
-                  }
+                  // if (!board1.name){
+                  //   board1 = await Board.findById(req.query.board)
+                  // }
                   
                   await db.collection(collection)
                   .findOneAndUpdate(
@@ -567,6 +582,16 @@ router.patch(
       }
       )
       console.log(tiles)
+
+      setTimeout(() => {
+        req.io.emit('messageOfUpdate', {
+          type: 'update',
+          subject: 'tiles',
+          by: req.user,
+          board: board1,
+          message: `${req.user.name} (${req.user.usertype}) has uploaded a file some seconds ago to update tiles, refresh the board ${board1.name} to see if there are any changes.`
+        })
+      }, 3000)
 
       res.status(200).send({
         msg: "wait..."

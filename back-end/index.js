@@ -40,18 +40,15 @@ server.listen(process.env.PORT, () => {
 
 /* SOCKET IO */
 
-var connections
 var io = socketIO(server);
 
 io.on('connection', socket => {
-  connections = socket
   socket.broadcast.emit('message', {
     msg: "New user connected."
   })
 })
 
 app.all(/.*/, (req, res, next) => {
-  // req.connections = connections
   req.io = io
   next()
 })
