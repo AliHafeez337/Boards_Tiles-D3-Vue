@@ -40,6 +40,9 @@ const actions = {
   },
   setRecenter: ({ commit }, data) => {
     commit('SET_RECENTER', data)
+  },
+  setMessages: ({ commit }, data) => {
+    commit('SET_MESSAGES', data)
   }
 }
 

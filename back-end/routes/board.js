@@ -15,7 +15,7 @@ const Tile = require('../models/Tile');
 const Label = require('../models/Label');
 
 // Local imports
-const { ensureAuthenticated, adminAuthenticated } = require('../auth/auth');
+const { ensureAuthenticated, adminAuthenticated, adminUserFleetWatcherAuthenticated } = require('../auth/auth');
 
 router.post(
   '/add',  
@@ -61,6 +61,7 @@ router.get(
   '/getAll',  
   passport.authenticate('jwt', {session: false}),
   ensureAuthenticated,
+  adminUserFleetWatcherAuthenticated,
   async (req, res) => {
     const boards = await Board.find()
     if (boards.length){

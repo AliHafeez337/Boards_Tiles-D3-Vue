@@ -13,6 +13,7 @@ const mutations = {
   SET_MODALIMPORT: (state, data) => { state.modalImport = data },
   SET_LOGS: (state, data) => { state.logs = data },
   SET_RECENTER: (state, data) => { state.recenter = data },
+  SET_MESSAGES: (state, data) => { state.messages = data },
 }
 
 export default mutations;

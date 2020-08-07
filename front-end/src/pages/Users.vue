@@ -39,6 +39,13 @@
                 >
                   Fleet
                 </a>
+                <a
+                  href="javascript:void(0)"
+                  @click="changenewtype('watcher')"
+                  class="dropdown-item"
+                >
+                  Watcher
+                </a>
               </drop-down>
               <strong>Name:</strong>&nbsp;
               <fginput
@@ -110,6 +117,13 @@
                   class="dropdown-item"
                 >
                   Fleet
+                </a>
+                <a
+                  href="javascript:void(0)"
+                  @click="changetype('watcher')"
+                  class="dropdown-item"
+                >
+                  Watcher
                 </a>
               </drop-down>
               <strong>Name:</strong>&nbsp;
@@ -275,7 +289,8 @@ export default {
       if (
         !(this.newUser.usertype === 'admin' || 
         this.newUser.usertype === 'user' ||
-        this.newUser.usertype === 'fleet')
+        this.newUser.usertype === 'fleet' ||
+        this.newUser.usertype === 'watcher')
         ||
         this.newUser.name.length < 1
         ||

@@ -1,6 +1,7 @@
 
 <template>
   <div id="board">
+    <messages v-if="notWatcher" class="messages"/>
     
     <!-- Navbar Warning -->
     <!-- style="position: static;" -->
@@ -117,7 +118,7 @@
                   {{ board.name }}
                 </a>
               </td>
-              <td style="color: red; cursor: pointer" @click="deleteBoard(board._id)">
+              <td v-if=deleteAuth style="color: red; cursor: pointer" @click="deleteBoard(board._id)">
                 Delete
               </td>
             </tr>
@@ -311,6 +312,7 @@
   import { config } from '../../../CONFIG';
   import { Navbar, DropDown } from '@/components';
   import colorPicker from '@caohenghu/vue-colorpicker'
+  import messages from './messages'
   import XLSX from 'xlsx'
 
   export default {
@@ -322,7 +324,8 @@
       [DatePicker.name]: DatePicker,
       Navbar,
       DropDown,
-      colorPicker
+      colorPicker,
+      messages
     },
     data() {
       return {
@@ -352,13 +355,20 @@
       }
     },
     created() {
-      console.log("Board refreshed...")
+      console.log("BOARD CREATED")
       this.$store.dispatch('setBoards')
     },
     mounted() {
       document.getElementById('upload').addEventListener('change', this.handleFileSelect, false);
     },
     computed: {
+      notWatcher() {
+        console.log(this.$store.getters.getProfile.usertype, this.$store.getters.getProfile.usertype !== 'watcher')
+        return this.$store.getters.getProfile.usertype !== 'watcher'
+      },
+      deleteAuth() {
+        return this.$store.getters.getProfile.usertype === 'admin'
+      },
       recenter() {
         return this.$store.getters.getRecenter
       },
@@ -437,7 +447,7 @@
         this.extraF = []
       }, 
       recenter: function (val) {
-        console.log('RECENTER', val)
+        // console.log('RECENTER', val)
         this.$store.dispatch('setRecenter', false)
         this.d3 += 1
       }, 
@@ -773,5 +783,9 @@
 <style scoped>
 #board {
   border: 1ch solid grey;
+}
+.messages {
+  position: absolute;
+  right: 1ch;
 }
 </style>

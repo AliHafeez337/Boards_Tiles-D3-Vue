@@ -10,6 +10,11 @@ export const config = {
   max_zoom_in: 32,
   default_zoom_level: 0.5,
 
+  // Recenter zoom to...
+  recenter_max_zoom_x: 50,
+  recenter_max_zoom_y: 30,
+  recenter_default_zoom_level: 0.5,
+
   // all values are in pixels except those whose details are written on their front
 
   // Place on the board where you want the new section to appear

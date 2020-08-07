@@ -12,13 +12,17 @@ const History = require('../models/History');
 const SectionName = require('../models/SectionName');
 
 // Local imports
-const { ensureAuthenticated } = require('../auth/auth');
+const { 
+  ensureAuthenticated,
+  adminUserAuthenticated,
+  adminUserFleetWatcherAuthenticated } = require('../auth/auth');
 
 // Update a sectionName
 router.patch(
   '/update/:id',  
   passport.authenticate('jwt', {session: false}),
   ensureAuthenticated, 
+  adminUserAuthenticated,
   async (req, res) => {
     if (req.params.id.match(/^[0-9a-fA-F]{24}$/)){
       const sectionName1 = await SectionName.findById(req.params.id)
@@ -98,7 +102,7 @@ router.patch(
             original: sectionName1,
             updated: sectionName,
             board: board1,
-            message: `${req.user.name} (${req.user.usertype}) has updated the section name '${sectionName.name}', please refresh the board ${board1.name}.`
+            message: `${req.user.name} (${req.user.usertype}) has updated the section name '${sectionName.name}', please refresh the board '${board1.name}'.`
           })
 
           res.status(200).send({
@@ -128,6 +132,7 @@ router.get(
   '/getAll',  
   passport.authenticate('jwt', {session: false}),
   ensureAuthenticated, 
+  adminUserFleetWatcherAuthenticated,
   async (req, res) => {
     if (req.query.board.match(/^[0-9a-fA-F]{24}$/)){
       SectionName.find({ 'board': req.query.board })

@@ -10,7 +10,7 @@ const Tile = require('../models/Tile');
 const Label = require('../models/Label');
 
 // Local imports
-const { ensureAuthenticated, adminUserFleetAuthenticated } = require('../auth/auth');
+const { ensureAuthenticated, adminUserFleetAuthenticated, adminUserFleetWatcherAuthenticated } = require('../auth/auth');
 
 // Add a label
 router.post(
@@ -63,7 +63,7 @@ router.post(
               updated: label,
               tile: tile,
               board,
-              message: `${req.user.name} (${req.user.usertype}) has added a label of color '${label.color}' on tile '${tile.name}', please refresh the board ${board.name}.`
+              message: `${req.user.name} (${req.user.usertype}) has added a label of color '${label.color}' on tile '${tile.name}', please refresh the board '${board.name}'.`
             })
 
             res.status(200).send({
@@ -116,7 +116,7 @@ router.delete(
           updated: label,
           tile,
           board,
-          message: `${req.user.name} (${req.user.usertype}) has deleted a label of color '${label.color}' on tile '${tile.name}', please refresh the board ${board.name}.`
+          message: `${req.user.name} (${req.user.usertype}) has deleted a label of color '${label.color}' on tile '${tile.name}', please refresh the board '${board.name}'.`
         })
 
         res.status(200).send({
@@ -141,7 +141,7 @@ router.get(
   '/getAll',  
   passport.authenticate('jwt', {session: false}),
   ensureAuthenticated, 
-  adminUserFleetAuthenticated,
+  adminUserFleetWatcherAuthenticated,
   async (req, res) => {
     if (req.query.board.match(/^[0-9a-fA-F]{24}$/)){
       Label.find({ 'board': req.query.board })

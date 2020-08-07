@@ -100,7 +100,7 @@
       </li>
       <!-- <li class="nav-item"> -->
         <a
-          v-if="ifBoard"
+          v-if="ifBoardAndUser"
           class="nav-link btn btn-neutral"
           href="javascript:void(0)"
           @click="resetBoard()"
@@ -320,9 +320,9 @@ export default {
     },
     recenterBoard() {
       this.$store.commit('SET_ZOOM', {
-        k: 0.3,
-        x: 50,
-        y: 30
+        k: config.recenter_default_zoom_level,
+        x: config.recenter_max_zoom_x,
+        y: config.recenter_max_zoom_y
       })
       this.$store.dispatch('setRecenter', true)
     }

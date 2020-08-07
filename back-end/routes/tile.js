@@ -11,7 +11,11 @@ const Tile = require('../models/Tile');
 const Label = require('../models/Label');
 
 // Local imports
-const { ensureAuthenticated, adminUserAuthenticated, adminUserFleetAuthenticated } = require('../auth/auth');
+const { 
+  ensureAuthenticated, 
+  adminUserAuthenticated, 
+  adminUserFleetAuthenticated,
+  adminUserFleetWatcherAuthenticated } = require('../auth/auth');
 
 // Add a tile
 router.post(
@@ -71,7 +75,7 @@ router.post(
               id: tile._id,
               updated: tile,
               board,
-              message: `${req.user.name} (${req.user.usertype}) has created a new tile with name ${tile.name}, please refresh the board ${board.name}.`
+              message: `${req.user.name} (${req.user.usertype}) has created a new tile with name ${tile.name}, please refresh the board '${board.name}'.`
             })
             
             res.status(200).send({
@@ -161,7 +165,7 @@ router.patch(
                 original: req.body,
                 updated: tile.value,
                 board: board1,
-                message: `${req.user.name} (${req.user.usertype}) has updated the tile '${tile.value.name}', please refresh the board ${board1.name}.`
+                message: `${req.user.name} (${req.user.usertype}) has updated the tile '${tile.value.name}', please refresh the board '${board1.name}'.`
               })
 
               res.status(200).send({
@@ -262,7 +266,7 @@ router.patch(
                 original: req.body,
                 updated: tile.value,
                 board: board1,
-                message: `${req.user.name} (${req.user.usertype}) has updated the tile '${tile.value.name}', please refresh the board ${board1.name}.`
+                message: `${req.user.name} (${req.user.usertype}) has updated the tile '${tile.value.name}', please refresh the board '${board1.name}'.`
               })
 
               res.status(200).send({
@@ -293,6 +297,7 @@ router.get(
   '/getAll',  
   passport.authenticate('jwt', {session: false}),
   ensureAuthenticated,
+  adminUserFleetWatcherAuthenticated,
   async (req, res) => {
     if (req.query.board.match(/^[0-9a-fA-F]{24}$/)){
 
@@ -363,7 +368,7 @@ router.delete(
           original: tile1[0],
           updated: null,
           board,
-          message: `${req.user.name} (${req.user.usertype}) has deleted the tile '${tile1[0].name}', please refresh the board ${board.name}.`
+          message: `${req.user.name} (${req.user.usertype}) has deleted the tile '${tile1[0].name}', please refresh the board '${board.name}'.`
         })
 
         res.status(200).send({
@@ -387,6 +392,7 @@ router.post(
   '/deleteField/:id',  
   passport.authenticate('jwt', {session: false}),
   ensureAuthenticated,
+  adminUserFleetAuthenticated,
   async (req, res) => {
     if (req.params.id.match(/^[0-9a-fA-F]{24}$/)){
       const tile1 = await Tile.findById(req.params.id)
@@ -465,7 +471,7 @@ router.post(
                         original: tile1,
                         updated: tile,
                         board: tile.board,
-                        message: `${req.user.name} (${req.user.usertype}) has deleted some fields/properties from the tile '${tile.name}', please refresh the board ${tile.board.name}.`
+                        message: `${req.user.name} (${req.user.usertype}) has deleted some fields/properties from the tile '${tile.name}', please refresh the board '${tile.board.name}'.`
                       })
 
                       res.status(200).send({
@@ -511,6 +517,7 @@ router.patch(
   '/getFile',  
   passport.authenticate('jwt', {session: false}),
   ensureAuthenticated,
+  adminUserFleetAuthenticated,
   async (req, res) => {
     if (req.query.board.match(/^[0-9a-fA-F]{24}$/)){
       // var board1 = {}
