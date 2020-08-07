@@ -11,7 +11,11 @@ const Section = require('../models/Section');
 const SectionName = require('../models/SectionName');
 
 // Local imports
-const { ensureAuthenticated, adminAuthenticated } = require('../auth/auth');
+const { 
+  ensureAuthenticated, 
+  adminAuthenticated, 
+  adminUserAuthenticated,
+  adminUserFleetWatcherAuthenticated } = require('../auth/auth');
 
 // Add a section
 router.post(
@@ -92,7 +96,7 @@ router.post(
                   id: section._id,
                   updated: section,
                   board,
-                  message: `${req.user.name} (${req.user.usertype}) has created a section '${section.name}', please refresh the board ${board.name}.`
+                  message: `${req.user.name} (${req.user.usertype}) has created a section '${section.name}', please refresh the board '${board.name}'.`
                 })
 
                 res.status(200).send({
@@ -174,7 +178,7 @@ router.delete(
             id: section._id,
             updated: section,
             board,
-            message: `${req.user.name} (${req.user.usertype}) has deleted a section '${section.name}', please refresh the board ${board.name}.`
+            message: `${req.user.name} (${req.user.usertype}) has deleted a section '${section.name}', please refresh the board '${board.name}'.`
           })
 
           res.status(200).send({
@@ -206,6 +210,7 @@ router.patch(
   '/update/:id',  
   passport.authenticate('jwt', {session: false}),
   ensureAuthenticated, 
+  adminUserAuthenticated,
   async (req, res) => {
     
     if (req.params.id.match(/^[0-9a-fA-F]{24}$/)){
@@ -309,7 +314,7 @@ router.patch(
           original: section1, 
           updated: section,
           board: board1,
-          message: `${req.user.name} (${req.user.usertype}) has updated a section '${section.name}', please refresh the board ${board1.name}.`
+          message: `${req.user.name} (${req.user.usertype}) has updated a section '${section.name}', please refresh the board '${board1.name}'.`
         })
 
         if (section){
@@ -341,6 +346,7 @@ router.get(
   '/getAll',  
   passport.authenticate('jwt', {session: false}),
   ensureAuthenticated, 
+  adminUserFleetWatcherAuthenticated,
   async (req, res) => {
     if (req.query.board.match(/^[0-9a-fA-F]{24}$/)){
       Section.find({ 'board': req.query.board })

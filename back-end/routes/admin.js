@@ -43,7 +43,7 @@ router.post(
     ]);
     console.log(body)
 
-    if (!(body.usertype === 'admin' || body.usertype === 'user' || body.usertype === 'fleet')){
+    if (!(body.usertype === 'admin' || body.usertype === 'user' || body.usertype === 'fleet' || body.usertype === 'watcher')){
       res.status(400).send({
         'errmsg': "Invalid usertype."
       })

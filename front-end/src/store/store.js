@@ -23,7 +23,8 @@ export const store = new Vuex.Store({
     modalUser: false,
     modalImport: false,
     logs: [],
-    recenter: false
+    recenter: false,
+    messages: [],
   },
   mutations,
   actions,

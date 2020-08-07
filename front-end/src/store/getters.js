@@ -40,6 +40,9 @@ const getters = {
   },
   getRecenter: function(state) {
     return state.recenter;
+  },
+  getMessages: function(state) {
+    return state.messages;
   }
 }
 

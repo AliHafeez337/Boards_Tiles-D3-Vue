@@ -32,7 +32,7 @@
     data() {
       return {
         zoomChanged: 0,
-        height: window.innerWidth,
+        height: window.innerHeight,
         width: window.innerWidth,
         justOnce: false,
         usertype: ''
@@ -62,7 +62,7 @@
     },
     methods: {
       renderD3() {
-        console.log("D3 Loading...")
+        console.log("D3 LOADING")
         
         var thisComponent = this
 
@@ -315,8 +315,10 @@
                       //   removeLabel(this, d);
                       // })
                       .on('contextmenu', function (d) {
-                        var coords = d3.mouse(this);
-                        createContextMenu(d, coords[0], coords[1], labelMenu, '.contextGroup', this);
+                        if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+                          var coords = d3.mouse(this);
+                          createContextMenu(d, coords[0], coords[1], labelMenu, '.contextGroup', this);
+                        }
                       })
                       .call(
                         d3.drag()
@@ -355,7 +357,7 @@
             }
           ];
 
-        } else {
+        } else if (this.usertype === 'admin' || this.usertype === 'user') {
 
           sectionMenuItems = [
             {
@@ -620,8 +622,10 @@
                       //   removeLabel(this, d);
                       // })
                       .on('contextmenu', function (d) {
-                        var coords = d3.mouse(this);
-                        createContextMenu(d, coords[0], coords[1], labelMenu, '.contextGroup', this);
+                        if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+                          var coords = d3.mouse(this);
+                          createContextMenu(d, coords[0], coords[1], labelMenu, '.contextGroup', this);
+                        }
                       })
                       .call(
                         d3.drag()
@@ -691,64 +695,78 @@
             }
           ];
           
+        } else {
+          sectionMenuItems = []
         }
 
-        const backLoadedLeft = [
-          {
-            title: 'Remove back-loaded',
-            action: (d, _this) => {
-              console.log('Remove back loaded clicked');
-              
-              d3.select('#' + d.id + '-bl').style('opacity', 0);
-              d.backLTitle = ''
+        if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+          const backLoadedLeft = [
+            {
+              title: 'Remove back-loaded',
+              action: (d, _this) => {
+                console.log('Remove back loaded clicked');
+                
+                d3.select('#' + d.id + '-bl').style('opacity', 0);
+                d.backLTitle = ''
 
-              store.dispatch('changeTile', { 
-                id: d.id,
-                x: d.x,
-                y: d.y,
-                backLeft: false,
-                backLTitle: '',
-                backRight: d.backRight,
-                event_name: d.event_name,
-                event_due: d.event_due
-              })
-            }
-          },
-        ]
+                store.dispatch('changeTile', { 
+                  id: d.id,
+                  x: d.x,
+                  y: d.y,
+                  backLeft: false,
+                  backLTitle: '',
+                  backRight: d.backRight,
+                  event_name: d.event_name,
+                  event_due: d.event_due
+                })
+              }
+            },
+          ]
+        } else {
+          const backLoadedLeft = []
+        }
 
-        const backLoadedRight = [
-          {
-            title: 'Remove back-loaded',
-            action: (d, _this) => {
-              console.log('Remove back loaded clicked');
-              
-              d3.select('#' + d.id + '-br').style('opacity', 0);
-              d.backRTitle = ''
-              
-              store.dispatch('changeTile', { 
-                id: d.id,
-                x: d.x,
-                y: d.y,
-                backLeft: d.backLeft,
-                backRight: false,
-                backRTitle: '',
-                event_name: d.event_name,
-                event_due: d.event_due
-              })
-            }
-          },
-        ]
+        if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+          const backLoadedRight = [
+            {
+              title: 'Remove back-loaded',
+              action: (d, _this) => {
+                console.log('Remove back loaded clicked');
+                
+                d3.select('#' + d.id + '-br').style('opacity', 0);
+                d.backRTitle = ''
+                
+                store.dispatch('changeTile', { 
+                  id: d.id,
+                  x: d.x,
+                  y: d.y,
+                  backLeft: d.backLeft,
+                  backRight: false,
+                  backRTitle: '',
+                  event_name: d.event_name,
+                  event_due: d.event_due
+                })
+              }
+            },
+          ]
+        } else {
+          const backLoadedRight = []
+        }
 
-        const labelMenu = [
-          {
-            title: 'Remove label',
-            action: (d, _this) => {
-              console.log('Remove label clicked');
-              
-              removeLabel(_this, d);
-            }
-          },
-        ]
+        if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+          const labelMenu = [
+            {
+              title: 'Remove label',
+              action: (d, _this) => {
+                console.log('Remove label clicked');
+                
+                removeLabel(_this, d);
+              }
+            },
+          ]
+        } else {
+          const labelMenu = []
+        }
 
         const store = this.$store;
 
@@ -865,208 +883,210 @@
         filter(svgContainer)
 
         const sectionDrag = (dd, _this) => {
-          var changed = false
+          if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+            var changed = false
 
-          if (this.usertype === 'admin' || this.usertype === 'user'){
-            changed = true
+            if (this.usertype === 'admin' || this.usertype === 'user'){
+              changed = true
 
-            var rect = d3.select('#' + dd.id).classed("dragging", true);
-            // var frame = d3.select('#' + dd.id + '-f').classed("dragging", true);
-            // var text = d3.select('#' + dd.id + '-t').classed("dragging", true);
-            var frame1 = d3.select('#' + dd.id + '-n').classed("dragging", true);
-            var text1 = d3.select('#' + dd.id + '-n-t').classed("dragging", true);
-            var t = d3.select('#' + dd.id + '-p')._groups[0][0]
-            var firstChild = t.parentNode.firstChild;
+              var rect = d3.select('#' + dd.id).classed("dragging", true);
+              // var frame = d3.select('#' + dd.id + '-f').classed("dragging", true);
+              // var text = d3.select('#' + dd.id + '-t').classed("dragging", true);
+              var frame1 = d3.select('#' + dd.id + '-n').classed("dragging", true);
+              var text1 = d3.select('#' + dd.id + '-n-t').classed("dragging", true);
+              var t = d3.select('#' + dd.id + '-p')._groups[0][0]
+              var firstChild = t.parentNode.firstChild;
 
-            var x = Number(rect.attr('x'));
-            var y = Number(rect.attr('y'));
-            var w = Number(rect.attr('width'));
-            var h = Number(rect.attr('height'));
+              var x = Number(rect.attr('x'));
+              var y = Number(rect.attr('y'));
+              var w = Number(rect.attr('width'));
+              var h = Number(rect.attr('height'));
 
-            var orignialX = x, originalY = y;
-            
-            var groups = []
-            d3.selectAll('.gTile')._groups[0].forEach(group => {
+              var orignialX = x, originalY = y;
+              
+              var groups = []
+              d3.selectAll('.gTile')._groups[0].forEach(group => {
 
-              let g = d3.select(group);
-              let id = g.attr('id');
-              let tile = d3.select('#' + id.substring(0, id.indexOf('-')))
+                let g = d3.select(group);
+                let id = g.attr('id');
+                let tile = d3.select('#' + id.substring(0, id.indexOf('-')))
 
-              let tileX = tile.attr('x'), 
-                tileY = tile.attr('y'),
-                tileW = tile.attr('width'),
-                tileH = tile.attr('height');
-                
-              let c1x = +tileX, c1y = tileY,
-                c2x = +tileX + +tileW, c2y = +tileY,
-                c3x = +tileX + +tileW, c3y = +tileY + +tileH,
-                c4x = +tileX, c4y =  +tileY + +tileH;
+                let tileX = tile.attr('x'), 
+                  tileY = tile.attr('y'),
+                  tileW = tile.attr('width'),
+                  tileH = tile.attr('height');
+                  
+                let c1x = +tileX, c1y = tileY,
+                  c2x = +tileX + +tileW, c2y = +tileY,
+                  c3x = +tileX + +tileW, c3y = +tileY + +tileH,
+                  c4x = +tileX, c4y =  +tileY + +tileH;
 
-              if (
-                (c1x > x && c1x < (+x + +w) && c1y > y && c1y < (+y + +h)) ||
-                (c2x > x && c2x < (+x + +w) && c2y > y && c2y < (+y + +h)) ||
-                (c3x > x && c3x < (+x + +w) && c3y > y && c3y < (+y + +h)) ||
-                (c4x > x && c4x < (+x + +w) && c4y > y && c4y < (+y + +h))
-              ){
-                console.log(`Some point of ${id} is inside the section`);
-                tile.style("opacity", 0.2)
-                groups.push(g)
-              }
-
-            })
-            
-            d3.event.on("drag", dragged).on("end", ended);
-
-            x = Number(rect.attr('x'));
-            y = Number(rect.attr('y'));
-            w = Number(rect.attr('width'));
-            h = Number(rect.attr('height'));
-
-            const oneSixthX = w / 3.5, oneSixthY = h / 4.5
-            const coords = d3.mouse(_this);
-            
-            console.log('Ending point', (+x + +w), (+y + +h), 'Division point', (+x + +w) - oneSixthX, (+y + +h) - oneSixthY, 'Starting point', x, y, 'Clicked point', coords[0], coords[1])
-
-            function dragged(d) {
-              var coords1 = d3.mouse(_this);
-
-              if (coords[0] > (+x + +w) - oneSixthX && coords[1] > (+y + +h) - oneSixthY){
-                // console.log('changing dimensions', this.usertype)
-                
-                let newWidth = w + (coords1[0] - (+x + +w)), newHeight = h + (coords1[1] - (+y + +h));
-
-                if (newWidth >= 150 && newHeight >= 200){
-                  d.width = newWidth, d.height = newHeight
-                  rect
-                    .attr('width', newWidth)
-                    .attr('height', newHeight);
-                  // frame
-                  //   .attr("x", d => {
-                  //     return  +d.x + (+newWidth / 2) - (+d.name.length * 5 / 2) - 10
-                  //   })
-                  // text
-                  //   .attr("x", d => {
-                  //     return  +d.x + (+newWidth / 2) - (+d.name.length * 5 / 2)
-                  //   })
+                if (
+                  (c1x > x && c1x < (+x + +w) && c1y > y && c1y < (+y + +h)) ||
+                  (c2x > x && c2x < (+x + +w) && c2y > y && c2y < (+y + +h)) ||
+                  (c3x > x && c3x < (+x + +w) && c3y > y && c3y < (+y + +h)) ||
+                  (c4x > x && c4x < (+x + +w) && c4y > y && c4y < (+y + +h))
+                ){
+                  console.log(`Some point of ${id} is inside the section`);
+                  tile.style("opacity", 0.2)
+                  groups.push(g)
                 }
-              } else {
-                // console.log('changing location')
 
-                if (thisComponent.usertype === 'admin'){
-                  // max right is 4800 max bottom is 2200
-
-                  d.x = coords1[0], d.y = coords1[1]
-                  rect.raise().attr("x", d.x = coords1[0]).attr("y", d.y = coords1[1]);
-                  // frame
-                  //   .raise()
-                  //   .attr("x", d => {
-                  //     return  +d.x + (+w / 2) - (+d.name.length * 5 / 2) - 10
-                  //   })
-                  //   .attr("y", (+d.y + +config.section_text_y) - 15);
-                  // text
-                  //   .raise()
-                  //   .attr("x", d => {
-                  //     return  +coords1[0] + (+w / 2) - (+d.name.length * 5 / 2)
-                  //   })
-                  //   .attr("y", (+d.y + +config.section_text_y));
-                } else {
-                  changed = false
-                }
-              }
-            }
-
-            function ended(d) {
-              console.log('section drag ends at:', rect.attr('x'), rect.attr('y'));
-              // console.log(text.attr('x'), text.attr('y'));
-
-              rect.classed("dragging", false);
+              })
+              
+              d3.event.on("drag", dragged).on("end", ended);
 
               x = Number(rect.attr('x'));
               y = Number(rect.attr('y'));
+              w = Number(rect.attr('width'));
+              h = Number(rect.attr('height'));
 
-              var diffX = x - orignialX, diffY = y - originalY
-              var tiles = [], tile = {}
-              console.log(diffX, diffY)
-
-              frame1.attr('x', +frame1.attr('x') + +diffX)
-              frame1.attr('y', +frame1.attr('y') + +diffY)
-
-              text1.attr('x', +text1.attr('x') + +diffX)
-              text1.attr('y', +text1.attr('y') + +diffY)
+              const oneSixthX = w / 3.5, oneSixthY = h / 4.5
+              const coords = d3.mouse(_this);
               
-              groups.forEach(group => {
-                let rects = group.selectAll('rect'), texts = group.selectAll('text')
-                // console.log(group, rects, texts)
-                rects._groups[0].forEach(rect => {
-                  let _rect = d3.select(rect);
-                  let _rectX = _rect.attr('x'), _rectY = _rect.attr('y')
-                  
-                  if (diffX >= 0){
-                    _rect.attr('x', +_rectX + +diffX)
-                    _rect.attr('y', +_rectY + +diffY)
-                  } else {
-                    _rect.attr('x', +diffX + +_rectX)
-                    _rect.attr('y', +diffY + +_rectY)
-                  }
-                })
+              console.log('Ending point', (+x + +w), (+y + +h), 'Division point', (+x + +w) - oneSixthX, (+y + +h) - oneSixthY, 'Starting point', x, y, 'Clicked point', coords[0], coords[1])
 
-                texts._groups[0].forEach(text => {
-                  let _text = d3.select(text);
-                  let _textX = _text.attr('x'), _textY = _text.attr('y')
-                  
-                  if (diffX >= 0){
-                    _text.attr('x', +_textX + +diffX)
-                    _text.attr('y', +_textY + +diffY)
-                  } else {
-                    _text.attr('x', +diffX + +_textX)
-                    _text.attr('y', +diffY + +_textY)
-                  }
-                })
+              function dragged(d) {
+                var coords1 = d3.mouse(_this);
 
-                var mainRect = d3.select(rects._groups[0][0])
-                mainRect.style("opacity", 1)
-                tile = {
-                  id: mainRect.attr('id'),
-                  x: mainRect.attr('x'),
-                  y: mainRect.attr('y')
+                if (coords[0] > (+x + +w) - oneSixthX && coords[1] > (+y + +h) - oneSixthY){
+                  // console.log('changing dimensions', this.usertype)
+                  
+                  let newWidth = w + (coords1[0] - (+x + +w)), newHeight = h + (coords1[1] - (+y + +h));
+
+                  if (newWidth >= 150 && newHeight >= 200){
+                    d.width = newWidth, d.height = newHeight
+                    rect
+                      .attr('width', newWidth)
+                      .attr('height', newHeight);
+                    // frame
+                    //   .attr("x", d => {
+                    //     return  +d.x + (+newWidth / 2) - (+d.name.length * 5 / 2) - 10
+                    //   })
+                    // text
+                    //   .attr("x", d => {
+                    //     return  +d.x + (+newWidth / 2) - (+d.name.length * 5 / 2)
+                    //   })
+                  }
+                } else {
+                  // console.log('changing location')
+
+                  if (thisComponent.usertype === 'admin'){
+                    // max right is 4800 max bottom is 2200
+
+                    d.x = coords1[0], d.y = coords1[1]
+                    rect.raise().attr("x", d.x = coords1[0]).attr("y", d.y = coords1[1]);
+                    // frame
+                    //   .raise()
+                    //   .attr("x", d => {
+                    //     return  +d.x + (+w / 2) - (+d.name.length * 5 / 2) - 10
+                    //   })
+                    //   .attr("y", (+d.y + +config.section_text_y) - 15);
+                    // text
+                    //   .raise()
+                    //   .attr("x", d => {
+                    //     return  +coords1[0] + (+w / 2) - (+d.name.length * 5 / 2)
+                    //   })
+                    //   .attr("y", (+d.y + +config.section_text_y));
+                  } else {
+                    changed = false
+                  }
                 }
-                tiles.push(tile)
-              })
-
-              // console.log(
-              //   rect.attr('id'),
-              //   rect.attr('width'),
-              //   rect.attr('height'),
-              //   rect.attr('x'),
-              //   rect.attr('y')
-              // )
-
-              if (changed){
-                store.dispatch('changeSectionName', {
-                  id: frame1.attr('id'),
-                  width: rect.attr('width'),
-                  height: rect.attr('height'),
-                  x: frame1.attr('x'),
-                  y: frame1.attr('y'),
-                  color: dd.color
-                })
-
-                store.dispatch('changeSection', {
-                  _id: d._id,
-                  width: rect.attr('width'),
-                  height: rect.attr('height'),
-                  x: rect.attr('x'),
-                  y: rect.attr('y'),
-                  tiles
-                })
               }
 
-              // IMPORTANT: Send the selected(the one you are dragging) on the back (according to z-axis) after you ended the drag other wise, the section will remain on top...
-              if (firstChild) { 
-                t.parentNode.insertBefore(t, firstChild); 
+              function ended(d) {
+                console.log('section drag ends at:', rect.attr('x'), rect.attr('y'));
+                // console.log(text.attr('x'), text.attr('y'));
+
+                rect.classed("dragging", false);
+
+                x = Number(rect.attr('x'));
+                y = Number(rect.attr('y'));
+
+                var diffX = x - orignialX, diffY = y - originalY
+                var tiles = [], tile = {}
+                console.log(diffX, diffY)
+
+                frame1.attr('x', +frame1.attr('x') + +diffX)
+                frame1.attr('y', +frame1.attr('y') + +diffY)
+
+                text1.attr('x', +text1.attr('x') + +diffX)
+                text1.attr('y', +text1.attr('y') + +diffY)
+                
+                groups.forEach(group => {
+                  let rects = group.selectAll('rect'), texts = group.selectAll('text')
+                  // console.log(group, rects, texts)
+                  rects._groups[0].forEach(rect => {
+                    let _rect = d3.select(rect);
+                    let _rectX = _rect.attr('x'), _rectY = _rect.attr('y')
+                    
+                    if (diffX >= 0){
+                      _rect.attr('x', +_rectX + +diffX)
+                      _rect.attr('y', +_rectY + +diffY)
+                    } else {
+                      _rect.attr('x', +diffX + +_rectX)
+                      _rect.attr('y', +diffY + +_rectY)
+                    }
+                  })
+
+                  texts._groups[0].forEach(text => {
+                    let _text = d3.select(text);
+                    let _textX = _text.attr('x'), _textY = _text.attr('y')
+                    
+                    if (diffX >= 0){
+                      _text.attr('x', +_textX + +diffX)
+                      _text.attr('y', +_textY + +diffY)
+                    } else {
+                      _text.attr('x', +diffX + +_textX)
+                      _text.attr('y', +diffY + +_textY)
+                    }
+                  })
+
+                  var mainRect = d3.select(rects._groups[0][0])
+                  mainRect.style("opacity", 1)
+                  tile = {
+                    id: mainRect.attr('id'),
+                    x: mainRect.attr('x'),
+                    y: mainRect.attr('y')
+                  }
+                  tiles.push(tile)
+                })
+
+                // console.log(
+                //   rect.attr('id'),
+                //   rect.attr('width'),
+                //   rect.attr('height'),
+                //   rect.attr('x'),
+                //   rect.attr('y')
+                // )
+
+                if (changed){
+                  store.dispatch('changeSectionName', {
+                    id: frame1.attr('id'),
+                    width: rect.attr('width'),
+                    height: rect.attr('height'),
+                    x: frame1.attr('x'),
+                    y: frame1.attr('y'),
+                    color: dd.color
+                  })
+
+                  store.dispatch('changeSection', {
+                    _id: d._id,
+                    width: rect.attr('width'),
+                    height: rect.attr('height'),
+                    x: rect.attr('x'),
+                    y: rect.attr('y'),
+                    tiles
+                  })
+                }
+
+                // IMPORTANT: Send the selected(the one you are dragging) on the back (according to z-axis) after you ended the drag other wise, the section will remain on top...
+                if (firstChild) { 
+                  t.parentNode.insertBefore(t, firstChild); 
+                }
               }
+
             }
-
           }
         }
 
@@ -1093,8 +1113,10 @@
           .style("fill", d => d.color)
           .style("opacity", config.section_opacity)
           .on('contextmenu', function (d) {
-            var coords = d3.mouse(this);
-            createContextMenu(d, coords[0], coords[1], sectionMenuItems, '.contextGroup');
+            if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+              var coords = d3.mouse(this);
+              createContextMenu(d, coords[0], coords[1], sectionMenuItems, '.contextGroup');
+            }
           })
           .call(d3.drag()
             .on('start', function started(dd) {
@@ -1368,8 +1390,10 @@
             console.log('TILE CLICKED')
           })
           .on('contextmenu', function (d) {
-            var coords = d3.mouse(this);
-            createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup', this);
+            if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+              var coords = d3.mouse(this);
+              createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup', this);
+            }
           })
           .call(
             d3.drag()
@@ -1421,9 +1445,11 @@
             console.log('Tile warning CLICKED')
           })
           .on('contextmenu', function (d) {
-            if (d.backLeft){
-              var coords = d3.mouse(this);
-              createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup', this);
+            if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+              if (d.backLeft){
+                var coords = d3.mouse(this);
+                createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup', this);
+              }
             }
           })
           .call(
@@ -1456,9 +1482,11 @@
             console.log('Back Loaded Left CLICKED')
           })
           .on('contextmenu', function (d) {
-            if (d.backLeft){
-              var coords = d3.mouse(this);
-              createContextMenu(d, coords[0], coords[1], backLoadedLeft, '.contextGroup');
+            if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+              if (d.backLeft){
+                var coords = d3.mouse(this);
+                createContextMenu(d, coords[0], coords[1], backLoadedLeft, '.contextGroup');
+              }
             }
           })
           .call(
@@ -1491,9 +1519,11 @@
             console.log('Back Loaded Right CLICKED')
           })
           .on('contextmenu', function (d) {
-            if (d.backRight){
-              var coords = d3.mouse(this);
-              createContextMenu(d, coords[0], coords[1], backLoadedRight, '.contextGroup');
+            if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+              if (d.backRight){
+                var coords = d3.mouse(this);
+                createContextMenu(d, coords[0], coords[1], backLoadedRight, '.contextGroup');
+              }
             }
           })
           .call(
@@ -1519,8 +1549,10 @@
           .attr("font-size", config.tile_text_size + 'px')
           .attr("fill", config.tile_text_color)
           .on('contextmenu', function (d) {
-            var coords = d3.mouse(this);
-            createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup', this);
+            if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+              var coords = d3.mouse(this);
+              createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup', this);
+            }
           })
           .call(
             d3.drag()
@@ -1572,8 +1604,10 @@
               //   removeLabel(this, d);
               // })
               .on('contextmenu', function (d) {
-                var coords = d3.mouse(this);
-                createContextMenu(d, coords[0], coords[1], labelMenu, '.contextGroup', this);
+                if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+                  var coords = d3.mouse(this);
+                  createContextMenu(d, coords[0], coords[1], labelMenu, '.contextGroup', this);
+                }
               })
               .call(
                 d3.drag()
@@ -1593,7 +1627,10 @@
                             .append('g')
                             .attr('class', 'contextGroup')
 
+        // console.log(this.height, this.height - (20 / 100 * this.height))
         const k = this.height / this.width
+        // const k = this.height - (20 / 100 * this.height) / this.width
+        // const k = 400 / this.width
 
         const x = d3.scaleLinear()
                     .domain([-4.5, 4.5])

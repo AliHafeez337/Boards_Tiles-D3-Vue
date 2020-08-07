@@ -76,7 +76,7 @@ export default {
     if (!this.$store.getters.getToken){
       this.$router.push("/login")
     } else if (!this.$store.getters.getProfile.name){
-      console.log("Profile doesn't exist.")
+      // console.log("Profile doesn't exist.")
       
       var service = new Services();
       service.profile()

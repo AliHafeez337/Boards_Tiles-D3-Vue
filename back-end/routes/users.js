@@ -37,7 +37,7 @@ router.post('/register', (req, res) => {
     errors.push({ errmsg: 'Unauthorized.' });
   }
 
-  if (!(usertype === 'admin' || usertype === 'user' || usertype === 'fleet')){
+  if (!(usertype === 'admin' || usertype === 'user' || usertype === 'fleet' || usertype === 'watcher')){
     errors.push({ errmsg: 'Invalid usertype.' });
   }
 

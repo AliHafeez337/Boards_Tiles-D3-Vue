@@ -74,7 +74,16 @@ module.exports = {
       return next()
     } else {
       res.status(401).send({
-        'errmsg': "Unauthorized, You must be an admin or a user to access this resource."
+        'errmsg': "Unauthorized, You must be an admin, user or a fleet to access this resource."
+      });
+    }
+  },
+  adminUserFleetWatcherAuthenticated: (req, res, next) => {
+    if (req.user.usertype === 'admin' || req.user.usertype === 'user' || req.user.usertype === 'fleet' || req.user.usertype === 'watcher') {
+      return next()
+    } else {
+      res.status(401).send({
+        'errmsg': "Unauthorized, You must be an admin, user, fleet or a watcher to access this resource."
       });
     }
   }
