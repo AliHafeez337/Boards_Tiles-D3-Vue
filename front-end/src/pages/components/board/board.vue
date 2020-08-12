@@ -1,7 +1,8 @@
 
 <template>
   <div id="board">
-    <messages v-if="notWatcher" class="messages"/>
+    <!-- DISPLAYING MESSAGES PERFECTLY -->
+    <!-- <messages v-if="notWatcher" class="messages"/> -->
     
     <!-- Navbar Warning -->
     <!-- style="position: static;" -->
@@ -363,7 +364,6 @@
     },
     computed: {
       notWatcher() {
-        console.log(this.$store.getters.getProfile.usertype, this.$store.getters.getProfile.usertype !== 'watcher')
         return this.$store.getters.getProfile.usertype !== 'watcher'
       },
       deleteAuth() {
@@ -474,6 +474,8 @@
       tileDetails: function (val) {
         if (val.event_due){
           this.due2 = new Date(val.event_due * 1000);
+        } else {
+          this.due2 = ''
         }
 
         this.tempKeys = Object.keys(val).filter(key1 => {
@@ -729,6 +731,10 @@
                       // console.log(new Date(Math.round((data.event_due - 25569)*86400*1000)).getTime() / 1000)
                       obj.event_due = new Date(Math.round((data.event_due - 25569)*86400*1000)).getTime() / 1000
                     }
+                  }
+                  if ((data[key] - 25569) && key !== 'event_due'){ // string + integer
+                    var d = new Date(Math.round((data[key] - 25569)*86400*1000))
+                    obj[key] = d.getDate() + '/' + (parseInt(d.getMonth() + 1)).toString() + '/' + d.getFullYear()
                   }
                 })
                 json_object2.push(obj)

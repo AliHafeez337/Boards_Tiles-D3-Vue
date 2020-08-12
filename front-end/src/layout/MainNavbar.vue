@@ -75,7 +75,7 @@
           href="javascript:void(0)"
           @click="pushTile()"
           class="dropdown-item"
-          v-if="profile.usertype === 'admin' || profile.usertype === 'user'"
+          v-if="profile.usertype === 'admin'"
         >
           Tile
         </a>

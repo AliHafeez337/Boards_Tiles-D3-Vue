@@ -121,6 +121,9 @@ router.patch(
       if (body.createdAt){
         delete body.createdAt
       }
+      if (body.nomsg){
+        delete body.nomsg
+      }
       // console.log(body)
 
       if (body) {
@@ -132,56 +135,59 @@ router.patch(
             useUnifiedTopology: true
           },
           async (err, client) => {
-          if (err) {
-            return console.log('Unable to connect to MongoDB server');
-          }
+            if (err) {
+              return console.log('Unable to connect to MongoDB server');
+            }
 
-          const db = client.db(process.env.DB_NAME);
-          const collection = 'tiles';
-          await db.collection(collection)
-            .findOneAndUpdate(
-              { '_id': new ObjectId(req.params.id) },
-              { $set: body },
-              { new: true }              
-            )
-            .then(async tile => {
-              const board1 = await Board.findById(tile.value.board)
-              
-              Object.keys(body).forEach(key => {
-                if (body[key] !== tile1[key]){
-                  var history = new History({
-                    user: req.user,
-                    change: `Updated the ${key} of a tile naming '${tile.value.name}' from board '${board1.name}'.`
+            const db = client.db(process.env.DB_NAME);
+            const collection = 'tiles';
+
+            await db.collection(collection)
+              .findOneAndUpdate(
+                { '_id': new ObjectId(req.params.id) },
+                { $set: body },
+                { new: true }              
+              )
+              .then(async tile => {
+                const board1 = await Board.findById(tile.value.board)
+                
+                Object.keys(body).forEach(key => {
+                  if (body[key] !== tile1[key]){
+                    var history = new History({
+                      user: req.user,
+                      change: `Updated the ${key} of a tile naming '${tile.value.name}' from board '${board1.name}'.`
+                    })
+                    history.save()
+                  }
+                })
+
+                if (!req.body.nomsg){
+                  req.io.emit('messageOfUpdate', {
+                    type: 'update',
+                    subject: 'tile',
+                    by: req.user,
+                    id: req.params.id,
+                    original: req.body,
+                    updated: tile.value,
+                    board: board1,
+                    message: `${req.user.name} (${req.user.usertype}) has updated the tile '${tile.value.name}', please refresh the board '${board1.name}'.`
                   })
-                  history.save()
                 }
+
+                res.status(200).send({
+                  msg: "Tile updated successfully...",
+                  tile: tile.value
+                })
+              })
+              .catch(err => {
+                console.log(err)
+                res.status(200).send({
+                  errmsg: "Coudn't update the tile..."
+                })
               })
 
-              req.io.emit('messageOfUpdate', {
-                type: 'update',
-                subject: 'tile',
-                by: req.user,
-                id: req.params.id,
-                original: req.body,
-                updated: tile.value,
-                board: board1,
-                message: `${req.user.name} (${req.user.usertype}) has updated the tile '${tile.value.name}', please refresh the board '${board1.name}'.`
-              })
-
-              res.status(200).send({
-                msg: "Tile updated successfully...",
-                tile: tile.value
-              })
-            })
-            .catch(err => {
-              console.log(err)
-              res.status(200).send({
-                errmsg: "Coudn't update the tile..."
-              })
-            })
-
-          client.close();
-        });
+            client.close();
+          });
       }
     } else {
       res.status(200).send({
@@ -213,6 +219,9 @@ router.patch(
       }
       if (body.board){
         delete body.board
+      }
+      if (body.nomsg){
+        delete body.nomsg
       }
       // if (body.x){
       //   delete body.x
@@ -248,7 +257,7 @@ router.patch(
             .then(async tile => {
               const board1 = await Board.findById(tile.value.board)
               
-              Object.keys(body).forEach(key => {
+              Object.keys(body).forEach((key, index) => {
                 if (body[key] !== tile1[key]){
                   var history = new History({
                     user: req.user,
@@ -258,16 +267,18 @@ router.patch(
                 }
               })
 
-              req.io.emit('messageOfUpdate', {
-                type: 'update',
-                subject: 'tile',
-                by: req.user,
-                id: req.params.id,
-                original: req.body,
-                updated: tile.value,
-                board: board1,
-                message: `${req.user.name} (${req.user.usertype}) has updated the tile '${tile.value.name}', please refresh the board '${board1.name}'.`
-              })
+              if (!req.body.nomsg){
+                req.io.emit('messageOfUpdate', {
+                  type: 'update',
+                  subject: 'tile',
+                  by: req.user,
+                  id: req.params.id,
+                  original: req.body,
+                  updated: tile.value,
+                  board: board1,
+                  message: `${req.user.name} (${req.user.usertype}) has updated the tile '${tile.value.name}', please refresh the board '${board1.name}'.`
+                })
+              }
 
               res.status(200).send({
                 msg: "Tile updated successfully...",
