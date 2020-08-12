@@ -68,6 +68,7 @@
 
         var sectionMenuItems = [], tileMenuItems = []
 
+        
         if (this.usertype === 'fleet'){
 
           sectionMenuItems = [
@@ -88,27 +89,6 @@
                 var rect = d3.select('#' + d.id);
 
                 this.$store.dispatch('sortTiles', rect.attr('id'))
-              }
-            },
-            {
-              title: 'Change color',
-              action: (d, _this) => {
-                console.log('Section change color clicked');
-                
-                var rect = d3.select('#' + d.id);
-                // var frame = d3.select('#' + d.id + '-f');
-                var frame = d3.select('#' + d.id + '-n');
-
-                // either getColor() or colorPallet(), both work...
-
-                // getColor()
-                // // colorPallet()
-                //   .then(color => {
-                //     changeColor(d, _this, rect, color)
-                //     changeColor(d, _this, frame, color)
-                //   })
-
-                setColor(d, [rect, frame])
               }
             }
           ];
@@ -315,7 +295,7 @@
                       //   removeLabel(this, d);
                       // })
                       .on('contextmenu', function (d) {
-                        if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+                        if (thisComponent.usertype === 'admin' || thisComponent.usertype === 'user' || thisComponent.usertype === 'fleet'){
                           var coords = d3.mouse(this);
                           createContextMenu(d, coords[0], coords[1], labelMenu, '.contextGroup', this);
                         }
@@ -335,17 +315,257 @@
               }
             },
             {
-              title: 'Change color',
-              action: async (d, _this) => {
-                console.log('Tile color button clicked');
+              title: 'Asset information',
+              action: (d, _this) => {
+                this.$store.dispatch('setModalDetails', true)
+                this.$store.dispatch('setTile', d)
+              }
+            }
+          ];
 
-                var rect = await d3.select('#' + d.id)
+        } else if (this.usertype === 'user') {
+
+          sectionMenuItems = [
+            {
+              title: 'Arrange tiles',
+              action: (d, _this) => {
+                console.log('Section tiles arranging clicked');
                 
-                // getColor()
-                // // colorPallet()
-                //   .then(color => changeColor(d, _this, rect, color))
+                var rect = d3.select('#' + d.id);
+                this.$store.dispatch('arrangeTiles', rect.attr('id'))
+              }
+            },
+            {
+              title: 'Sort tiles',
+              action: (d, _this) => {
+                console.log('Section tiles sorting clicked');
+                
+                var rect = d3.select('#' + d.id);
+
+                this.$store.dispatch('sortTiles', rect.attr('id'))
+              }
+            }
+          ];
+
+          tileMenuItems = [
+            {
+              title: 'Event name',
+              action: (d, _this) => {
+                console.log('Event name clicked')
+
+                var eName = prompt("Please enter the Event title.");
+                if (eName){
+                  d.event_name = eName
+
+                  store.dispatch('changeTile', { 
+                    id: d.id,
+                    x: d.x,
+                    y: d.y,
+                    backLeft: d.backLeft,
+                    backRight: d.backRight,
+                    event_name: d.event_name,
+                    event_due: d.event_due
+                  })
+                }
+              }
+            },
+            {
+              title: 'Event due date',
+              action: (d, _this) => {
+                console.log('Event due date clicked')
+
+                var eDate = prompt("Please enter the Event due date in format DD-MM-YYYY, '-' are also not necessary, just 8 digits are necessary.");
+                if (eDate){
+                  const e = eDate.replace ( /[^\d.]/g, '' )
+                  // console.log(e)
                   
-                setColor(d, [rect])
+                  if (e.length !== 8){
+                    return
+                  }
+                  var newDate = e[2] + e[3] + '-' + e[0] + e[1] + '-' + e[4] + e[5] + e[6] + e[7]
+                  console.log(newDate)
+                  
+                  var timestamp = Date.parse(newDate);
+                  if (isNaN(timestamp) == false) {
+                    var dd = new Date(timestamp);
+                    // console.log(dd.getTime() / 1000)
+                    
+                    d.event_due = dd.getTime() / 1000
+                    
+                    var tile = d3.select('#' + d.id + '-w');
+                    const time = Date.now(), due = +d.event_due * +1000
+                    
+                    // 259200000 are 3 days and 604800 are 1 week
+                    // get times from https://www.epochconverter.com/timestamp-list
+                    if (due - time < 604800000){
+                      tile.style("opacity", 1)
+                    } else {
+                      tile.style("opacity", 0)
+                    }
+                    
+                    if (due - time < 259200000){
+                      tile.style("fill", config.tile_3_days_warning_color)
+                    } else if (d.event_due && due - time < 604800000){
+                      tile.style("fill", config.tile_7_days_warning_color)
+                    } else {
+                      tile.style("fill", d.color)
+                    }
+
+                    store.dispatch('changeTile', { 
+                      id: d.id,
+                      x: d.x,
+                      y: d.y,
+                      backLeft: d.backLeft,
+                      backRight: d.backRight,
+                      event_name: d.event_name,
+                      event_due: dd.getTime() / 1000
+                    })
+                  }
+                }
+              }
+            },
+            {
+              title: 'Remove event',
+              action: (d, _this) => {
+                console.log("Removing event clicked.")
+
+                d3.select('#' + d.id + '-w').style('opacity', 0);
+
+                d.event_name = '', d.event_due = ''
+                store.dispatch('changeTile', { 
+                  id: d.id,
+                  x: d.x,
+                  y: d.y,
+                  backLeft: d.backLeft,
+                  backRight: d.backRight,
+                  event_name: '',
+                  event_due: null
+                })
+              }
+            },
+            {
+              title: 'Back Loaded Left',
+              action: (d, _this) => {
+                console.log('Tile back loaded left clicked');
+                
+                d3.select('#' + d.id + '-bl').style('opacity', 1);
+                
+                // this.BackLoadedL = true
+                var back_title = prompt("Please enter the left BackLoaded title.");
+                if (back_title) {
+                  d.backLTitle = back_title
+                  
+                  store.dispatch('changeTile', { 
+                    id: d.id,
+                    x: d.x,
+                    y: d.y,
+                    backLeft: true,
+                    back_title: back_title,
+                    backRight: d.backRight,
+                    event_name: d.event_name,
+                    event_due: d.event_due
+                  })
+                } else {
+                  store.dispatch('changeTile', { 
+                    id: d.id,
+                    x: d.x,
+                    y: d.y,
+                    backLeft: true,
+                    backRight: d.backRight,
+                    event_name: d.event_name,
+                    event_due: d.event_due
+                  })
+                }
+              }
+            },
+            {
+              title: 'Back Loaded Right',
+              action: (d, _this) => {
+                console.log('Tile back loaded right clicked');
+                
+                d3.select('#' + d.id + '-br').style('opacity', 1);
+
+                // this.BackLoadedR = true
+                var back_title = prompt("Please enter the right BackLoaded title.");
+                if (back_title) {
+                  d.backRTitle = back_title
+
+                  store.dispatch('changeTile', { 
+                    id: d.id,
+                    x: d.x,
+                    y: d.y,
+                    backLeft: d.backLeft,
+                    backRight: true,
+                    backRTitle: back_title,
+                    event_name: d.event_name,
+                    event_due: d.event_due
+                  })
+                } else {
+                  store.dispatch('changeTile', { 
+                    id: d.id,
+                    x: d.x,
+                    y: d.y,
+                    backLeft: d.backLeft,
+                    backRight: true,
+                    event_name: d.event_name,
+                    event_due: d.event_due
+                  })
+                }
+              }
+            },
+            {
+              title: 'Add label',
+              action: (d, _this) => {
+                console.log('Tile add label clicked');
+                
+                const id = d.id
+                var rect = d3.select('#' + id)
+                var parent = d3.select('#' + d.id + '-p');
+
+                var x = Number(rect.attr('x'));
+                var y = Number(rect.attr('y'));
+
+                getColor()
+                // colorPallet()
+                  .then(color => {
+                    var number = parent.selectAll('rect')._groups[0].length
+
+                    var thisLabel = parent
+                                      .append('rect')
+                                      .attr('class', d => 'label ' + ((x + 2) + (number * d.width)) + '-' + (y + 2))
+                                      .attr('id', d => d.id + '-' + (number - 3))
+
+                    // Number - 3 (3 represents that there are 3 rects before the labels)
+                    thisLabel
+                      .attr("width", d => config.label_width)
+                      .attr("height", d => config.label_height)
+                      .attr("x", d => (+x + +2) + +(((number - 3) * (config.label_width + config.gap_between_labels)) + config.lebel_padding_from_left) - +config.label_width)
+                      .attr("y", (+y + +2))
+                      .attr("rx", config.labels_edges_round)
+                      .attr("ry", config.labels_edges_round)
+                      .style("opacity", config.label_opacity)
+                      .style("fill", color)
+                      // .on("click", function(d){
+                      //   removeLabel(this, d);
+                      // })
+                      .on('contextmenu', function (d) {
+                        if (thisComponent.usertype === 'admin' || thisComponent.usertype === 'user' || thisComponent.usertype === 'fleet'){
+                          var coords = d3.mouse(this);
+                          createContextMenu(d, coords[0], coords[1], labelMenu, '.contextGroup', this);
+                        }
+                      })
+                      .call(
+                        d3.drag()
+                          .on("start", function started(d) {
+                            tileDrag(d)
+                          })
+                      );
+
+                    store.dispatch('pushLabel', {
+                      tile: id,
+                      color: color
+                    })
+                  })
               }
             },
             {
@@ -357,7 +577,8 @@
             }
           ];
 
-        } else if (this.usertype === 'admin' || this.usertype === 'user') {
+          
+        } else if (this.usertype === 'admin') {
 
           sectionMenuItems = [
             {
@@ -622,7 +843,7 @@
                       //   removeLabel(this, d);
                       // })
                       .on('contextmenu', function (d) {
-                        if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+                        if (thisComponent.usertype === 'admin' || thisComponent.usertype === 'user' || thisComponent.usertype === 'fleet'){
                           var coords = d3.mouse(this);
                           createContextMenu(d, coords[0], coords[1], labelMenu, '.contextGroup', this);
                         }
@@ -695,12 +916,11 @@
             }
           ];
           
-        } else {
-          sectionMenuItems = []
         }
-
+        
+        var backLoadedLeft = []
         if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
-          const backLoadedLeft = [
+          backLoadedLeft = [
             {
               title: 'Remove back-loaded',
               action: (d, _this) => {
@@ -722,12 +942,11 @@
               }
             },
           ]
-        } else {
-          const backLoadedLeft = []
         }
 
+        var backLoadedRight = []
         if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
-          const backLoadedRight = [
+          backLoadedRight = [
             {
               title: 'Remove back-loaded',
               action: (d, _this) => {
@@ -749,12 +968,11 @@
               }
             },
           ]
-        } else {
-          const backLoadedRight = []
         }
 
+        var labelMenu = []
         if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
-          const labelMenu = [
+          labelMenu = [
             {
               title: 'Remove label',
               action: (d, _this) => {
@@ -764,8 +982,6 @@
               }
             },
           ]
-        } else {
-          const labelMenu = []
         }
 
         const store = this.$store;
@@ -877,7 +1093,8 @@
         var svgContainer = chartDiv
                             .append("svg:svg")
                             .attr("width", window.innerWidth)
-                            .attr("height", window.innerHeight)
+                            // .attr("height", window.innerHeight)
+                            .attr("height", window.innerHeight - (11 / 100) * window.innerHeight)
                             .attr("id", "svg");
 
         filter(svgContainer)
@@ -886,7 +1103,7 @@
           if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
             var changed = false
 
-            if (this.usertype === 'admin' || this.usertype === 'user'){
+            if (this.usertype === 'admin'){
               changed = true
 
               var rect = d3.select('#' + dd.id).classed("dragging", true);
@@ -1067,7 +1284,8 @@
                     height: rect.attr('height'),
                     x: frame1.attr('x'),
                     y: frame1.attr('y'),
-                    color: dd.color
+                    color: dd.color,
+                    nomsg: true
                   })
 
                   store.dispatch('changeSection', {
@@ -1113,7 +1331,7 @@
           .style("fill", d => d.color)
           .style("opacity", config.section_opacity)
           .on('contextmenu', function (d) {
-            if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+            if (thisComponent.usertype === 'admin' || thisComponent.usertype === 'user' || thisComponent.usertype === 'fleet'){
               var coords = d3.mouse(this);
               createContextMenu(d, coords[0], coords[1], sectionMenuItems, '.contextGroup');
             }
@@ -1124,50 +1342,6 @@
             })
           );
 
-        // var frame = sectionGroup
-        //             .append('rect')
-        //             .attr('class', d => 'sectionTextFrame ' + d.x.toString() + '-' + d.y.toString())
-        //             .attr('id', d => d.id + '-f');
-
-        // frame
-        //   .attr("width", d => (+d.name.length * 10) + (10 * 2))
-        //   .attr("height", +config.section_text_size + 5)
-        //   .attr("x", d => {
-        //     return  +d.x + (+d.width / 2) - (+d.name.length * 5 / 2) - 10
-        //   })
-        //   .attr("y", d => +d.y + +config.section_text_y - 15)
-        //   .attr("rx", config.tile_edges_round)
-        //   .attr("ry", config.tile_edges_round)
-        //   .style("opacity", config.tile_opacity)
-        //   .style("fill", d => d.color)
-        //   .attr("stroke-width", 2)
-        //   .style("filter", "url(#drop-shadow)")
-        //   .call(
-        //     d3.drag()
-        //     .on('start', function started(dd) {
-        //       sectionDrag(dd, this)
-        //     })
-        //   );
-        
-        // var sectionText = sectionGroup
-        //                     .append('text')
-        //                     .attr('class', d => 'sectionText ' + d.x.toString() + '-' + d.y.toString())
-        //                     .attr('id', d => d.id + '-t');
-
-        // sectionText
-        //   .attr("x", d => {
-        //     return  +d.x + (+d.width / 2) - (+d.name.length * 5 / 2)
-        //   })
-        //   .attr("y", d => +d.y + +config.section_text_y)
-        //   .text(d => d.name)
-        //   .attr("font-family", config.section_text_font)
-        //   .attr("font-size", config.section_text_size + 'px')
-        //   .attr("fill", config.section_text_color)
-        //   .call(d3.drag()
-        //     .on('start', function started(dd) {
-        //       sectionDrag(dd, this)
-        //     })
-        //   );
 
 
         const sectionNameDrag = (dd, _this) => {
@@ -1262,7 +1436,7 @@
 
         const tileDrag = d => {
           // if (this.usertype === 'admin' || this.usertype === 'user'){
-          if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+          if (thisComponent.usertype === 'admin' || thisComponent.usertype === 'user' || thisComponent.usertype === 'fleet'){
 
             var rectsGroup = d3.select('#' + d.id + '-p').selectAll('rect').classed("dragging", true);
             var backL = d3.select('#' + d.id + '-bl').classed("dragging", true);
@@ -1390,7 +1564,7 @@
             console.log('TILE CLICKED')
           })
           .on('contextmenu', function (d) {
-            if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+            if (thisComponent.usertype === 'admin' || thisComponent.usertype === 'user' || thisComponent.usertype === 'fleet'){
               var coords = d3.mouse(this);
               createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup', this);
             }
@@ -1445,11 +1619,9 @@
             console.log('Tile warning CLICKED')
           })
           .on('contextmenu', function (d) {
-            if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
-              if (d.backLeft){
-                var coords = d3.mouse(this);
-                createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup', this);
-              }
+            if (thisComponent.usertype === 'admin' || thisComponent.usertype === 'user' || thisComponent.usertype === 'fleet'){
+              var coords = d3.mouse(this);
+              createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup', this);
             }
           })
           .call(
@@ -1482,7 +1654,7 @@
             console.log('Back Loaded Left CLICKED')
           })
           .on('contextmenu', function (d) {
-            if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+            if (thisComponent.usertype === 'admin' || thisComponent.usertype === 'user' || thisComponent.usertype === 'fleet'){
               if (d.backLeft){
                 var coords = d3.mouse(this);
                 createContextMenu(d, coords[0], coords[1], backLoadedLeft, '.contextGroup');
@@ -1519,7 +1691,7 @@
             console.log('Back Loaded Right CLICKED')
           })
           .on('contextmenu', function (d) {
-            if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+            if (thisComponent.usertype === 'admin' || thisComponent.usertype === 'user' || thisComponent.usertype === 'fleet'){
               if (d.backRight){
                 var coords = d3.mouse(this);
                 createContextMenu(d, coords[0], coords[1], backLoadedRight, '.contextGroup');
@@ -1549,7 +1721,7 @@
           .attr("font-size", config.tile_text_size + 'px')
           .attr("fill", config.tile_text_color)
           .on('contextmenu', function (d) {
-            if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+            if (thisComponent.usertype === 'admin' || thisComponent.usertype === 'user' || thisComponent.usertype === 'fleet'){
               var coords = d3.mouse(this);
               createContextMenu(d, coords[0], coords[1], tileMenuItems, '.contextGroup', this);
             }
@@ -1604,7 +1776,7 @@
               //   removeLabel(this, d);
               // })
               .on('contextmenu', function (d) {
-                if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
+                if (thisComponent.usertype === 'admin' || thisComponent.usertype === 'user' || thisComponent.usertype === 'fleet'){
                   var coords = d3.mouse(this);
                   createContextMenu(d, coords[0], coords[1], labelMenu, '.contextGroup', this);
                 }

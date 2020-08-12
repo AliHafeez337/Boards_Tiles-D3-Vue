@@ -43,17 +43,17 @@ server.listen(process.env.PORT, () => {
 var io = socketIO(server);
 
 io.on('connection', socket => {
-  socket.broadcast.emit('message', {
-    type: "Connection",
-    // msg: `A user connected from ${socket.handshake.address}.`
-    message: `A user connected.`
-  })
-  socket.on('disconnect', () => {
-    socket.broadcast.emit('message', {
-      type: "Connection",
-      message: "A user disconnected."
-    })
-  });
+  // socket.broadcast.emit('message', {
+  //   type: "Connection",
+  //   // msg: `A user connected from ${socket.handshake.address}.`
+  //   message: `A user connected.`
+  // })
+  // socket.on('disconnect', () => {
+  //   socket.broadcast.emit('message', {
+  //     type: "Connection",
+  //     message: "A user disconnected."
+  //   })
+  // });
 })
 
 app.all(/.*/, (req, res, next) => {

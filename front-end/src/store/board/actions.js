@@ -650,7 +650,8 @@ export const changeSection = async ({ commit, getters }, data) => {
               url: `/tile/update/${tile._id}`,
               data: {
                 x: _tile.x,
-                y: _tile.y
+                y: _tile.y,
+                nomsg: true
               }
             });
 
@@ -1324,7 +1325,7 @@ export const arrangeTiles = ({ commit, getters }, id) => {
   setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
 
   tiles1.forEach(async tile => {
-
+    
     commit('SET_SAVING', +getters.getSaving + 1)
 
     try {
