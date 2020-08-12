@@ -1103,7 +1103,7 @@
           if (this.usertype === 'admin' || this.usertype === 'user' || this.usertype === 'fleet'){
             var changed = false
 
-            if (this.usertype === 'admin' || this.usertype === 'user'){
+            if (this.usertype === 'admin'){
               changed = true
 
               var rect = d3.select('#' + dd.id).classed("dragging", true);
