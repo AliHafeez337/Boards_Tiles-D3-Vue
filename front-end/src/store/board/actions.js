@@ -1,5 +1,6 @@
 import { config } from './../../CONFIG';
 import axios from './../../axios';
+import _ from 'lodash';
 
 // Searches only the trailer
 export const setSearch = ({ commit, getters }, data) => {
@@ -1322,49 +1323,59 @@ export const arrangeTiles = ({ commit, getters }, id) => {
 
   console.log('Final result', tiles1)
 
+  var subjectTiles = []
+  for(let detailedSection in sectionDetails){
+    sectionDetails[detailedSection].forEach(tile => {
+      subjectTiles.push(tile)
+    })
+  }
+
   setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
 
   tiles1.forEach(async tile => {
+    let thisTile = _.find(subjectTiles, o => o.id === tile.id)
+    if (thisTile){
     
-    commit('SET_SAVING', +getters.getSaving + 1)
-
-    try {
-      if (getters.getProfile.usertype === 'admin' || getters.getProfile.usertype === 'user'){
-
-        var res = await axios({
-          method: 'patch',
-          url: `/tile/update/${tile._id}`,
-          data: tile
-        });
-      } else {
-        var res = await axios({
-          method: 'patch',
-          url: `/tile/update1/${tile._id}`,
-          data: tile
-        });
-      }
-
-      setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
-
-      if (res.data){
-        if (res.data.errmsg){
-          commit('SET_ERR', { bool: true, errmsg: res.data.errmsg })
+      commit('SET_SAVING', +getters.getSaving + 1)
+  
+      try {
+        if (getters.getProfile.usertype === 'admin' || getters.getProfile.usertype === 'user'){
+  
+          var res = await axios({
+            method: 'patch',
+            url: `/tile/update/${tile._id}`,
+            data: tile
+          });
+        } else {
+          var res = await axios({
+            method: 'patch',
+            url: `/tile/update1/${tile._id}`,
+            data: tile
+          });
+        }
+  
+        setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
+  
+        if (res.data){
+          if (res.data.errmsg){
+            commit('SET_ERR', { bool: true, errmsg: res.data.errmsg })
+            setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+          }
+        } else {
+          commit('SET_ERR', { bool: true, errmsg: "No data received" })
           setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
         }
-      } else {
-        commit('SET_ERR', { bool: true, errmsg: "No data received" })
+      } catch(err) {
+        if (err.errmsg){
+          err = err.errmsg
+        }
+  
+        setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
+        commit('SET_ERR', { bool: true, errmsg: err })
         setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
       }
-    } catch(err) {
-      if (err.errmsg){
-        err = err.errmsg
-      }
-
-      setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
-      commit('SET_ERR', { bool: true, errmsg: err })
-      setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+  
     }
-
   })
 
   commit('SET_TILES', tiles1)
@@ -1750,49 +1761,59 @@ export const sortTiles = ({ commit, getters }, id) => {
 
   console.log('Final result', tiles1)
 
+  var subjectTiles = []
+  for(let detailedSection in sectionDetails){
+    sectionDetails[detailedSection].forEach(tile => {
+      subjectTiles.push(tile)
+    })
+  }
+
   setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
 
   tiles1.forEach(async tile => {
+    let thisTile = _.find(subjectTiles, o => o.id === tile.id)
+    if (thisTile){
 
-    commit('SET_SAVING', +getters.getSaving + 1)
-
-    try {
-      if (getters.getProfile.usertype === 'admin' || getters.getProfile.usertype === 'user'){
-
-        var res = await axios({
-          method: 'patch',
-          url: `/tile/update/${tile._id}`,
-          data: tile
-        });
-      } else {
-        var res = await axios({
-          method: 'patch',
-          url: `/tile/update1/${tile._id}`,
-          data: tile
-        });
-      }
-
-      setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
-
-      if (res.data){
-        if (res.data.errmsg){
-          commit('SET_ERR', { bool: true, errmsg: res.data.errmsg })
+      commit('SET_SAVING', +getters.getSaving + 1)
+  
+      try {
+        if (getters.getProfile.usertype === 'admin' || getters.getProfile.usertype === 'user'){
+  
+          var res = await axios({
+            method: 'patch',
+            url: `/tile/update/${tile._id}`,
+            data: tile
+          });
+        } else {
+          var res = await axios({
+            method: 'patch',
+            url: `/tile/update1/${tile._id}`,
+            data: tile
+          });
+        }
+  
+        setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
+  
+        if (res.data){
+          if (res.data.errmsg){
+            commit('SET_ERR', { bool: true, errmsg: res.data.errmsg })
+            setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+          }
+        } else {
+          commit('SET_ERR', { bool: true, errmsg: "No data received" })
           setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
         }
-      } else {
-        commit('SET_ERR', { bool: true, errmsg: "No data received" })
+      } catch(err) {
+        if (err.errmsg){
+          err = err.errmsg
+        }
+  
+        setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
+        commit('SET_ERR', { bool: true, errmsg: err })
         setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
       }
-    } catch(err) {
-      if (err.errmsg){
-        err = err.errmsg
-      }
-
-      setTimeout(() => commit('SET_SAVING', +getters.getSaving - 1), 250)
-      commit('SET_ERR', { bool: true, errmsg: err })
-      setTimeout(() => commit('SET_ERR', { bool: false, errmsg: '' }), 2000)
+  
     }
-
   })
 
   commit('SET_TILES', tiles1)

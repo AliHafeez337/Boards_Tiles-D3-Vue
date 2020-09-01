@@ -206,7 +206,7 @@
                     x: d.x,
                     y: d.y,
                     backLeft: true,
-                    back_title: back_title,
+                    backLTitle: back_title,
                     backRight: d.backRight,
                     event_name: d.event_name,
                     event_due: d.event_due
@@ -217,6 +217,7 @@
                     x: d.x,
                     y: d.y,
                     backLeft: true,
+                    backLTitle: '',
                     backRight: d.backRight,
                     event_name: d.event_name,
                     event_due: d.event_due
@@ -460,7 +461,7 @@
                     x: d.x,
                     y: d.y,
                     backLeft: true,
-                    back_title: back_title,
+                    backLTitle: back_title,
                     backRight: d.backRight,
                     event_name: d.event_name,
                     event_due: d.event_due
@@ -471,6 +472,7 @@
                     x: d.x,
                     y: d.y,
                     backLeft: true,
+                    backLTitle: '',
                     backRight: d.backRight,
                     event_name: d.event_name,
                     event_due: d.event_due
@@ -754,7 +756,7 @@
                     x: d.x,
                     y: d.y,
                     backLeft: true,
-                    back_title: back_title,
+                    backLTitle: back_title,
                     backRight: d.backRight,
                     event_name: d.event_name,
                     event_due: d.event_due
@@ -765,6 +767,7 @@
                     x: d.x,
                     y: d.y,
                     backLeft: true,
+                    backLTitle: '',
                     backRight: d.backRight,
                     event_name: d.event_name,
                     event_due: d.event_due
@@ -1435,6 +1438,11 @@
           );
 
         const tileDrag = d => {
+          // var audio = new Audio('tunes/Elevator Ding-SoundBible.com-685385892.mp3');
+          var audio = new Audio('http://soundbible.com/mp3/poker-chips-daniel_simon.mp3');
+          // var audio = new Audio('http://soundbible.com/mp3/Elevator Ding-SoundBible.com-685385892.mp3');
+          audio.play();
+
           // if (this.usertype === 'admin' || this.usertype === 'user'){
           if (thisComponent.usertype === 'admin' || thisComponent.usertype === 'user' || thisComponent.usertype === 'fleet'){
 
@@ -1825,29 +1833,41 @@
                         if (this.zoomChanged === 1){
                           transform.k = config.default_zoom_level
                         }
-                        
+
                         var oldZoom = null;
                         if (!this.justOnce){
                           oldZoom = this.$store.getters.getZoom;
                           this.justOnce = true
                         }
-
+                        // console.log("Zoom", this.$store.getters.getZoom.k, this.$store.getters.getZoom.x, this.$store.getters.getZoom.y)
+                          
                         if (this.search){
                           if (this.zoomChanged === 1){
+                            // console.log('if Runs')
+                            // console.log("Search", this.search.k, this.search.x, this.search.y)
+
                             transform.k = this.search.k
                             transform.x = this.search.x
                             transform.y = this.search.y
+
                             // sectionGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
                             // sectionNameGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
                             // tileGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
                             // tooltip.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
                             // contextGroup.attr("transform", "translate(" + this.search.x + "," + this.search.y + ") scale(" + this.search.k + ")");
+                          } else {
+                            // console.log('else Runs')
+                            store.dispatch('changeZoom', { 
+                              zoom: d3.event.transform
+                            })
+                            store.commit('SET_SEARCH', null)
                           }
                         
                         } else if (oldZoom && oldZoom.x && oldZoom.y && oldZoom.k){
-                            transform.k = oldZoom.k
-                            transform.x = oldZoom.x
-                            transform.y = oldZoom.y
+                          // console.log("Old zoom runs")
+                          transform.k = oldZoom.k
+                          transform.x = oldZoom.x
+                          transform.y = oldZoom.y
                           // sectionGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
                           // sectionNameGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");
                           // tileGroup.attr("transform", "translate(" + oldZoom.x + "," + oldZoom.y + ") scale(" + oldZoom.k + ")");

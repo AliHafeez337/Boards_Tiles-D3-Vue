@@ -468,7 +468,7 @@
         this.d3 += 1
       },
       search: function (val) {
-        console.log('SEARCH', val)
+        // console.log('SEARCH', val)
         this.d3 += 1
       },
       tileDetails: function (val) {
