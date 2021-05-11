@@ -29,7 +29,7 @@
     "express-session": "^1.17.1",
     "http": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "mongodb": "^3.5.9",
     "mongoose": "^5.9.23",
     "morgan": "^1.10.0",
